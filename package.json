@@ -8,7 +8,7 @@
     },
     "devDependencies": {},
     "repository": {
-    "type": "git",
+        "type": "git",
         "url": "git+https://github.com/Loosper/sherminal.git"
     },
     "author": "Loosper, Rek1ess",

@@ -5,5 +5,8 @@ lib/
 include/
 pip-selfcheck.json
 
+#mac garbage
+.DS_Store
+
 # node dependencies
 node_modules/
