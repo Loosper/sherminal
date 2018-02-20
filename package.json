@@ -1,0 +1,20 @@
+{
+    "name": "sherminal",
+    "version": "0.0.1",
+    "description": "Shared terminal",
+    "main": "index.js",
+    "dependencies": {
+        "xterm": "^3.1.0"
+    },
+    "devDependencies": {},
+    "repository": {
+    "type": "git",
+        "url": "git+https://github.com/Loosper/sherminal.git"
+    },
+    "author": "Loosper, Rek1ess",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Loosper/sherminal/issues"
+    },
+    "homepage": "https://github.com/Loosper/sherminal#readme"
+}
