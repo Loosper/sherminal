@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 
 Base = declarative_base()
@@ -12,7 +13,9 @@ class User(Base):
     username = Column(String)
 
     def __repr__(self):
-        pass
+        return "terminal: {}, username: '{}'".format(
+            self.term_id, self.username
+        )
 
 
 if __name__ == '__main__':
@@ -20,3 +23,12 @@ if __name__ == '__main__':
 
     engine = create_engine('sqlite:///:memory:', echo=True)
     Base.metadata.create_all(engine)
+
+    # session_maker = sessionmaker(bind=engine)
+    # session = session_maker()
+    session = sessionmaker(bind=engine)()
+
+    new = User(term_id=1, username='first')
+    session.add(new)
+
+    print(session.query(User).first())
