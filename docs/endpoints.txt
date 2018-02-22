@@ -1,0 +1,5 @@
+/ - currently opens a new terminal session. Will become log in page
+/websockets/[id] - creates websocket connections to [id] terminal - PRIVATE
+/termianl/[id] - TODO: url to connect to a terminal session
+/xstatic/[path] - static files for templates. Up for removal if we choose
+a single page application
