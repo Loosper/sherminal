@@ -1,4 +1,5 @@
 ptyprocess==0.5.2
+SQLAlchemy==1.2.3
 terminado==0.8.1
 tornado==4.5.3
 tornado-xstatic==0.2
