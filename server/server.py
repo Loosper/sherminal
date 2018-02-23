@@ -1,45 +1,64 @@
 import tornado.web
-# This demo requires tornado_xstatic and XStatic-term.js
-import tornado_xstatic
 import os
 import webbrowser
+# import asyncio
+import tornado.options
+
+from tornado.web import StaticFileHandler
+from tornado.platform.asyncio import AsyncIOMainLoop
+
+# from sqlalchemy import create_engine
 
 from terminado import TermSocket, NamedTermManager
-from terminado import uimodule
 
 
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "../client")
-TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "../client")
+DIR = os.path.dirname(__file__)
 
 
 class TerminalPageHandler(tornado.web.RequestHandler):
-    def get(self, path):
+    async def get(self, path):
         return self.render(
             "index.html", static=self.static_url,
-            xstatic=self.application.settings['xstatic_url'],
             ws_url_path="/websocket/" + path
         )
 
 
+class Static(tornado.web.StaticFileHandler):
+    def initialize(self, path):
+        self.dirname, self.filename = os.path.split(path)
+        super().initialize(self.dirname)
+
+    def get(self, path=None, include_body=True):
+        super().get(self.filename, include_body)
+
+
 def main(argv):
+    AsyncIOMainLoop().install()
+    # logging
+    tornado.options.parse_command_line()
+
+    # engine = create_engine('sqlite:///:memory:', echo=True)
+
     term_manager = NamedTermManager(3, shell_command=['zsh'])
     handlers = [
         (r"/websocket/(.*)", TermSocket, {'term_manager': term_manager}),
-        (r"/(.*)", TerminalPageHandler),
-        (r"/xstatic/(.*)", tornado_xstatic.XStaticFileHandler,
-            {'allowed_modules': ['termjs']})
+        (r"/", Static,
+            {'path': os.path.join(DIR, "../client/index.html")}),
+        (r'/static/(setup\.js)', StaticFileHandler,
+            {'path': os.path.join(DIR, "../client/")}),
+        (r'/static/(.*)', StaticFileHandler,
+            {'path': os.path.join(DIR, "../node_modules/xterm/dist")})
     ]
+
     app = tornado.web.Application(
-        handlers, static_path=STATIC_DIR,
-        template_path=TEMPLATE_DIR,
-        ui_modules={'Terminal': uimodule.Terminal},
-        xstatic_url=tornado_xstatic.url_maker('/xstatic/')
+        handlers
     )
 
     PORT = 8765
     print('Listening on port {}.'.format(PORT))
 
-    app.listen(8765, 'localhost')
+    app.listen(PORT, 'localhost')
+
     loop = tornado.ioloop.IOLoop.instance()
     loop.add_callback(webbrowser.open, "http://localhost:{}/".format(PORT))
 

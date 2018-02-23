@@ -1,29 +1,15 @@
-<!DOCTYPE html>
-<head>
-<meta charset="UTF-8">
-<title>Terminado UIModule demo</title>
-<!--
-  pyxterm: Basic Python socket implementation for term.js
-
-  Example template
-  Modified by: R. Saravanan <sarava@sarava.net> 2014
-  Original Copyright (c) 2012-2013, Christopher Jeffrey (MIT License)
--->
-</head>
-<style>
-#wrapper {
-    border: 5px dotted magenta;
-    padding: 10px;
-    display: inline-block;  # Need this, not sure why
-}
-
-.terminado-container {
-    display: inline-block;  # ditto
-}
-</style>
-<body>
-<h1>Terminado UIModule terminal</h1>
-<div id="wrapper" style="border: 5px dotted magenta;">
-    {% module Terminal(ws_url_path) %}
-</div>
-</body>
+<!doctype html>
+<html>
+    <head>
+    <meta charset="UTF-8">
+        <link rel="stylesheet" href="/static/xterm.css" />
+        <script src="/static/xterm.js"></script>
+        <script src="/static/addons/terminado/terminado.js"></script>
+        <script src="/static/setup.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div id="terminal-container"></div>
+        </div>
+    </body>
+</html>
