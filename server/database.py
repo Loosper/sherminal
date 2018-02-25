@@ -9,7 +9,8 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users'
 
-    term_id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    term_id = Column(Integer, nullable=True)
     username = Column(String)
 
     def __repr__(self):
