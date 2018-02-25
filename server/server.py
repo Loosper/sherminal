@@ -37,7 +37,17 @@ class Static(StaticFileHandler):
         super().get(self.filename, include_body)
 
 
-class Login(RequestHandler):
+# TODO: spin off into threads
+class DatabseQuery:
+    async def search_username(self, username):
+        return self.session.query(User).filter_by(username=username).first()
+
+    async def add(self, *args):
+        self.session.add(*args)
+        self.session.commit()
+
+
+class Login(RequestHandler, DatabseQuery):
     def initialize(self, database):
         self.session = database()
 
@@ -52,15 +62,29 @@ class Login(RequestHandler):
         else:
             return
 
-        user = self.session.query(User).filter_by(
-            username=data['username']).first()
+        user = await self.search_username(data['username'])
 
         if not user:
             new_user = User(username=data['username'])
-            self.session.add(new_user)
-            self.session.commit()
+            await self.add(new_user)
 
         self.write({'terminal_path': data['username']})
+
+
+class UserTermManager(TermSocket, DatabseQuery):
+    def initialize(self, term_manager, database):
+        self.session = database()
+        super().initialize(term_manager)
+
+    async def open(self, url_component=None):
+        user = await self.search_username(url_component)
+
+        if not user:
+            self.close(401, 'Not created')
+            return
+
+        print(url_component)
+        super().open(url_component)
 
 
 def main(argv):
@@ -74,7 +98,9 @@ def main(argv):
 
     term_manager = NamedTermManager(3, shell_command=['zsh'])
     handlers = [
-        (r"/websocket/(.*)", TermSocket, {'term_manager': term_manager}),
+        (r"/websocket/(.*)", UserTermManager, {
+            'term_manager': term_manager, 'database': Session
+        }),
         (r"/", Static,
             {'path': os.path.join(DIR, "../client/index.html")}),
         (r'/login', Login, {'database': Session}),
