@@ -3,27 +3,7 @@ import './styles/login.css';
 import './styles/bootstrap.min.css';
 
 class LoginHandler extends Component {
-    var Component = React.createClass({
-        getInitialState: function() {
-          return {
-            inputValue: ''
-          };
-        },
-      
-        render: function() {
-          return (
-            //...
-            <input value={this.state.inputValue} onChange={this.updateInputValue}/>
-            //...
-          );
-        },
-      
-        updateInputValue: function(evt) {
-          this.setState({
-            inputValue: evt.target.value
-          });
-        }
-      });
+    
       
     render() {
         return (
