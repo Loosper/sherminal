@@ -2,8 +2,14 @@
 
 env/
 
-#mac garbage
+# mac garbage
 .DS_Store
 
 # node dependencies
 node_modules/
+
+# this is personal
+.eslintrc.js
+
+# python caches
+__pycache__/
