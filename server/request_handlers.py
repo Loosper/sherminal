@@ -1,30 +1,12 @@
-import os
 import json
 
 
-from tornado.web import StaticFileHandler, RequestHandler
+from tornado.web import RequestHandler
 from terminado import TermSocket
 from database import User
 
 
-# class TerminalPageHandler(tornado.web.RequestHandler):
-#     async def get(self, path):
-#         return self.render(
-#             "index.html", static=self.static_url,
-#             ws_url_path="/websocket/" + path
-#         )
-
-
 # REVIEW: dir() and help()
-class StaticManager(StaticFileHandler):
-    def initialize(self, path):
-        self.dirname, self.filename = os.path.split(path)
-        super().initialize(self.dirname)
-
-    def get(self, path=None, include_body=True):
-        super().get(self.filename, include_body)
-
-
 # TODO: spin off into threads
 class DatabaseQuery:
     async def search_username(self, username):

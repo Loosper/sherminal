@@ -5,7 +5,6 @@ import tornado.web
 import tornado.options
 
 from tornado.platform.asyncio import AsyncIOMainLoop
-from tornado.web import StaticFileHandler
 
 from terminado import NamedTermManager
 
@@ -13,7 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from database import Base
-from request_handlers import UserTermManager, LoginManager, StaticManager
+from request_handlers import UserTermManager, LoginManager
 
 
 DIR = os.path.dirname(__file__)
@@ -33,13 +32,7 @@ def main(argv):
         (r"/websocket/(.*)", UserTermManager, {
             'term_manager': term_manager, 'database': Session
         }),
-        (r"/", StaticManager,
-            {'path': os.path.join(DIR, "../client/index.html")}),
-        (r'/login', LoginManager, {'database': Session}),
-        (r'/static/(setup\.js)', StaticFileHandler,
-            {'path': os.path.join(DIR, "../client/")}),
-        (r'/static/(.*)', StaticFileHandler,
-            {'path': os.path.join(DIR, "../node_modules/xterm/dist")})
+        (r'/login', LoginManager, {'database': Session})
     ]
 
     app = tornado.web.Application(
