@@ -9,7 +9,7 @@ class Window extends Component {
         super(props);
         this.setupClient = this.setupClient.bind(this);
 
-        this.URL = this.props.URL;
+        this.host = this.props.host;
         this.state = {loggedIn: false, terminals: []};
         // this is bad but works
         this.termid = 0;
@@ -18,7 +18,7 @@ class Window extends Component {
     setupClient(socket_path) {
         let new_state = this.state.terminals.slice();
         new_state.push(<Terminal
-            URL={this.URL}
+            host={this.host}
             socketURL={socket_path}
             key={this.termid++}
         />);
@@ -28,7 +28,7 @@ class Window extends Component {
 
     render() {
         if (!this.state.loggedIn) {
-            return (<LoginHandler onSubmit={this.setupClient} URL={this.URL}/>);
+            return (<LoginHandler onSubmit={this.setupClient} host={this.host}/>);
         } else {
             return (this.state.terminals);
         }

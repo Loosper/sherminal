@@ -5,6 +5,6 @@ import Window from './Window';
 
 
 // TODO: export into a config
-const URL = 'http://localhost:8765/';
+const HOST = 'localhost:8765';
 
-ReactDOM.render(<Window URL={URL}/>, document.getElementById('login'));
+ReactDOM.render(<Window host={HOST}/>, document.getElementById('login'));

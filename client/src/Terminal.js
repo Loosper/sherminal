@@ -12,7 +12,7 @@ Xterm.applyAddon(terminado);
 class Terminal extends Component {
     constructor(props) {
         super(props);
-        this.URL = this.props.URL;
+        this.host = this.props.host;
 
         this.terminal = <div
             id={'terminal-container' + this.key}
@@ -23,7 +23,7 @@ class Terminal extends Component {
     componentDidMount() {
         let term = new Xterm();
 
-        let socketURL = 'ws://localhost:8765/websocket/' + this.props.socketURL;
+        let socketURL = 'ws://' + this.host + '/websocket/' + this.props.socketURL;
 
         let socket = new WebSocket(socketURL);
         term.terminadoAttach(socket);

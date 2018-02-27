@@ -12,15 +12,19 @@ class LoginHandler extends Component {
         this.updateUsername = this.updateUsername.bind(this);
         this.login = this.login.bind(this);
 
-        this.URL = this.props.URL;
+        this.host = this.props.host;
         this.state = {username: ''};
     }
 
     login(event) {
+        event.preventDefault();
         let self = this;
+        let url = 'http://' + this.host + '/login';
+
         axios.post(
-            this.URL + 'login',
-            {username: this.state.username}
+            url,
+            {username: this.state.username},
+            {timeout: 1000}
         ).then(function (response) {
             // console.log(response.data);
             self.props.onSubmit(response.data['terminal_path']);
@@ -30,8 +34,7 @@ class LoginHandler extends Component {
                 console.log('Server responded: ' + error.response.status);
                 console.log(error.response.data);
             } else if (error.request) {
-                console.log('No response.');
-                console.log(error.request);
+                console.log('No response from: ' + url);
             } else {
                 console.log('Failed to send: ' + error.config);
             }
@@ -44,7 +47,8 @@ class LoginHandler extends Component {
 
     render() {
         return (
-            <div className="container">
+            // TODO: fix glyphicon
+            <form className="container" onSubmit={this.login}>
                 <div className="col-lg-6 col-md-6 col-sm-8  loginbox">
                     <div className=" row">
                         <div className="col-md-12">
@@ -64,13 +68,12 @@ class LoginHandler extends Component {
                     </div>
                     <div className="row ">
                         <div className="col-md-12 login-btn-container">
-                            <a  onClick={this.login}
-                                className=" btn btn-secondary"
-                            >Sign in <span className="glyphicon glyphicon-log-in" /></a>
+                            <span className="glyphicon glyphicon-log-in" />
+                            <a className=" btn btn-secondary">Sign in</a>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         );
     }
 }
