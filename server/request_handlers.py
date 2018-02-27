@@ -80,6 +80,7 @@ class LoginHandler(RequestHandler, DatabaseQuery):
 class UserTermHandler(TermSocket, DatabaseQuery):
     def initialize(self, session, term_manager):
         self.setup_session(session)
+        self.read_only = False
         super().initialize(term_manager)
 
     async def open(self, url_component=None):
@@ -89,8 +90,13 @@ class UserTermHandler(TermSocket, DatabaseQuery):
             self.close(401, 'Not created')
             return
 
-        # print(url_component)
         super().open(url_component)
+
+    def on_message(self, message):
+        if self.read_only:
+            return
+        else:
+            super().on_message(message)
 
     # we serve the client from a different place
     def check_origin(self, origin):
