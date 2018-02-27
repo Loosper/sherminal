@@ -25,8 +25,16 @@ class LoginHandler extends Component {
             // console.log(response.data);
             self.props.onSubmit(response.data['terminal_path']);
         }).catch(function (error) {
-            console.log(error.response.status);
-            console.log(error.response.data);
+            // server responded with error
+            if (error.response) {
+                console.log('Server responded: ' + error.response.status);
+                console.log(error.response.data);
+            } else if (error.request) {
+                console.log('No response.');
+                console.log(error.request);
+            } else {
+                console.log('Failed to send: ' + error.config);
+            }
         });
     }
 
