@@ -3,4 +3,8 @@ import ReactDOM from 'react-dom';
 import './styles/index.css';
 import Window from './Window';
 
-ReactDOM.render(<Window />, document.getElementById('login'));
+
+// TODO: export into a config
+const URL = 'http://localhost:8765/';
+
+ReactDOM.render(<Window URL={URL}/>, document.getElementById('login'));

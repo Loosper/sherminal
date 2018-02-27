@@ -9,7 +9,7 @@ class Window extends Component {
         super(props);
         this.setupClient = this.setupClient.bind(this);
 
-        this.URL = 'http://localhost:8765/';
+        this.URL = this.props.URL;
         this.state = {loggedIn: false, terminals: []};
         // this is bad but works
         this.termid = 0;
