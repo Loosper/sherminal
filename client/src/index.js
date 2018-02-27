@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './styles/index.css';
-import LoginHandler from './LoginHandler';
+import Window from './Window';
 
-ReactDOM.render(<LoginHandler />, document.getElementById('login'));
+ReactDOM.render(<Window />, document.getElementById('login'));
