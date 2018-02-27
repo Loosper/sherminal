@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from database import Base
-from request_handlers import UserTermManager, LoginManager
+from request_handlers import UserTermHandler, LoginHandler, ActiveUsersHandler
 
 
 DIR = os.path.dirname(__file__)
@@ -36,10 +36,11 @@ Session = sessionmaker(bind=engine)
 term_manager = NamedTermManager(3, shell_command=['zsh'])
 
 handlers = [
-    (r"/websocket/(.*)", UserTermManager, {
+    (r"/websocket/(.*)", UserTermHandler, {
         'term_manager': term_manager, 'session': Session
     }),
-    (r'/login', LoginManager, {'session': Session})
+    (r'/login', LoginHandler, {'session': Session}),
+    (r'/active_users', ActiveUsersHandler, {'term_manager': term_manager})
 ]
 
 app = tornado.web.Application(

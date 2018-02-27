@@ -47,7 +47,7 @@ class DatabaseQuery:
         self.session.close()
 
 
-class LoginManager(RequestHandler, DatabaseQuery):
+class LoginHandler(RequestHandler, DatabaseQuery):
     def initialize(self, session):
         self.setup_session(session)
 
@@ -77,8 +77,8 @@ class LoginManager(RequestHandler, DatabaseQuery):
         self.write({'terminal_path': data['username']})
 
 
-class UserTermManager(TermSocket, DatabaseQuery):
-    def initialize(self, term_manager, session):
+class UserTermHandler(TermSocket, DatabaseQuery):
+    def initialize(self, session, term_manager):
         self.setup_session(session)
         super().initialize(term_manager)
 
@@ -95,3 +95,11 @@ class UserTermManager(TermSocket, DatabaseQuery):
     # we serve the client from a different place
     def check_origin(self, origin):
         return True
+
+
+class ActiveUsersHandler(RequestHandler):
+    def initialize(self, term_manager):
+        self.manager = term_manager
+
+    def get(self):
+        self.write({'active_users': list(self.manager.terminals.keys())})
