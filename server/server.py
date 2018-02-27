@@ -36,11 +36,11 @@ Session = sessionmaker(bind=engine)
 term_manager = NamedTermManager(3, shell_command=['zsh'])
 
 handlers = [
-    (r"/websocket/(.*)", UserTermHandler, {
+    (r"/websocket/(.*)/?", UserTermHandler, {
         'term_manager': term_manager, 'session': Session
     }),
-    (r'/login', LoginHandler, {'session': Session}),
-    (r'/active_users', ActiveUsersHandler, {'term_manager': term_manager})
+    (r'/login/?', LoginHandler, {'session': Session}),
+    (r'/active_users/?', ActiveUsersHandler, {'term_manager': term_manager})
 ]
 
 app = tornado.web.Application(

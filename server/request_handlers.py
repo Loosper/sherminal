@@ -102,4 +102,6 @@ class ActiveUsersHandler(RequestHandler):
         self.manager = term_manager
 
     def get(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+
         self.write({'active_users': list(self.manager.terminals.keys())})
