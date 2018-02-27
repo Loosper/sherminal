@@ -1,5 +1,4 @@
 import os
-# import webbrowser
 # import asyncio
 import tornado.web
 import tornado.options
@@ -16,46 +15,42 @@ from request_handlers import UserTermManager, LoginManager
 
 
 DIR = os.path.dirname(__file__)
+PORT = 8765
 
 
-def main(argv):
-    AsyncIOMainLoop().install()
-    # logging
-    tornado.options.parse_command_line()
+AsyncIOMainLoop().install()
+# logging
+tornado.options.parse_command_line()
 
-    engine = create_engine('sqlite:///:memory:', echo=True)
-    Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
+engine = create_engine('sqlite:///:memory:', echo=True)
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
 
-    term_manager = NamedTermManager(3, shell_command=['zsh'])
-    handlers = [
-        (r"/websocket/(.*)", UserTermManager, {
-            'term_manager': term_manager, 'database': Session
-        }),
-        (r'/login', LoginManager, {'database': Session})
-    ]
+term_manager = NamedTermManager(3, shell_command=['zsh'])
 
-    app = tornado.web.Application(
-        handlers,
-        debug=True
-    )
+handlers = [
+    (r"/websocket/(.*)", UserTermManager, {
+        'term_manager': term_manager, 'session': Session
+    }),
+    (r'/login', LoginManager, {'session': Session})
+]
 
-    PORT = 8765
-    print('Listening on port {}.'.format(PORT))
+app = tornado.web.Application(
+    handlers,
+    debug=True
+)
 
-    app.listen(PORT, 'localhost')
+print('Listening on port {}.\nPress Ctrl + C to stop.'.format(PORT))
 
-    loop = tornado.ioloop.IOLoop.instance()
-    # loop.add_callback(webbrowser.open, "http://localhost:{}/".format(PORT))
+app.listen(PORT)
 
-    try:
-        loop.start()
-    except KeyboardInterrupt:
-        print(" Shutting down...")
-    finally:
-        term_manager.shutdown()
-        loop.close()
+loop = tornado.ioloop.IOLoop.instance()
 
-
-if __name__ == '__main__':
-    main([])
+try:
+    loop.start()
+except KeyboardInterrupt:
+    print(" Shutting down...")
+finally:
+    term_manager.shutdown()
+    loop.close()
+    engine.dispose()
