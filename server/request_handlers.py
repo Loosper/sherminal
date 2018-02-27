@@ -1,32 +1,61 @@
 import json
-
+import asyncio
 
 from tornado.web import RequestHandler
 from terminado import TermSocket
+from functools import partial
+
 from database import User
+
+from concurrent.futures import ThreadPoolExecutor
+
+
+Executor = ThreadPoolExecutor(max_workers=5)
 
 
 # REVIEW: dir() and help()
 # TODO: spin off into threads
+# Sessions are not thread-safe. However any database query is explicitly
+# waited upon, so we don't need to worry about simultaneous accesss
+# Effectively we do not speed up database access, we minimize downtime
+# This assumption is false as soon as two requsts share a session
+# (scoped_session) or a query is not wited upon
 class DatabaseQuery:
+    '''Library onbect for asynchronous database connection'''
+    def setup_session(self, session):
+        self.session = session()
+        self.loop = asyncio.get_event_loop()
+
     async def search_username(self, username):
-        return self.session.query(User).filter_by(username=username).first()
+        def query(name):
+            return self.session.query(User).filter_by(username=name).first()
+
+        return await self.loop.run_in_executor(
+            Executor, partial(query, username)
+        )
 
     async def add(self, *args):
-        self.session.add(*args)
-        self.session.commit()
+        def adder(*args):
+            self.session.add(*args)
+            self.session.commit()
+
+        return await self.loop.run_in_executor(
+            Executor, partial(adder, *args)
+        )
+
+    def on_finish(self):
+        self.session.close()
 
 
 class LoginManager(RequestHandler, DatabaseQuery):
-    def initialize(self, database):
-        self.session = database()
+    def initialize(self, session):
+        self.setup_session(session)
 
     def options(self):
         # TODO: figure out how to properly deploy
         self.set_header('Access-Control-Allow-Origin', '*')
         self.set_header('Access-Control-Allow-Headers', 'Content-type')
 
-    # TODO: await databse connections
     async def post(self):
         if self.request.headers["Content-Type"].startswith("application/json"):
             try:
@@ -49,8 +78,8 @@ class LoginManager(RequestHandler, DatabaseQuery):
 
 
 class UserTermManager(TermSocket, DatabaseQuery):
-    def initialize(self, term_manager, database):
-        self.session = database()
+    def initialize(self, term_manager, session):
+        self.setup_session(session)
         super().initialize(term_manager)
 
     async def open(self, url_component=None):
@@ -60,7 +89,7 @@ class UserTermManager(TermSocket, DatabaseQuery):
             self.close(401, 'Not created')
             return
 
-        print(url_component)
+        # print(url_component)
         super().open(url_component)
 
     # we serve the client from a different place

@@ -9,6 +9,7 @@ from terminado import NamedTermManager
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from database import Base
 from request_handlers import UserTermManager, LoginManager
@@ -19,10 +20,16 @@ PORT = 8765
 
 
 AsyncIOMainLoop().install()
+
 # logging
 tornado.options.parse_command_line()
 
-engine = create_engine('sqlite:///:memory:', echo=True)
+engine = create_engine(
+    'sqlite:///:memory:',
+    connect_args={'check_same_thread': False},
+    poolclass=StaticPool,
+    echo=False
+)
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
