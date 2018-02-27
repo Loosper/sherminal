@@ -21,6 +21,11 @@ class LoginManager(RequestHandler, DatabaseQuery):
     def initialize(self, database):
         self.session = database()
 
+    def options(self):
+        # TODO: figure out how to properly deploy
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Access-Control-Allow-Headers', 'Content-type')
+
     # TODO: await databse connections
     async def post(self):
         if self.request.headers["Content-Type"].startswith("application/json"):
@@ -31,6 +36,8 @@ class LoginManager(RequestHandler, DatabaseQuery):
                 return
         else:
             return
+
+        self.set_header('Access-Control-Allow-Origin', '*')
 
         user = await self.search_username(data['username'])
 
@@ -55,3 +62,7 @@ class UserTermManager(TermSocket, DatabaseQuery):
 
         print(url_component)
         super().open(url_component)
+
+    # we serve the client from a different place
+    def check_origin(self, origin):
+        return True
