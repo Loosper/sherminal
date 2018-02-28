@@ -10,37 +10,33 @@ class UserBar extends Component {
         this.state = {
             users: []
         };
-
-        this.updateActiveUsers();//this needs to be changed
     }
 
-    updateActiveUsers() {
+    componentDidMount() {
         let url = 'http://' + this.props.host + '/active_users';
-        
-        axios.get(url)
-        .then(function (response) {
+
+        axios.get(url).then(function (response) {
             console.log(response);
 
             let activeUsers = response.data['active_users'];
 
-            if (activeUsers.length == 0) {
-                activeUsers.push('No active users.')
+            if (activeUsers.length === 0) {
+                activeUsers.push('No active users.');
             }
 
             this.setState({users: activeUsers});
 
-        }.bind(this))
-        .catch(function (error) {
+        }.bind(this)).catch(function (error) {
             console.log(error);
         });
     }
 
     render() {
         return(
-            <nav class="navbar navbar-light bg-light">
+            <nav className="navbar navbar-light bg-light">
                 {this.state.users}
             </nav>
-        )
+        );
     }
 }
 
