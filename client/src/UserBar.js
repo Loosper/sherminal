@@ -11,11 +11,9 @@ class UserBar extends Component {
         this.state = {
             users: []
         };
-
-        this.updateActiveUsers();//this needs to be changed
     }
 
-    updateActiveUsers() {
+    componentDidMount() {
         let url = 'http://' + this.props.host + '/active_users';
         let host = this.props.host;//js scope has cancer
         let new_state = this.state.users.slice();
@@ -41,8 +39,7 @@ class UserBar extends Component {
 
             this.setState({users: new_state});
 
-        }.bind(this))
-        .catch(function (error) {
+        }.bind(this)).catch(function (error) {
             console.log(error);
         });
     }
@@ -52,7 +49,7 @@ class UserBar extends Component {
             <nav className="navbar navbar-light bg-light">
                 {this.state.users}
             </nav>
-        )
+        );
     }
 }
 
