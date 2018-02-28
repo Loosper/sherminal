@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
+import UserBar from './UserBar';
 
 
 class Window extends Component {
@@ -10,7 +11,7 @@ class Window extends Component {
         this.setupClient = this.setupClient.bind(this);
 
         this.host = this.props.host;
-        this.state = {loggedIn: false, terminals: []};
+        this.state = {loggedIn: false, terminals: [], userBar: []};
         // this is bad but works
         this.termid = 0;
     }
