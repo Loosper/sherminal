@@ -15,7 +15,10 @@ class User extends Component {
 
     render() {
         return(
-            <a class="navbar-brand" href={this.state.terminal}>{this.state.username}</a>
+            <div>
+                <a className="navbar-brand" href={this.state.terminal}>{this.state.username}</a>
+                //this is wrong
+            </div>
         )
     }
 }

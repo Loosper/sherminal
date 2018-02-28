@@ -14,7 +14,7 @@ class Window extends Component {
         this.state = {
             loggedIn: false, 
             terminals: [], 
-            users: this.props.users
+            users: <UserBar host={this.host}/>
         };
         // this is bad but works
         this.termid = 0;
@@ -28,14 +28,22 @@ class Window extends Component {
             key={this.termid++}
         />);
 
-        this.setState({loggedIn: true, terminals: new_state});
+        this.setState({
+            loggedIn: true, 
+            terminals: new_state
+         });
     }
 
     render() {
         if (!this.state.loggedIn) {
             return (<LoginHandler onSubmit={this.setupClient} host={this.host}/>);
         } else {
-            return (this.state.terminals);//needs to return userbar too?
+            return (
+                <div>
+                    {this.state.users}
+                    {this.state.terminals}
+                </div>
+            );//needs to return userbar too?
         }
     }
 }
