@@ -25,24 +25,23 @@ class UserBar extends Component {
 
             let activeUsers = response.data['active_users'];
 
-            if (activeUsers.length === 0) {
+            if (activeUsers.length === 1) {
                 activeUsers.push('No active users.');
-                return;
-            }
-
-            activeUsers.forEach(function(username) {
-                // let terminalPath = 'http://' + host + '/websockets/' + username;
-
-                new_state.push(
-                    <User
-                        username={username}
-                        create_terminal={self.props.terminal_factory}
-                        key={self.childid++}
-                    />
-                );
-            });
+            } else {
+                activeUsers.forEach(function(username) {
+                    // let terminalPath = 'http://' + host + '/websockets/' + username;
+    
+                    new_state.push(
+                        <User
+                            username={username}
+                            create_terminal={self.props.terminal_factory}
+                            key={self.childid++}
+                        />
+                    );
+                });
 
             self.setState({users: new_state});
+            }
 
         }).catch(function (error) {
             console.log(error);
