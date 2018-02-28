@@ -17,6 +17,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# terminado
-.terminado.js.swp
