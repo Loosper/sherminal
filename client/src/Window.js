@@ -9,12 +9,13 @@ class Window extends Component {
     constructor(props) {
         super(props);
         this.setupClient = this.setupClient.bind(this);
+        this.add_terminal = this.add_terminal.bind(this);
 
         this.host = this.props.host;
         this.state = {
-            loggedIn: false, 
-            terminals: [], 
-            users: <UserBar host={this.host}/>
+            loggedIn: false,
+            terminals: [],
+            users: <UserBar host={this.host} terminal_factory={this.add_terminal}/>
         };
         // this is bad but works
         this.termid = 0;
@@ -29,9 +30,21 @@ class Window extends Component {
         />);
 
         this.setState({
-            loggedIn: true, 
+            loggedIn: true,
             terminals: new_state
-         });
+        });
+    }
+
+    add_terminal(path) {
+        let new_terminals = this.state.terminals.slice();
+        new_terminals.push();
+        new_terminals.push(<Terminal
+            host={this.host}
+            socketURL={path}
+            key={this.termid++}
+        />);
+
+        this.setState({terminals: new_terminals});
     }
 
     render() {

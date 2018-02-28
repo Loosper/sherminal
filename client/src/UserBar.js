@@ -11,16 +11,17 @@ class UserBar extends Component {
         this.state = {
             users: []
         };
+        this.childid = 0;
     }
 
     componentDidMount() {
         let url = 'http://' + this.props.host + '/active_users';
-        let host = this.props.host;//js scope has cancer
+        // let host = this.props.host;//js scope has cancer
         let new_state = this.state.users.slice();
-        
-        axios.get(url)
-        .then(function (response) {
-            console.log(response);
+        let self = this;
+
+        axios.get(url).then(function (response) {
+            // console.log(response);
 
             let activeUsers = response.data['active_users'];
 
@@ -30,16 +31,20 @@ class UserBar extends Component {
             }
 
             activeUsers.forEach(function(username) {
-                let terminalPath = 'http://' + host + '/websockets/' + username;
+                // let terminalPath = 'http://' + host + '/websockets/' + username;
 
                 new_state.push(
-                    <User username={username} terminal={terminalPath}/>
+                    <User
+                        username={username}
+                        create_terminal={self.props.terminal_factory}
+                        key={self.childid++}
+                    />
                 );
             });
 
-            this.setState({users: new_state});
+            self.setState({users: new_state});
 
-        }.bind(this)).catch(function (error) {
+        }).catch(function (error) {
             console.log(error);
         });
     }

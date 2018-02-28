@@ -8,17 +8,20 @@ class User extends Component {
         super(props);
 
         this.state = {
-            username: this.props.username,
-            terminal: this.props.terminal
+            username: this.props.username
         };
     }
 
     render() {
-        return(
+        return (
             <div>
-                <a className="navbar-brand" href={this.state.terminal}>{this.state.username}</a>
+                <a className="navbar-brand"
+                    onClick={
+                        (event) => this.props.create_terminal(this.state.username)
+                    }
+                >{this.state.username}</a>
             </div>
-        )//this is wrong
+        );//this is wrong
     }
 }
 

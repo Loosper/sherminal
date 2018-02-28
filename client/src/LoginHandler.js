@@ -36,7 +36,7 @@ class LoginHandler extends Component {
             } else if (error.request) {
                 console.log('No response from: ' + url);
             } else {
-                console.log('Failed to send: ' + error.config);
+                console.log('Failed to send: ' + error);
             }
         });
     }
