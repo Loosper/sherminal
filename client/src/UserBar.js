@@ -10,6 +10,8 @@ class UserBar extends Component {
         this.state = {
             users: []
         };
+
+        this.updateActiveUsers();//this needs to be changed
     }
 
     updateActiveUsers() {
@@ -19,7 +21,13 @@ class UserBar extends Component {
         .then(function (response) {
             console.log(response);
 
-            this.setState({users: response.data['active_users']});
+            let activeUsers = response.data['active_users'];
+
+            if (activeUsers.length == 0) {
+                activeUsers.push('No active users.')
+            }
+
+            this.setState({users: activeUsers});
 
         }.bind(this))
         .catch(function (error) {
@@ -28,14 +36,10 @@ class UserBar extends Component {
     }
 
     render() {
-        this.updateActiveUsers();
-
         return(
-            <div className="row">
-                <div className="col-md-12">
+            <nav class="navbar navbar-light bg-light">
                 {this.state.users}
-                </div>
-            </div>
+            </nav>
         )
     }
 }
