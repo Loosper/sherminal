@@ -11,11 +11,10 @@ class Window extends Component {
         this.setupClient = this.setupClient.bind(this);
         this.add_terminal = this.add_terminal.bind(this);
 
-        this.host = this.props.host;
         this.state = {
             loggedIn: false,
             terminals: [],
-            users: <UserBar host={this.host} terminal_factory={this.add_terminal}/>
+            users: <UserBar terminal_factory={this.add_terminal}/>
         };
         // this is bad but works
         this.termid = 0;
@@ -24,7 +23,6 @@ class Window extends Component {
     setupClient(socket_path) {
         let new_state = this.state.terminals.slice();
         new_state.push(<Terminal
-            host={this.host}
             socketURL={socket_path}
             key={this.termid++}
         />);
@@ -39,7 +37,6 @@ class Window extends Component {
         let new_terminals = this.state.terminals.slice();
         new_terminals.push();
         new_terminals.push(<Terminal
-            host={this.host}
             socketURL={path}
             key={this.termid++}
         />);
@@ -49,7 +46,7 @@ class Window extends Component {
 
     render() {
         if (!this.state.loggedIn) {
-            return (<LoginHandler onSubmit={this.setupClient} host={this.host}/>);
+            return (<LoginHandler onSubmit={this.setupClient} />);
         } else {
             return (
                 <div>

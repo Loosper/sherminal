@@ -12,14 +12,13 @@ class LoginHandler extends Component {
         this.updateUsername = this.updateUsername.bind(this);
         this.login = this.login.bind(this);
 
-        this.host = this.props.host;
         this.state = {username: ''};
     }
 
     login(event) {
         event.preventDefault();
         let self = this;
-        let url = 'http://' + this.host + '/login';
+        let url = 'http://' + process.env.REACT_APP_HOST + '/login';
 
         axios.post(
             url,

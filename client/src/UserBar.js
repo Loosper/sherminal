@@ -15,9 +15,8 @@ class UserBar extends Component {
     }
 
     componentDidMount() {
-        let url = 'http://' + this.props.host + '/active_users';
-        // let host = this.props.host;//js scope has cancer
-        let new_state = this.state.users.slice();
+        let url = 'http://' + process.env.REACT_APP_HOST + '/active_users';
+
         let self = this;
 
         axios.get(url).then(function (response) {
@@ -28,9 +27,9 @@ class UserBar extends Component {
             if (activeUsers.length === 1) {
                 activeUsers.push('No active users.');
             } else {
+                let new_state = self.state.users.slice();
+
                 activeUsers.forEach(function(username) {
-                    // let terminalPath = 'http://' + host + '/websockets/' + username;
-    
                     new_state.push(
                         <User
                             username={username}
@@ -40,7 +39,7 @@ class UserBar extends Component {
                     );
                 });
 
-            self.setState({users: new_state});
+                self.setState({users: new_state});
             }
 
         }).catch(function (error) {
@@ -50,7 +49,7 @@ class UserBar extends Component {
 
     render() {
         return(
-            <nav className="navbar navbar-light bg-light">
+            <nav>
                 {this.state.users}
             </nav>
         );

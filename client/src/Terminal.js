@@ -12,9 +12,8 @@ Xterm.applyAddon(terminado);
 class Terminal extends Component {
     constructor(props) {
         super(props);
-        this.host = this.props.host;
 
-        this.terminal = <div
+        this.terminal = <span
             id={'terminal-container' + this.key}
             style={{display: 'inline-block'}}
         />;
@@ -23,7 +22,8 @@ class Terminal extends Component {
     componentDidMount() {
         let term = new Xterm();
 
-        let socketURL = 'ws://' + this.host + '/websocket/' + this.props.socketURL;
+        let socketURL = 'ws://' + process.env.REACT_APP_HOST +
+            '/websocket/' + this.props.socketURL;
 
         let socket = new WebSocket(socketURL);
         term.terminadoAttach(socket);

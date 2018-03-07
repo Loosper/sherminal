@@ -14,13 +14,13 @@ class User extends Component {
 
     render() {
         return (
-            <div>
-                <a className="navbar-brand"
+            <span>
+                <a
                     onClick={
                         (event) => this.props.create_terminal(this.state.username)
                     }
                 >{this.state.username}</a>
-            </div>
+            </span>
         );//this is wrong
     }
 }
