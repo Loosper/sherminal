@@ -56,7 +56,13 @@ class Window extends Component {
         let index = new_state.indexOf(terminal);
 
         new_state.splice(index, 1);
-        this.setState({terminals: new_state});
+
+        let loggedIn = true;
+        if (new_state.length === 0) {
+            loggedIn = false;
+        }
+
+        this.setState({terminals: new_state, loggedIn: loggedIn});
     }
 
     render() {
