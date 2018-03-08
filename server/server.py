@@ -33,14 +33,15 @@ engine = create_engine(
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
-term_manager = NamedTermManager(3, shell_command=['zsh'])
+# TODO: set absolute maximum and refuse everything after
+term_manager = NamedTermManager(15, shell_command=['env', '-i', 'bash'])
 
 handlers = [
     (r"/websocket/(.*)/?", UserTermHandler, {
         'term_manager': term_manager, 'session': Session
     }),
     (r'/login/?', LoginHandler, {'session': Session}),
-    (r'/active_users/?', ActiveUsersHandler, {'term_manager': term_manager})
+    (r'/active_users/?', ActiveUsersHandler)
 ]
 
 app = tornado.web.Application(
@@ -48,7 +49,7 @@ app = tornado.web.Application(
     debug=True
 )
 
-print('Listening on port {}.\nPress Ctrl + C to stop.'.format(PORT))
+print('Listening on port {}.\nPress Ctrl^C to stop.'.format(PORT))
 
 app.listen(PORT)
 

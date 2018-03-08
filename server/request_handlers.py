@@ -1,7 +1,8 @@
 import json
 import asyncio
 
-from tornado.web import RequestHandler
+from tornado.web import RequestHandler, asynchronous
+from tornado.iostream import StreamClosedError
 from terminado import TermSocket
 from functools import partial
 
@@ -74,13 +75,52 @@ class LoginHandler(RequestHandler, DatabaseQuery):
             new_user = User(username=data['username'])
             await self.add(new_user)
 
+        # self.set_cookie('auth_token', 'hellothere', domain='localhost')
         self.write({'terminal_path': data['username']})
 
 
+class ActiveUsersTracker:
+    def __init__(self):
+        # TODO: this should be something fast
+        self.users = []
+        self.registered_handlers = []
+
+    def add_user(self, user):
+        self.users.append(user)
+
+        # notify all registered
+        for handler in self.registered_handlers:
+            handler('added', user)
+
+    def remove_user(self, user):
+        self.users.remove(user)
+
+        # notify all registered
+        for handler in self.registered_handlers:
+            handler('removed', user)
+
+    def register(self, handler):
+        self.registered_handlers.append(handler)
+        # print(len(self.registered_handlers))
+
+    def deregister(self, callback):
+        # print('1 less')
+        self.registered_handlers.remove(callback)
+
+    def get_users(self):
+        return self.users
+
+
+default_tracker = ActiveUsersTracker()
+
+
 class UserTermHandler(TermSocket, DatabaseQuery):
-    def initialize(self, session, term_manager):
+    def initialize(self, session, term_manager, tracker=default_tracker):
         self.setup_session(session)
+        self.tracker = tracker
+        self.userURL = ''
         self.read_only = False
+
         super().initialize(term_manager)
 
     async def open(self, url_component=None):
@@ -90,7 +130,14 @@ class UserTermHandler(TermSocket, DatabaseQuery):
             self.close(401, 'Not created')
             return
 
+        # REVIEW: this can fail when threshold reached.
+        # a) increase maximum
+        # b) ruturn error
         super().open(url_component)
+
+        # add user to logged in list
+        self.userURL = url_component
+        self.tracker.add_user(self.userURL)
 
     def on_message(self, message):
         if self.read_only:
@@ -98,16 +145,50 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         else:
             super().on_message(message)
 
+    def on_close(self):
+        self.tracker.remove_user(self.userURL)
+        super().on_close()
+
     # we serve the client from a different place
     def check_origin(self, origin):
         return True
 
 
 class ActiveUsersHandler(RequestHandler):
-    def initialize(self, term_manager):
-        self.manager = term_manager
-
-    def get(self):
+    def initialize(self, tracker=default_tracker):
+        self.tracker = tracker
+        # TODO: set for this domain
         self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Content-Type', 'text/event-stream')
+        self.set_header('Cache-Control', 'no-cache')
 
-        self.write({'active_users': list(self.manager.terminals.keys())})
+    # NOTE: if you make this async this breaks
+    @asynchronous
+    def get(self):
+        # print(self.request.headers)
+
+        users = self.tracker.get_users()
+        if users:
+            # print(users)
+            self.write(f'data: {json.dumps(users)}\n\n')
+
+        # here goes hoping noone closes this
+        # self.finish()
+        self.tracker.register(self.send_message)
+
+    def on_finish(self):
+        # print('durr')
+        self.tracker.deregister(self.send_message)
+
+    def keep_alive(self):
+        # void message to refresh connection
+        self.write(': keep_alive')
+        self.flush()
+
+    def send_message(self, msg_type, msg_value):
+        try:
+            # print('wrote')
+            self.write(f'event: {msg_type}\n data:{msg_value}\n\n')
+            self.flush()
+        except StreamClosedError as error:
+            print('nice')
