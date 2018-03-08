@@ -13,6 +13,7 @@ class Terminal extends Component {
     constructor(props) {
         super(props);
 
+        this.xterm = null;
         this.terminal = <span
             id={'terminal-container' + this.key}
             style={{display: 'inline-block'}}
@@ -20,16 +21,24 @@ class Terminal extends Component {
     }
 
     componentDidMount() {
-        let term = new Xterm();
+        this.xterm = new Xterm();
 
         let socketURL = 'ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL;
 
         let socket = new WebSocket(socketURL);
-        term.terminadoAttach(socket);
+        socket.addEventListener('close', (e) => this.props.tearDown(this));
+
+        this.xterm.terminadoAttach(socket);
+        // console.log(socket.url);
 
         // is there a way to pass a ract element?
-        term.open(document.getElementById('terminal-container' + this.key));
+        this.xterm.open(document.getElementById('terminal-container' + this.key));
+    }
+
+    componentWillUnmount() {
+        // this might be unnecessary
+        this.xterm.destroy();
     }
 
     render() {

@@ -9,23 +9,33 @@ class Window extends Component {
     constructor(props) {
         super(props);
         this.setupClient = this.setupClient.bind(this);
-        this.add_terminal = this.add_terminal.bind(this);
+        this.addTerminal = this.addTerminal.bind(this);
+        this.removeTerminal = this.removeTerminal.bind(this);
 
         this.state = {
             loggedIn: false,
             terminals: [],
-            users: <UserBar terminal_factory={this.add_terminal}/>
+            users: <UserBar terminal_factory={this.addTerminal}/>
         };
+        // token for tracking the user
+        this.authToken = '';
         // this is bad but works
         this.termid = 0;
     }
 
-    setupClient(socket_path) {
-        let new_state = this.state.terminals.slice();
-        new_state.push(<Terminal
-            socketURL={socket_path}
+    getTerminal(path) {
+        // token={this.authToken}
+        return <Terminal
+            socketURL={path}
+            tearDown={this.removeTerminal}
             key={this.termid++}
-        />);
+        />;
+    }
+
+    setupClient(socketPath, authToken) {
+        this.authToken = authToken;
+        let new_state = this.state.terminals.slice();
+        new_state.push(this.getTerminal(socketPath));
 
         this.setState({
             loggedIn: true,
@@ -33,15 +43,20 @@ class Window extends Component {
         });
     }
 
-    add_terminal(path) {
+    addTerminal(path) {
         let new_terminals = this.state.terminals.slice();
         new_terminals.push();
-        new_terminals.push(<Terminal
-            socketURL={path}
-            key={this.termid++}
-        />);
+        new_terminals.push(this.getTerminal(path));
 
         this.setState({terminals: new_terminals});
+    }
+
+    removeTerminal(terminal) {
+        let new_state = this.state.terminals.slice();
+        let index = new_state.indexOf(terminal);
+
+        new_state.splice(index, 1);
+        this.setState({terminals: new_state});
     }
 
     render() {
