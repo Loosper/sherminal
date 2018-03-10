@@ -1,5 +1,6 @@
 import json
 import asyncio
+import logging
 
 from tornado.web import RequestHandler, asynchronous
 from tornado.iostream import StreamClosedError
@@ -12,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 Executor = ThreadPoolExecutor(max_workers=5)
+Logger = logging.getLogger('tornado.access')
 
 
 # REVIEW: dir() and help()
@@ -104,7 +106,6 @@ class ActiveUsersTracker:
         # print(len(self.registered_handlers))
 
     def deregister(self, callback):
-        # print('1 less')
         self.registered_handlers.remove(callback)
 
     def get_users(self):
@@ -157,38 +158,42 @@ class UserTermHandler(TermSocket, DatabaseQuery):
 class ActiveUsersHandler(RequestHandler):
     def initialize(self, tracker=default_tracker):
         self.tracker = tracker
-        # TODO: set for this domain
-        self.set_header('Access-Control-Allow-Origin', '*')
+        self.loop = asyncio.get_event_loop()
+
+        # hax
+        self.set_header(
+            'Access-Control-Allow-Origin',
+            self.request.headers.get('Origin')
+        )
         self.set_header('Content-Type', 'text/event-stream')
         self.set_header('Cache-Control', 'no-cache')
 
     # NOTE: if you make this async this breaks
     @asynchronous
     def get(self):
-        # print(self.request.headers)
-
         users = self.tracker.get_users()
         if users:
-            # print(users)
             self.write(f'data: {json.dumps(users)}\n\n')
 
-        # here goes hoping noone closes this
-        # self.finish()
-        self.tracker.register(self.send_message)
+        Logger.info(self.request.uri + ' Opened')
 
-    def on_finish(self):
-        # print('durr')
+        self.tracker.register(self.send_message)
+        self.keep_alive()
+
+    def on_connection_close(self):
+        Logger.info(self.request.uri + ' Closed')
         self.tracker.deregister(self.send_message)
+        self.refresher.cancel()
 
     def keep_alive(self):
         # void message to refresh connection
-        self.write(': keep_alive')
+        self.write(': keep_alive\n\n')
         self.flush()
+        self.refresher = self.loop.call_later(15, self.keep_alive)
 
     def send_message(self, msg_type, msg_value):
         try:
-            # print('wrote')
             self.write(f'event: {msg_type}\n data:{msg_value}\n\n')
             self.flush()
         except StreamClosedError as error:
-            print('nice')
+            raise
