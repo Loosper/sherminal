@@ -116,6 +116,7 @@ default_tracker = ActiveUsersTracker()
 
 
 class UserTermHandler(TermSocket, DatabaseQuery):
+    ''' Track users who have an open termianl'''
     def initialize(self, session, term_manager, tracker=default_tracker):
         self.setup_session(session)
         self.tracker = tracker
@@ -193,7 +194,7 @@ class ActiveUsersHandler(RequestHandler):
 
     def send_message(self, msg_type, msg_value):
         try:
-            self.write(f'event: {msg_type}\n data:{msg_value}\n\n')
+            self.write(f'event: {msg_type}\ndata: {msg_value}\n\n')
             self.flush()
         except StreamClosedError as error:
             raise
