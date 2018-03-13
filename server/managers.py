@@ -30,12 +30,13 @@ class ChrootNamedTermManager(NamedTermManager):
             os.mkdir(data)
             os.mkdir(work)
 
-        subprocess.run(
-            # why is this twice
-            f'mount -t overlay overlay -o\
-            lowerdir=/,upperdir={data},workdir={work} {user_path}',
-            shell=True
-        )
+        if not os.path.ismount(user_path):
+            subprocess.run(
+                # why is this twice
+                f'mount -t overlay overlay -o\
+                lowerdir=/,upperdir={data},workdir={work} {user_path}',
+                shell=True
+            )
 
         self.shell_command[1] = user_path
 
@@ -46,3 +47,10 @@ class ChrootNamedTermManager(NamedTermManager):
         self.terminals[term_name] = term
         self.start_reading(term)
         return term
+
+    def on_eof(self, pty):
+        subprocess.run(
+            f'umount {self.data_path}{pty.term_name}',
+            shell=True
+        )
+        super().on_eof(pty)
