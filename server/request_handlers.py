@@ -59,6 +59,7 @@ class LoginHandler(RequestHandler, DatabaseQuery):
         self.set_header('Access-Control-Allow-Origin', '*')
         self.set_header('Access-Control-Allow-Headers', 'Content-type')
 
+    # TODO: Sanitize the name. It will be used in a FILESYSTEM PATH
     async def post(self):
         if self.request.headers["Content-Type"].startswith("application/json"):
             try:
@@ -131,7 +132,7 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         if not user:
             self.close(401, 'Not created')
             return
-
+        # TODO: consider having a seperate term handler for superuser sessions
         # REVIEW: this can fail when threshold reached.
         # a) increase maximum
         # b) ruturn error

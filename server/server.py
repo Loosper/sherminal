@@ -5,7 +5,7 @@ import tornado.options
 
 from tornado.platform.asyncio import AsyncIOMainLoop
 
-from terminado import NamedTermManager
+# from terminado import NamedTermManager
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -13,6 +13,7 @@ from sqlalchemy.pool import StaticPool
 
 from database import Base
 from request_handlers import UserTermHandler, LoginHandler, ActiveUsersHandler
+from managers import ChrootNamedTermManager
 
 
 DIR = os.path.dirname(__file__)
@@ -34,7 +35,7 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 # TODO: set absolute maximum and refuse everything after
-term_manager = NamedTermManager(15, shell_command=['env', '-i', 'bash'])
+term_manager = ChrootNamedTermManager(15, shell_command=['chroot', ''])
 
 handlers = [
     (r"/websocket/(.*)/?", UserTermHandler, {
