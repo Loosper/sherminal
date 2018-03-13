@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
+import SettingsMenu from './SettingsMenu';
 
 
 class Window extends Component {
@@ -12,15 +13,28 @@ class Window extends Component {
         this.addTerminal = this.addTerminal.bind(this);
         this.removeTerminal = this.removeTerminal.bind(this);
 
+        this.signOut = this.signOut.bind(this);
+
         this.state = {
             loggedIn: false,
             terminals: [],
-            users: <UserBar terminal_factory={this.addTerminal}/>
+            users: <UserBar terminal_factory={this.addTerminal}/>,
+            settings: <SettingsMenu signOut={this.signOut}/>
         };
         // token for tracking the user
         this.authToken = '';
         // this is bad but works
         this.termid = 0;
+    }
+
+    signOut(e) {
+        e.preventDefault();
+
+        this.setState({
+            loggedIn: false,
+            terminals: [],
+            users: <UserBar terminal_factory={this.addTerminal}/>
+        });
     }
 
     getTerminal(path) {
@@ -71,10 +85,13 @@ class Window extends Component {
         } else {
             return (
                 <div>
-                    {this.state.users}
+                    <div>
+                        {this.state.users}
+                        {this.state.settings}
+                    </div>
                     {this.state.terminals}
                 </div>
-            );//needs to return userbar too?
+            );
         }
     }
 }

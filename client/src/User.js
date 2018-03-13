@@ -15,13 +15,11 @@ class User extends Component {
     render() {
         return (
             <span>
-                <a
-                    onClick={
-                        (event) => this.props.create_terminal(this.state.username)
-                    }
-                >{this.state.username}</a>
+                <a onClick={(event) => this.props.create_terminal(this.state.username)}>
+                    {this.state.username}
+                </a>
             </span>
-        );//this is wrong
+        );
     }
 }
 

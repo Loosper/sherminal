@@ -67,7 +67,7 @@ class UserBar extends Component {
         });
     }
 
-    componenwillUnmount() {
+    componentwillUnmount() {
         this.events.close();
     }
 
