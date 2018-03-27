@@ -83,6 +83,7 @@ class LoginHandler(RequestHandler, DatabaseQuery):
 
 
 class ActiveUsersTracker:
+    ''' Track users who have an open termianl'''
     def __init__(self):
         # TODO: this should be something fast
         self.users = []
@@ -117,7 +118,6 @@ default_tracker = ActiveUsersTracker()
 
 
 class UserTermHandler(TermSocket, DatabaseQuery):
-    ''' Track users who have an open termianl'''
     def initialize(self, session, term_manager, tracker=default_tracker):
         self.setup_session(session)
         self.tracker = tracker
