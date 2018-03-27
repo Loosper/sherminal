@@ -14,6 +14,7 @@ class Terminal extends Component {
         super(props);
 
         this.xterm = null;
+        this.socket = null;
         this.terminal = <span
             id={'terminal-container' + this.key}
             style={{display: 'inline-block'}}
@@ -30,6 +31,7 @@ class Terminal extends Component {
         socket.addEventListener('close', (e) => this.props.tearDown(this));
 
         this.xterm.terminadoAttach(socket);
+        this.socket = socket;
         // console.log(socket.url);
 
         // is there a way to pass a ract element?
@@ -37,6 +39,7 @@ class Terminal extends Component {
     }
 
     componentWillUnmount() {
+        this.socket.close();
         // this might be unnecessary
         this.xterm.destroy();
     }

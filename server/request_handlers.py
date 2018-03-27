@@ -86,15 +86,16 @@ class ActiveUsersTracker:
     ''' Track users who have an open termianl'''
     def __init__(self):
         # TODO: this should be something fast
-        self.users = []
+        self.users = set()
         self.registered_handlers = []
 
     def add_user(self, user):
-        self.users.append(user)
+        if user not in self.users:
+            self.users.add(user)
 
-        # notify all registered
-        for handler in self.registered_handlers:
-            handler('added', user)
+            # notify all registered
+            for handler in self.registered_handlers:
+                handler('added', user)
 
     def remove_user(self, user):
         self.users.remove(user)
@@ -175,7 +176,7 @@ class ActiveUsersHandler(RequestHandler):
     def get(self):
         users = self.tracker.get_users()
         if users:
-            self.write(f'data: {json.dumps(users)}\n\n')
+            self.write(f'data: {json.dumps(list(users))}\n\n')
 
         Logger.info(self.request.uri + ' Opened')
 
