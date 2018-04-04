@@ -5,8 +5,6 @@ import tornado.options
 
 from tornado.platform.asyncio import AsyncIOMainLoop
 
-# from terminado import NamedTermManager
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -18,7 +16,7 @@ from managers import ChrootNamedTermManager
 
 DIR = os.path.dirname(__file__)
 PORT = 8765
-
+HOST = 'localhost'
 
 AsyncIOMainLoop().install()
 
@@ -52,14 +50,14 @@ app = tornado.web.Application(
 
 print('Listening on port {}.\nPress Ctrl^C to stop.'.format(PORT))
 
-app.listen(PORT)
+app.listen(PORT, HOST)
 
 loop = tornado.ioloop.IOLoop.instance()
 
 try:
     loop.start()
 except KeyboardInterrupt:
-    print(" Shutting down...")
+    print("Shutting down...")
 finally:
     term_manager.shutdown()
     loop.close()
