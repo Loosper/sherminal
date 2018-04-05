@@ -24,8 +24,8 @@ class Terminal extends Component {
     componentDidMount() {
         this.xterm = new Xterm();
 
-        let socketURL = 'ws://' + process.env.REACT_APP_HOST +
-            '/websocket/' + this.props.socketURL;
+        let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
+            '/websocket/' + this.props.socketURL);
 
         let socket = new WebSocket(socketURL);
         socket.addEventListener('close', (e) => this.props.tearDown(this));
