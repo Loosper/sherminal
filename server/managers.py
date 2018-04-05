@@ -29,10 +29,12 @@ class ChrootNamedTermManager(NamedTermManager):
             # TODO: put path of user in db
 
         if not os.path.ismount(user_path):
+            # NB: this is critically bad: just one quotation will compromise
+            # the whole mount
             subprocess.run(
                 # why is this twice
                 f'mount -t overlay overlay -o\
-                lowerdir=/,upperdir={data},workdir={work} {user_path}',
+                lowerdir=/,upperdir="{data}",workdir="{work}" "{user_path}"',
                 shell=True
             )
 
@@ -45,4 +47,4 @@ class ChrootNamedTermManager(NamedTermManager):
             f'umount {self.data_path}{pty.term_name}',
             shell=True
         )
-        super().on_eof(pty)
+        return super().on_eof(pty)

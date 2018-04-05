@@ -1,6 +1,7 @@
 import json
 import asyncio
 import logging
+import re
 
 from tornado.web import RequestHandler, asynchronous
 from tornado.iostream import StreamClosedError
@@ -72,10 +73,13 @@ class LoginHandler(RequestHandler, DatabaseQuery):
 
         self.set_header('Access-Control-Allow-Origin', '*')
 
-        user = await self.search_username(data['username'])
+        username = re.escape(data['username'])
+        # TODO: strip forbidden characters (&...)./
+
+        user = await self.search_username(username)
 
         if not user:
-            new_user = User(username=data['username'])
+            new_user = User(username=username)
             await self.add(new_user)
 
         # self.set_cookie('auth_token', 'hellothere', domain='localhost')
@@ -98,7 +102,7 @@ class ActiveUsersTracker:
                 handler('added', user)
 
     def remove_user(self, user):
-        self.users.remove(user)
+        self.users.discard(user)
 
         # notify all registered
         for handler in self.registered_handlers:
@@ -128,7 +132,10 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         super().initialize(term_manager)
 
     async def open(self, url_component=None):
-        user = await self.search_username(url_component)
+        conn_url = re.escape(url_component)
+        # TODO: strip forbidden characters (&...)
+
+        user = await self.search_username(conn_url)
 
         if not user:
             self.close(401, 'Not created')
@@ -140,7 +147,7 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         super().open(url_component)
 
         # add user to logged in list
-        self.userURL = url_component
+        self.userURL = conn_url
         self.tracker.add_user(self.userURL)
 
     def on_message(self, message):
