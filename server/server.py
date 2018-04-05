@@ -16,7 +16,7 @@ from managers import ChrootNamedTermManager
 
 DIR = os.path.dirname(__file__)
 PORT = 8765
-HOST = 'localhost'
+HOST = '0.0.0.0'
 
 AsyncIOMainLoop().install()
 
