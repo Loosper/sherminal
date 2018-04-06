@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 import 'xterm/dist/xterm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import './styles/main.css';
+
 // sadly the other way is broken
 const Xterm = require('xterm/dist/xterm.js');
 const terminado = require('xterm/dist/addons/terminado/terminado');
@@ -17,12 +19,12 @@ class Terminal extends Component {
     constructor(props) {
         super(props);
 
-        this.sizeContainer = this.props.size === 2 ? "col-md-6" : "col-md-12";
+        //this.sizeContainer = this.props.size === 2 ? "col-md-6" : "col-md-12";
         this.xterm = null;
         this.socket = null;
 
         this.terminal = 
-        <div className={this.sizeContainer}>
+        <div className="col-md-6 nopadding">
             <div className="row">
                 <div className="col-md text-left text-white">
                     {this.props.userName}
@@ -31,10 +33,8 @@ class Terminal extends Component {
                     close
                 </div>
             </div>
-            <div 
-                id={'terminal-container' + this.key}>
-            </div>
-        </div>;
+            <div id={'terminal-container' + this.props.terminalId}/>
+        </div>;     
     }
 
     componentDidMount() {
@@ -51,7 +51,7 @@ class Terminal extends Component {
         // console.log(socket.url);
 
         // is there a way to pass a ract element?
-        this.xterm.open(document.getElementById('terminal-container' + this.key));
+        this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
 
         // this needs to be figured out
         //this.xterm.fit(); 

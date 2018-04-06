@@ -46,7 +46,7 @@ class Window extends Component {
             size={size}
             socketURL={path}
             tearDown={this.removeTerminal}
-            key={this.termid++}
+            terminalId={this.termid++}
         />;
     }
 
