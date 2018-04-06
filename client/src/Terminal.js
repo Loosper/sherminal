@@ -29,8 +29,10 @@ class Terminal extends Component {
                 <div className="col-md text-left text-white">
                     {this.props.userName}
                 </div>
-                <div className="col-md text-right text-white" onClick={this.props.tearDown}>
-                    close
+                <div 
+                    className="col-md text-right text-white" 
+                    onClick={event => this.props.tearDown(this)}>
+                        close
                 </div>
             </div>
             <div id={'terminal-container' + this.props.terminalId}/>
@@ -44,7 +46,9 @@ class Terminal extends Component {
             '/websocket/' + this.props.socketURL);
 
         let socket = new WebSocket(socketURL);
-        socket.addEventListener('close', (e) => this.props.tearDown(this));
+
+        // teardown gets called twice and closes everything when clicking close button
+        //socket.addEventListener('close', (e) => this.props.tearDown(this));
 
         this.xterm.terminadoAttach(socket);
         this.socket = socket;

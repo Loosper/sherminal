@@ -3,6 +3,8 @@ import axios from 'axios';
 
 
 import './styles/login.css';
+import './styles/main.css';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 

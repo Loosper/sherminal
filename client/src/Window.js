@@ -43,7 +43,6 @@ class Window extends Component {
         // token={this.authToken}
         return <Terminal
             userName={path}
-            size={size}
             socketURL={path}
             tearDown={this.removeTerminal}
             terminalId={this.termid++}
@@ -64,17 +63,19 @@ class Window extends Component {
     addTerminal(path) {
         let new_terminals = this.state.terminals.slice();
         new_terminals.push();
-        new_terminals.push(this.getTerminal(path, new_terminals.size));
+        new_terminals.push(this.getTerminal(path));
 
         this.setState({terminals: new_terminals});
     }
 
     removeTerminal(terminal) {
+        //console.log(terminal);
         let new_state = this.state.terminals.slice();
         let index = new_state.indexOf(terminal);
 
         new_state.splice(index, 1);
 
+        console.log(new_state.length);
         let loggedIn = true;
         if (new_state.length === 0) {
             loggedIn = false;
@@ -85,6 +86,8 @@ class Window extends Component {
 
     render() {
         if (!this.state.loggedIn) {
+            document.body.style.backgroundColor = "white";
+
             return (<LoginHandler onSubmit={this.setupClient} />);
         } else {
             document.body.style.backgroundColor = "black";
