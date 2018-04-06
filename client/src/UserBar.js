@@ -73,9 +73,9 @@ class UserBar extends Component {
 
     render() {
         return(
-            <nav>
+            <div className="col">
                 {this.state.users}
-            </nav>
+            </div>
         );
     }
 }
