@@ -39,9 +39,11 @@ class Window extends Component {
         });
     }
 
-    getTerminal(path) {
+    getTerminal(path, size) {
         // token={this.authToken}
         return <Terminal
+            userName={path}
+            size={size}
             socketURL={path}
             tearDown={this.removeTerminal}
             key={this.termid++}
@@ -62,7 +64,7 @@ class Window extends Component {
     addTerminal(path) {
         let new_terminals = this.state.terminals.slice();
         new_terminals.push();
-        new_terminals.push(this.getTerminal(path));
+        new_terminals.push(this.getTerminal(path, new_terminals.size));
 
         this.setState({terminals: new_terminals});
     }
@@ -78,7 +80,7 @@ class Window extends Component {
             loggedIn = false;
         }
 
-        //this.setState({terminals: new_state, loggedIn: loggedIn});
+        this.setState({terminals: new_state, loggedIn: loggedIn});
     }
 
     render() {
@@ -88,7 +90,7 @@ class Window extends Component {
             document.body.style.backgroundColor = "black";
 
             return (
-                <div>
+                <div className="container-fluid">
                     <div className="row border-bottom border-white">
                         {this.state.users}
                         {this.state.settings}
