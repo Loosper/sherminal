@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 
 import 'xterm/dist/xterm.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 // sadly the other way is broken
 const Xterm = require('xterm/dist/xterm.js');
@@ -16,8 +15,7 @@ class Terminal extends Component {
 
         this.xterm = null;
         this.socket = null;
-        this.terminal = <div
-            className="container-fluid"
+        this.terminal = <span
             id={'terminal-container' + this.key}
             style={{display: 'inline-block'}}
         />;

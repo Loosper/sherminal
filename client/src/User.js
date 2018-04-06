@@ -15,7 +15,7 @@ class User extends Component {
     render() {
         return (
             <span>
-                <a className="text-white" onClick={(event) => this.props.create_terminal(this.state.username)}>
+                <a onClick={(event) => this.props.create_terminal(this.state.username)}>
                     {this.state.username}
                 </a>
             </span>
