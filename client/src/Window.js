@@ -5,6 +5,8 @@ import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
 import SettingsMenu from './SettingsMenu';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/main.css';
 
 class Window extends Component {
     constructor(props) {
@@ -76,20 +78,24 @@ class Window extends Component {
             loggedIn = false;
         }
 
-        this.setState({terminals: new_state, loggedIn: loggedIn});
+        //this.setState({terminals: new_state, loggedIn: loggedIn});
     }
 
     render() {
         if (!this.state.loggedIn) {
             return (<LoginHandler onSubmit={this.setupClient} />);
         } else {
+            document.body.style.backgroundColor = "black";
+
             return (
                 <div>
-                    <div>
+                    <div className="row border-bottom border-white">
                         {this.state.users}
                         {this.state.settings}
                     </div>
-                    {this.state.terminals}
+                    <div className="row">
+                        {this.state.terminals}
+                    </div>  
                 </div>
             );
         }
