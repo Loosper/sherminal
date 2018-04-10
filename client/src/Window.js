@@ -40,8 +40,10 @@ class Window extends Component {
     }
 
     getTerminal(path, size) {
-        // token={this.authToken}
+        this.termid += 1;
+
         return <Terminal
+            key={this.termid}
             userName={path}
             socketURL={path}
             authToken={this.authToken}
@@ -76,7 +78,7 @@ class Window extends Component {
 
         new_state.splice(index, 1);
 
-        console.log(new_state.length);
+        // console.log(new_state.length);
         let loggedIn = true;
         if (new_state.length === 0) {
             loggedIn = false;

@@ -47,12 +47,10 @@ class Terminal extends Component {
 
         let socket = new WebSocket(socketURL);
 
-        // teardown gets called twice and closes everything when clicking close button
-        //socket.addEventListener('close', (e) => this.props.tearDown(this));
+        socket.addEventListener('close', (e) => this.props.tearDown(this));
 
         this.xterm.terminadoAttach(socket);
         this.socket = socket;
-        // console.log(socket.url);
 
         // is there a way to pass a ract element?
         this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));

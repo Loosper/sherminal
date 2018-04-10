@@ -26,18 +26,13 @@ class UserBar extends Component {
 
         let self = this;
 
-        let events = new EventSource(url); // ,{withCredentials: true});
+        let events = new EventSource(url);
         this.events = events;
-        // events.withCredentials // perhaps cookies?
 
         events.onerror = function(error) {
             // if this is not done, it will retry the connection
             error.target.close();
         };
-
-        // events.onopen = function(event) {
-        //     console.log(event);
-        // };
 
         events.onmessage = function(event) {
             let users = JSON.parse(event.data);
@@ -67,7 +62,7 @@ class UserBar extends Component {
         });
     }
 
-    componentwillUnmount() {
+    componentWillUnmount() {
         this.events.close();
     }
 
