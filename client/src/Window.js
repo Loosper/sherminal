@@ -86,11 +86,11 @@ class Window extends Component {
 
     render() {
         if (!this.state.loggedIn) {
-            document.body.style.backgroundColor = "white";
+            document.body.style.backgroundColor = 'white';
 
             return (<LoginHandler onSubmit={this.setupClient} />);
         } else {
-            document.body.style.backgroundColor = "black";
+            document.body.style.backgroundColor = 'black';
 
             return (
                 <div className="container-fluid">
@@ -100,7 +100,7 @@ class Window extends Component {
                     </div>
                     <div className="row">
                         {this.state.terminals}
-                    </div>  
+                    </div>
                 </div>
             );
         }
