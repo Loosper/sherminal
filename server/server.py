@@ -33,7 +33,9 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 # TODO: set absolute maximum and refuse everything after
-term_manager = ChrootNamedTermManager(15, shell_command=['chroot', ''])
+term_manager = ChrootNamedTermManager(
+    15, shell_command=['chroot', '', '/bin/bash']
+)
 
 handlers = [
     (r"/websocket/(.*)/?", UserTermHandler, {
