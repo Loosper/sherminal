@@ -44,6 +44,7 @@ class Window extends Component {
         return <Terminal
             userName={path}
             socketURL={path}
+            authToken={this.authToken}
             tearDown={this.removeTerminal}
             terminalId={this.termid++}
         />;

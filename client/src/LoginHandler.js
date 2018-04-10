@@ -22,13 +22,17 @@ class LoginHandler extends Component {
         let self = this;
         let url = 'http://' + process.env.REACT_APP_HOST + '/login';
 
+        // TODO: just use fetch promises. Removes a dependency
         axios.post(
             url,
             {username: this.state.username},
             {timeout: 1000}
         ).then(function (response) {
-            // console.log(response.data);
-            self.props.onSubmit(response.data['terminal_path']);
+            // console.log(response.data['terminal_path']);
+            self.props.onSubmit(
+                response.data['terminal_path'],
+                response.data['auth_token']
+            );
         }).catch(function (error) {
             // server responded with error
             if (error.response) {

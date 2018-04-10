@@ -23,27 +23,27 @@ class Terminal extends Component {
         this.xterm = null;
         this.socket = null;
 
-        this.terminal = 
+        this.terminal =
         <div className="col-md-6 nopadding">
             <div className="row">
                 <div className="col-md text-left text-white">
                     {this.props.userName}
                 </div>
-                <div 
-                    className="col-md text-right text-white" 
+                <div
+                    className="col-md text-right text-white"
                     onClick={event => this.props.tearDown(this)}>
                         close
                 </div>
             </div>
             <div id={'terminal-container' + this.props.terminalId}/>
-        </div>;     
+        </div>;
     }
 
     componentDidMount() {
         this.xterm = new Xterm();
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
-            '/websocket/' + this.props.socketURL);
+            '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
 
         let socket = new WebSocket(socketURL);
 
@@ -58,7 +58,7 @@ class Terminal extends Component {
         this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
 
         // this needs to be figured out
-        //this.xterm.fit(); 
+        //this.xterm.fit();
     }
 
     componentWillUnmount() {
