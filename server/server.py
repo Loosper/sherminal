@@ -38,7 +38,8 @@ term_manager = ChrootNamedTermManager(
 )
 
 handlers = [
-    (r"/websocket/(.*)/?", UserTermHandler, {
+    # socket/identificator
+    (r"/websocket/(.*)/(.*)/?", UserTermHandler, {
         'term_manager': term_manager, 'session': Session
     }),
     (r'/login/?', LoginHandler, {'session': Session}),

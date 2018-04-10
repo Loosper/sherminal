@@ -2,6 +2,7 @@ import json
 import asyncio
 import logging
 import re
+import uuid
 
 from tornado.web import RequestHandler, asynchronous
 from tornado.iostream import StreamClosedError
@@ -79,11 +80,13 @@ class LoginHandler(RequestHandler, DatabaseQuery):
         user = await self.search_username(username)
 
         if not user:
-            new_user = User(username=username)
+            user = new_user = User(username=username, guid=uuid.uuid1().hex)
             await self.add(new_user)
 
-        # self.set_cookie('auth_token', 'hellothere', domain='localhost')
-        self.write({'terminal_path': data['username']})
+        self.write({
+            'terminal_path': data['username'],
+            'auth_token': user.guid
+        })
 
 
 class ActiveUsersTracker:
@@ -131,7 +134,7 @@ class UserTermHandler(TermSocket, DatabaseQuery):
 
         super().initialize(term_manager)
 
-    async def open(self, url_component=None):
+    async def open(self, url_component, identificator=None):
         conn_url = re.escape(url_component)
         # TODO: strip forbidden characters (&...)
 
@@ -140,6 +143,10 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         if not user:
             self.close(401, 'Not created')
             return
+
+        if identificator != user.guid:
+            self.read_only = True
+
         # TODO: consider having a seperate term handler for superuser sessions
         # REVIEW: this can fail when threshold reached.
         # a) increase maximum

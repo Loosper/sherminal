@@ -9,7 +9,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    guid = Column(String(32), primary_key=True)
     term_id = Column(Integer, nullable=True)
     username = Column(String)
 
