@@ -68,10 +68,9 @@ class LoginHandler extends Component {
                         </div>
                     </div>
                     <div className="row ">
-                        <div className="col-md-12 login-btn-container">
-                            <span className="glyphicon glyphicon-log-in" />
-                            <a className=" btn btn-secondary">Sign in</a>
-                        </div>
+                        <button className=" btn btn-secondary" type='submit'>
+                            Sign in
+                        </button>
                     </div>
                 </div>
             </form>
