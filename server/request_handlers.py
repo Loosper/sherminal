@@ -155,7 +155,7 @@ class UserTermHandler(TermSocket, DatabaseQuery):
 
         # add user to logged in list
         self.userURL = conn_url
-        self.tracker.add_user(self.userURL)
+        self.tracker.add_user(url_component)
 
     def on_message(self, message):
         if self.read_only:
