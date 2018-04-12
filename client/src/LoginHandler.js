@@ -12,9 +12,10 @@ class LoginHandler extends Component {
     constructor(props) {
         super(props);
         this.updateUsername = this.updateUsername.bind(this);
+        this.updatePassword = this.updatePassword.bind(this);
         this.login = this.login.bind(this);
 
-        this.state = {username: ''};
+        this.state = {username: '', password: ''};
     }
 
     login(event) {
@@ -25,7 +26,7 @@ class LoginHandler extends Component {
         // TODO: just use fetch promises. Removes a dependency
         axios.post(
             url,
-            {username: this.state.username},
+            {username: this.state.username, password: this.state.password},
             {timeout: 1000}
         ).then(function (response) {
             // console.log(response.data['terminal_path']);
@@ -50,6 +51,10 @@ class LoginHandler extends Component {
         this.setState({username: event.target.value});
     }
 
+    updatePassword(event) {
+        this.setState({password: event.target.value});
+    }
+
     render() {
         return (
             // TODO: fix glyphicon
@@ -68,6 +73,12 @@ class LoginHandler extends Component {
                                 placeholder="User name"
                                 value={this.state.username}
                                 onChange={this.updateUsername}
+                            />
+                            <input
+                                className="form-control" type="text"
+                                placeholder="password if you are an admin"
+                                value={this.state.password}
+                                onChange={this.updatePassword}
                             />
                         </div>
                     </div>
