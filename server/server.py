@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from database import Base
+from database import Base, User
 from request_handlers import UserTermHandler, LoginHandler, ActiveUsersHandler
 from managers import ChrootNamedTermManager
 
@@ -31,6 +31,16 @@ engine = create_engine(
 )
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
+
+# add amin
+session = Session()
+session.add(User(
+    username='loosper',
+    password='hello',
+    guid='super_secret',
+    administrator=True
+))
+session.commit()
 
 # TODO: set absolute maximum and refuse everything after
 term_manager = ChrootNamedTermManager(

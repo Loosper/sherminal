@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -12,6 +12,9 @@ class User(Base):
     guid = Column(String(32), primary_key=True)
     term_id = Column(Integer, nullable=True)
     username = Column(String)
+    # hehe no hash
+    password = Column(String)
+    administrator = Column(Boolean)
 
     def __repr__(self):
         return "terminal: {}, username: '{}'".format(

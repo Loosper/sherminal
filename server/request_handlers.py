@@ -31,9 +31,13 @@ class DatabaseQuery:
         self.session = session()
         self.loop = asyncio.get_event_loop()
 
-    async def search_username(self, username):
+    async def search_user(self, username, password=None):
         def query(name):
-            return self.session.query(User).filter_by(username=name).first()
+            user = self.session.query(User).\
+                filter_by(username=name).first()
+
+            # REVIEW: if anthing this can break
+            return user if not password or user.password == password else False
 
         return await self.loop.run_in_executor(
             Executor, partial(query, username)
@@ -52,14 +56,21 @@ class DatabaseQuery:
         self.session.close()
 
 
+# NOTE: this is also register, but there is no such mechanism
 class LoginHandler(RequestHandler, DatabaseQuery):
     def initialize(self, session):
         self.setup_session(session)
 
+    def prepare(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header(
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept'
+        )
+
     def options(self):
         # TODO: figure out how to properly deploy
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.set_header('Access-Control-Allow-Headers', 'Content-type')
+        pass
 
     # TODO: Sanitize the name. It will be used in a FILESYSTEM PATH
     async def post(self):
@@ -72,21 +83,34 @@ class LoginHandler(RequestHandler, DatabaseQuery):
         else:
             return
 
-        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Content-Type', 'application/json')
 
-        username = re.escape(data['username'])
         # TODO: strip forbidden characters (&...)./
+        username = re.escape(data['username'])
+        password = data.get('password')
 
-        user = await self.search_username(username)
+        # TODO: perhaps show error if password mismatch?
+        user = await self.search_user(username, password)
 
-        if not user:
-            user = new_user = User(username=username, guid=uuid.uuid1().hex)
-            await self.add(new_user)
+        if user is None:
+            user = User(
+                username=username,
+                password=password,
+                administrator=False,
+                guid=uuid.uuid1().hex
+            )
+            await self.add(user)
 
-        self.write({
+        if user is False:
+            self.send_error(401)
+            return
+
+        response_data = {
             'terminal_path': data['username'],
-            'auth_token': user.guid
-        })
+            'auth_token': user.guid,
+            'administrator': user.administrator
+        }
+        self.write(response_data)
 
 
 class ActiveUsersTracker:
@@ -138,13 +162,13 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         conn_url = re.escape(url_component)
         # TODO: strip forbidden characters (&...)
 
-        user = await self.search_username(conn_url)
+        user = await self.search_user(conn_url)
 
         if not user:
             self.close(401, 'Not created')
             return
 
-        if identificator != user.guid:
+        if not user.administrator and identificator != user.guid:
             self.read_only = True
 
         # TODO: consider having a seperate term handler for superuser sessions
