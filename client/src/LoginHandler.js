@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-
 
 import './styles/login.css';
 import './styles/main.css';
@@ -22,28 +20,26 @@ class LoginHandler extends Component {
         event.preventDefault();
         let self = this;
         let url = 'http://' + process.env.REACT_APP_HOST + '/login';
+        let data = {username: this.state.username, password: this.state.password};
 
-        // TODO: just use fetch promises. Removes a dependency
-        axios.post(
-            url,
-            {username: this.state.username, password: this.state.password},
-            {timeout: 1000}
-        ).then(function (response) {
-            // console.log(response.data['terminal_path']);
+        // TODO: timeout
+        fetch(
+            url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {'Content-Type': 'application/json'},
+                mode: 'cors'
+            }
+        ).then(function(response) {
+            return response.json();
+        }).then(function(data) {
             self.props.onSubmit(
-                response.data['terminal_path'],
-                response.data['auth_token']
+                data['terminal_path'],
+                data['auth_token']
             );
         }).catch(function (error) {
-            // server responded with error
-            if (error.response) {
-                console.log('Server responded: ' + error.response.status);
-                console.log(error.response.data);
-            } else if (error.request) {
-                console.log('No response from: ' + url);
-            } else {
-                console.log('Failed to send: ' + error);
-            }
+            console.log('Unimplemented error handilng');
+            console.log(error);
         });
     }
 
