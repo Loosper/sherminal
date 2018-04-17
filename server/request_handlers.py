@@ -119,6 +119,10 @@ class LoginHandler(RequestHandler, DatabaseQuery):
         }
         self.write(response_data)
 
+    def write_error(self, status_code):
+        # why????
+        self.set_header('Access-Control-Allow-Origin', '*')
+
 
 class ActiveUsersTracker:
     ''' Track users who have an open termianl'''

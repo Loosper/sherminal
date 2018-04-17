@@ -31,6 +31,10 @@ class LoginHandler extends Component {
                 mode: 'cors'
             }
         ).then(function(response) {
+            if (response.status !== 200) {
+                throw new Error(response.status);
+            }
+
             return response.json();
         }).then(function(data) {
             self.props.onSubmit(
@@ -38,8 +42,12 @@ class LoginHandler extends Component {
                 data['auth_token']
             );
         }).catch(function (error) {
-            console.log('Unimplemented error handilng');
-            console.log(error);
+            if (error.message === '401') {
+                // TODO: show this info to the user
+                console.log('No perms');
+            } else {
+                console.log('Error with the request');
+            }
         });
     }
 
