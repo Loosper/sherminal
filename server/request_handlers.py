@@ -31,17 +31,24 @@ class DatabaseQuery:
         self.session = session()
         self.loop = asyncio.get_event_loop()
 
-    async def search_user(self, username, password=None):
-        def query(name):
-            user = self.session.query(User).\
-                filter_by(username=name).first()
-
-            # REVIEW: if anthing this can break
-            return user if not password or user.password == password else False
-
-        return await self.loop.run_in_executor(
-            Executor, partial(query, username)
+    async def query(self, args):  # that argument is a dict
+        user = await self.loop.run_in_executor(
+            Executor,
+            lambda: self.session.query(User).filter_by(**args).first()
         )
+
+        return user
+
+    async def guid_to_user(self, guid):
+        return await self.query({'guid': guid})
+
+    async def name_to_user(self, username, password=None):
+        # REVIEW: should waiting happen here?
+        user = await self.query({'username': username})
+
+        if user and password and user.password != password:
+            return False
+        return user
 
     async def add(self, *args):
         def adder(*args):
@@ -90,7 +97,7 @@ class LoginHandler(RequestHandler, DatabaseQuery):
         password = data.get('password')
 
         # TODO: perhaps show error if password mismatch?
-        user = await self.search_user(username, password)
+        user = await self.name_to_user(username, password)
 
         if user is None:
             user = User(
@@ -101,7 +108,7 @@ class LoginHandler(RequestHandler, DatabaseQuery):
             )
             await self.add(user)
 
-        if user is False:
+        if user is False or user.administrator and password is None:
             self.send_error(401)
             return
 
@@ -158,28 +165,31 @@ class UserTermHandler(TermSocket, DatabaseQuery):
 
         super().initialize(term_manager)
 
-    async def open(self, url_component, identificator=None):
-        conn_url = re.escape(url_component)
+    async def open(self, host_id, guest_id):
+        conn_url = re.escape(host_id)
         # TODO: strip forbidden characters (&...)
 
-        user = await self.search_user(conn_url)
+        # TODO: this is where async will shine
+        host = await self.name_to_user(conn_url)
+        guest = await self.guid_to_user(guest_id)
 
-        if not user:
+        if not host or not guest:
             self.close(401, 'Not created')
             return
 
-        if not user.administrator and identificator != user.guid:
+        if host != guest and not guest.administrator:
+            # print('non-user: ', guest)
             self.read_only = True
 
         # TODO: consider having a seperate term handler for superuser sessions
         # REVIEW: this can fail when threshold reached.
         # a) increase maximum
         # b) ruturn error
-        super().open(url_component)
+        super().open(host_id)
 
         # add user to logged in list
         self.userURL = conn_url
-        self.tracker.add_user(url_component)
+        self.tracker.add_user(host_id)
 
     def on_message(self, message):
         if self.read_only:
