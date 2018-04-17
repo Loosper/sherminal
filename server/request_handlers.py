@@ -46,7 +46,7 @@ class DatabaseQuery:
         # REVIEW: should waiting happen here?
         user = await self.query({'username': username})
 
-        if user and password and user.password != password:
+        if user and password is not None and user.password != password:
             return False
         return user
 
