@@ -17,8 +17,8 @@ class User(Base):
     administrator = Column(Boolean)
 
     def __repr__(self):
-        return "terminal: {}, username: '{}'".format(
-            self.term_id, self.username
+        return "username: '{}', pass: {}, guid: {}".format(
+            self.username, self.password, self.guid
         )
 
 
