@@ -31,13 +31,24 @@ class DatabaseQuery:
         self.session = session()
         self.loop = asyncio.get_event_loop()
 
-    async def search_username(self, username):
-        def query(name):
-            return self.session.query(User).filter_by(username=name).first()
-
-        return await self.loop.run_in_executor(
-            Executor, partial(query, username)
+    async def query(self, args):  # that argument is a dict
+        user = await self.loop.run_in_executor(
+            Executor,
+            lambda: self.session.query(User).filter_by(**args).first()
         )
+
+        return user
+
+    async def guid_to_user(self, guid):
+        return await self.query({'guid': guid})
+
+    async def name_to_user(self, username, password=None):
+        # REVIEW: should waiting happen here?
+        user = await self.query({'username': username})
+
+        if user and password is not None and user.password != password:
+            return False
+        return user
 
     async def add(self, *args):
         def adder(*args):
@@ -52,14 +63,21 @@ class DatabaseQuery:
         self.session.close()
 
 
+# NOTE: this is also register, but there is no such mechanism
 class LoginHandler(RequestHandler, DatabaseQuery):
     def initialize(self, session):
         self.setup_session(session)
 
+    def prepare(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header(
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept'
+        )
+
     def options(self):
         # TODO: figure out how to properly deploy
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.set_header('Access-Control-Allow-Headers', 'Content-type')
+        pass
 
     # TODO: Sanitize the name. It will be used in a FILESYSTEM PATH
     async def post(self):
@@ -72,21 +90,38 @@ class LoginHandler(RequestHandler, DatabaseQuery):
         else:
             return
 
-        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Content-Type', 'application/json')
 
-        username = re.escape(data['username'])
         # TODO: strip forbidden characters (&...)./
+        username = re.escape(data['username'])
+        password = data.get('password')
 
-        user = await self.search_username(username)
+        # TODO: perhaps show error if password mismatch?
+        user = await self.name_to_user(username, password)
 
-        if not user:
-            user = new_user = User(username=username, guid=uuid.uuid1().hex)
-            await self.add(new_user)
+        if user is None:
+            user = User(
+                username=username,
+                password=password,
+                administrator=False,
+                guid=uuid.uuid1().hex
+            )
+            await self.add(user)
 
-        self.write({
+        if user is False or user.administrator and password is None:
+            self.send_error(401)
+            return
+
+        response_data = {
             'terminal_path': data['username'],
-            'auth_token': user.guid
-        })
+            'auth_token': user.guid,
+            'administrator': user.administrator
+        }
+        self.write(response_data)
+
+    def write_error(self, status_code):
+        # why????
+        self.set_header('Access-Control-Allow-Origin', '*')
 
 
 class ActiveUsersTracker:
@@ -134,28 +169,31 @@ class UserTermHandler(TermSocket, DatabaseQuery):
 
         super().initialize(term_manager)
 
-    async def open(self, url_component, identificator=None):
-        conn_url = re.escape(url_component)
+    async def open(self, host_id, guest_id):
+        conn_url = re.escape(host_id)
         # TODO: strip forbidden characters (&...)
 
-        user = await self.search_username(conn_url)
+        # TODO: this is where async will shine
+        host = await self.name_to_user(conn_url)
+        guest = await self.guid_to_user(guest_id)
 
-        if not user:
+        if not host or not guest:
             self.close(401, 'Not created')
             return
 
-        if identificator != user.guid:
+        if host != guest and not guest.administrator:
+            # print('non-user: ', guest)
             self.read_only = True
 
         # TODO: consider having a seperate term handler for superuser sessions
         # REVIEW: this can fail when threshold reached.
         # a) increase maximum
         # b) ruturn error
-        super().open(url_component)
+        super().open(host_id)
 
         # add user to logged in list
         self.userURL = conn_url
-        self.tracker.add_user(url_component)
+        self.tracker.add_user(host_id)
 
     def on_message(self, message):
         if self.read_only:
