@@ -23,20 +23,7 @@ class Terminal extends Component {
         this.xterm = null;
         this.socket = null;
 
-        this.terminal =
-        <div className="col-md-6 nopadding">
-            <div className="row">
-                <div className="col-md text-left text-white">
-                    {this.props.userName}
-                </div>
-                <div
-                    className="col-md text-right text-white"
-                    onClick={event => this.props.tearDown(this)}>
-                        close
-                </div>
-            </div>
-            <div id={'terminal-container' + this.props.terminalId}/>
-        </div>;
+        this.terminal = <div id={'terminal-container' + this.props.terminalId} className="terminal-round"/>;
     }
 
     componentDidMount() {

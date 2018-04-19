@@ -39,6 +39,24 @@ class Window extends Component {
         });
     }
 
+    getTerminalContainer(terminal) {
+        return (
+            <div className="col-md-6 nopadding shadowbox window">
+                <div className="row">
+                    <div className="col-md text-left text-white">
+                        {this.props.userName}
+                    </div>
+                    <div
+                        className="col-md text-right text-white"
+                        onClick={event => this.props.tearDown(this)}>
+                            close
+                    </div>
+                </div>
+                {terminal}
+            </div>
+        );
+    }
+
     getTerminal(path, size) {
         this.termid += 1;
 
@@ -55,7 +73,7 @@ class Window extends Component {
     setupClient(socketPath, authToken) {
         this.authToken = authToken;
         let new_state = this.state.terminals.slice();
-        new_state.push(this.getTerminal(socketPath));
+        new_state.push(this.getTerminalContainer(this.getTerminal(socketPath)));
 
         this.setState({
             loggedIn: true,
@@ -93,7 +111,7 @@ class Window extends Component {
 
             return (<LoginHandler onSubmit={this.setupClient} />);
         } else {
-            document.body.style.backgroundColor = 'black';
+            //document.body.style.backgroundColor = 'black';
 
             return (
                 <div className="container-fluid">

@@ -8,7 +8,14 @@
  }
 
  .shadowbox {
-
     box-shadow: 0 8px 50px -2px #000;
     border-radius:5px;
+ }
+
+ .terminal-round {
+    border-radius: 5px;
+ }
+
+ .window {
+    background: linear-gradient(silver, dimgrey);
  }
