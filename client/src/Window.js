@@ -73,7 +73,7 @@ class Window extends Component {
     setupClient(socketPath, authToken) {
         this.authToken = authToken;
         let new_state = this.state.terminals.slice();
-        new_state.push(this.getTerminalContainer(this.getTerminal(socketPath)));
+        new_state.push(this.getTerminal(socketPath));
 
         this.setState({
             loggedIn: true,

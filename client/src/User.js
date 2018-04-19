@@ -15,7 +15,7 @@ class User extends Component {
     render() {
         // TODO: make this space with HTML
         return (
-            <a className="text-white" onClick={(event) => this.props.create_terminal(this.state.username)}>
+            <a onClick={(event) => this.props.create_terminal(this.state.username)}>
                 {this.state.username + '     '}
             </a>
         );

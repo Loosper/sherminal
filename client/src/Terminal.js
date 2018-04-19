@@ -11,6 +11,8 @@ const Xterm = require('xterm/dist/xterm.js');
 const terminado = require('xterm/dist/addons/terminado/terminado');
 const fit = require('xterm/dist/addons/fit/fit');
 
+const CloseButton = require('./images/close-button.png');
+
 Xterm.applyAddon(terminado);
 Xterm.applyAddon(fit);
 
@@ -20,40 +22,57 @@ class Terminal extends Component {
         super(props);
 
         //this.sizeContainer = this.props.size === 2 ? "col-md-6" : "col-md-12";
-        this.xterm = null;
-        this.socket = null;
 
-        this.terminal = <div id={'terminal-container' + this.props.terminalId} className="terminal-round"/>;
+        this.state = {
+            xterm: null,
+            socket: null,
+            terminal: 
+            <div id={this.props.terminalId} className="col-md-6 ">
+                <div className="terminal-window border-top border-white terminal-color">
+                    <div className="row">
+                        <div className="col-md text-left">
+                            {this.props.userName}
+                        </div>
+                        <div className="col-md text-right"onClick={event => this.props.tearDown(this)}>
+                            <img src={CloseButton} className="close-icon">
+                            </img>
+                        </div>
+                    </div>
+                    <div id={'terminal-container' + this.props.terminalId} className="border-top border-secondary"/>
+                </div>
+            </div>
+        };
     }
 
     componentDidMount() {
-        this.xterm = new Xterm();
+        let new_xterm = new Xterm();
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
 
-        let socket = new WebSocket(socketURL);
+        let new_socket = new WebSocket(socketURL);
 
-        socket.addEventListener('close', (e) => this.props.tearDown(this));
+        new_socket.addEventListener('close', (e) => this.props.tearDown(this));
 
-        this.xterm.terminadoAttach(socket);
-        this.socket = socket;
+        new_xterm.terminadoAttach(new_socket);
 
         // is there a way to pass a ract element?
-        this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
+        new_xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
 
-        // this needs to be figured out
-        //this.xterm.fit();
+        this.setState({
+            xterm: new_xterm,
+            socket: new_socket
+        });
     }
 
     componentWillUnmount() {
-        this.socket.close();
+        this.state.socket.close();
         // this might be unnecessary
-        this.xterm.destroy();
+        this.state.xterm.destroy();
     }
 
     render() {
-        return (this.terminal);
+        return (this.state.terminal);
     }
 }
 

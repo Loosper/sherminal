@@ -7,15 +7,28 @@
     margin: 0 !important;
  }
 
- .shadowbox {
-    box-shadow: 0 8px 50px -2px #000;
-    border-radius:5px;
- }
-
  .terminal-round {
     border-radius: 5px;
  }
 
- .window {
-    background: linear-gradient(silver, dimgrey);
+ .terminal-window {
+    box-shadow: 0 8px 50px -2px #000;
+    border-radius: 5px;
+    margin: 7px;
+    overflow: auto;
+ }
+
+ .close-icon {
+    width: auto;
+    height: 15px;
+    margin: 5px;
+ }
+
+ .terminal-color {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7db9e8+0,dfe1df+0,c1c0c2+6 */
+    background: #7db9e8; /* Old browsers */
+    background: -moz-linear-gradient(top, #7db9e8 0%, #dfe1df 0%, #c1c0c2 6%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #7db9e8 0%,#dfe1df 0%,#c1c0c2 6%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #7db9e8 0%,#dfe1df 0%,#c1c0c2 6%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7db9e8', endColorstr='#c1c0c2',GradientType=0 ); /* IE6-9 */
  }
