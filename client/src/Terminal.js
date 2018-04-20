@@ -26,7 +26,7 @@ class Terminal extends Component {
         this.state = {
             xterm: null,
             socket: null,
-            terminal: 
+            terminal:
             <div className="col-md-6 terminal-col">
                 <div className="terminal-window border-top border-white terminal-color">
                     <div className="row terminal-menu">
@@ -34,7 +34,7 @@ class Terminal extends Component {
                             {this.props.userName}
                         </div>
                         <div className="col-md text-right"onClick={event => this.props.tearDown(this)}>
-                            <img src={CloseButton} className="close-icon">
+                            <img alt= "close-button" src={CloseButton} className="close-icon">
                             </img>
                         </div>
                     </div>
