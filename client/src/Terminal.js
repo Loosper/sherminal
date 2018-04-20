@@ -27,10 +27,10 @@ class Terminal extends Component {
             xterm: null,
             socket: null,
             terminal: 
-            <div id={this.props.terminalId} className="col-md-6 ">
+            <div className="col-md-6">
                 <div className="terminal-window border-top border-white terminal-color">
-                    <div className="row">
-                        <div className="col-md text-left">
+                    <div className="row terminal-menu">
+                        <div className="col-md text-left terminal-username-offset">
                             {this.props.userName}
                         </div>
                         <div className="col-md text-right"onClick={event => this.props.tearDown(this)}>
