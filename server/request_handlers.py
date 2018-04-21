@@ -8,6 +8,7 @@ from tornado.web import RequestHandler, asynchronous
 from tornado.iostream import StreamClosedError
 from terminado import TermSocket
 from functools import partial
+from random import randint
 
 from database import User
 
@@ -105,7 +106,8 @@ class LoginHandler(RequestHandler, DatabaseQuery):
                 password=password,
                 administrator=False,
                 guid=uuid.uuid1().hex,
-                avatar='https://api.adorable.io/avatars/' + randint(0, 5000)
+                avatar='https://api.adorable.io/avatars/' +
+                str(randint(0, 5000))
             )
             await self.add(user)
 
@@ -116,7 +118,8 @@ class LoginHandler(RequestHandler, DatabaseQuery):
         response_data = {
             'terminal_path': data['username'],
             'auth_token': user.guid,
-            'administrator': user.administrator
+            'administrator': user.administrator,
+            'avatar': user.avatar
         }
         self.write(response_data)
 
@@ -194,7 +197,9 @@ class UserTermHandler(TermSocket, DatabaseQuery):
 
         # add user to logged in list
         self.userURL = conn_url
-        self.tracker.add_user(host_id)
+        self.tracker.add_user(
+            json.dumps({'host': host.username, 'avatar': host.avatar})
+        )
 
     def on_message(self, message):
         if self.read_only:
