@@ -15,6 +15,7 @@ class User(Base):
     # hehe no hash
     password = Column(String)
     administrator = Column(Boolean)
+    avatar = Column(String)
 
     def __repr__(self):
         return "username: '{}', pass: {}, guid: {}".format(

@@ -14,7 +14,7 @@
  .terminal-window {
     box-shadow: 0 8px 45px -2px #000;
     border-radius: 8px;
-    margin: 7px;
+    margin: 7px auto;
     overflow: auto;
  }
 
@@ -39,4 +39,13 @@
 
  .terminal-menu {
      height: 26px;
+ }
+
+ .terminal-row {
+     padding-left: 15px;
+ }
+
+ .terminal-col {
+     padding-right: 15px;
+     padding-left: 0px;
  }

@@ -27,7 +27,7 @@ class Terminal extends Component {
             xterm: null,
             socket: null,
             terminal: 
-            <div className="col-md-6">
+            <div className="col-md-6 terminal-col">
                 <div className="terminal-window border-top border-white terminal-color">
                     <div className="row terminal-menu">
                         <div className="col-md text-left terminal-username-offset">

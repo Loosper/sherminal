@@ -95,7 +95,7 @@ class Window extends Component {
                         {this.state.users}
                         {this.state.settings}
                     </div>
-                    <div className="row">
+                    <div className="row terminal-row">
                         {this.state.terminals}
                     </div>
                 </div>

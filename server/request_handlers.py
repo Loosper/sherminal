@@ -104,7 +104,8 @@ class LoginHandler(RequestHandler, DatabaseQuery):
                 username=username,
                 password=password,
                 administrator=False,
-                guid=uuid.uuid1().hex
+                guid=uuid.uuid1().hex,
+                avatar='https://api.adorable.io/avatars/' + randint(0, 5000)
             )
             await self.add(user)
 
