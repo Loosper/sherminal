@@ -12,10 +12,10 @@
  }
 
  .terminal-window {
-    box-shadow: 0 8px 45px -2px #000;
+    box-shadow: 0 8px 35px -8px #000;
     border-radius: 8px;
     margin: 7px auto;
-    overflow: auto;
+    overflow: hidden;
  }
 
  .close-icon {
@@ -48,4 +48,12 @@
  .terminal-col {
      padding-right: 15px;
      padding-left: 0px;
+ }
+
+ .avatar {
+    width: auto;
+    height: 60px;
+    margin: 8px;
+    border-radius: 50%;
+    box-shadow: 0 8px 10px -7px #000;
  }

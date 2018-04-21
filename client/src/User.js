@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/main.css';
 
 
 class User extends Component {
@@ -8,16 +9,20 @@ class User extends Component {
         super(props);
 
         this.state = {
-            username: this.props.username
+            username: this.props.username,
+            avatar: this.props.avatar
         };
     }
 
     render() {
         // TODO: make this space with HTML
+        console.log(this.state.avatar);
         return (
-            <a onClick={(event) => this.props.create_terminal(this.state.username)}>
-                {this.state.username + '     '}
-            </a>
+            <img src={this.state.avatar} 
+                onClick={(event) => this.props.create_terminal(this.state.username)}
+                className="avatar"
+                alt="avatar">
+            </img>
         );
     }
 }

@@ -13,9 +13,12 @@ class UserBar extends Component {
         this.childid = 0;
     }
 
-    makeUser(username) {
+    makeUser(data) {
+        data = JSON.parse(data);
+
         return <User
-            username={username}
+            username={data.host}
+            avatar={data.avatar}
             create_terminal={this.props.terminal_factory}
             key={this.childid++}
         />;
