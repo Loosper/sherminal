@@ -70,8 +70,8 @@ class UserBar extends Component {
     }
 
     render() {
-        return(
-            <div className="col">
+        return (
+            <div className="row userbar">
                 {this.state.users}
             </div>
         );

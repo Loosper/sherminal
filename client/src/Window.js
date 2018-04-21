@@ -91,7 +91,7 @@ class Window extends Component {
         } else {
             return (
                 <div className="container-fluid">
-                    <div className="row border-bottom border-white">
+                    <div className="row upper-row border-bottom border-white">
                         {this.state.users}
                         {this.state.settings}
                     </div>

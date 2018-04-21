@@ -16,13 +16,16 @@ class User extends Component {
 
     render() {
         // TODO: make this space with HTML
-        console.log(this.state.avatar);
         return (
-            <img src={this.state.avatar} 
-                onClick={(event) => this.props.create_terminal(this.state.username)}
-                className="avatar"
-                alt="avatar">
-            </img>
+            <div className="user">
+                <img 
+                    src={this.state.avatar} 
+                    onClick={(event) => this.props.create_terminal(this.state.username)}
+                    className="avatar"
+                    alt="avatar">
+                </img>
+                <p className="text-center username">{this.state.username}</p>
+            </div>
         );
     }
 }

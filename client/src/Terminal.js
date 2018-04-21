@@ -29,13 +29,13 @@ class Terminal extends Component {
             terminal:
             <div className="col-md-6 terminal-col">
                 <div className="terminal-window border-top border-white terminal-color">
-                    <div className="row terminal-menu">
-                        <div className="col-md text-left terminal-username-offset">
-                            {this.props.userName}
-                        </div>
-                        <div className="col-md text-right"onClick={event => this.props.tearDown(this)}>
-                            <img alt= "close-button" src={CloseButton} className="close-icon">
+                    <div className="row terminal-menu text-center">
+                        <div className="close-button"onClick={event => this.props.tearDown(this)}>
+                            <img alt="close-button" src={CloseButton} className="close-icon">
                             </img>
+                        </div>
+                        <div className="col terminal-username">
+                            {this.props.userName}
                         </div>
                     </div>
                     <div id={'terminal-container' + this.props.terminalId} className="border-top border-secondary"/>
