@@ -87,7 +87,7 @@ class LoginHandler extends Component {
                             />
                         </div>
                     </div>
-                    <div className="row ">
+                    <div className="row">
                         <button className=" btn btn-secondary" type='submit'>
                             Sign in
                         </button>
