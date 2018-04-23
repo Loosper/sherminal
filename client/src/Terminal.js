@@ -46,18 +46,26 @@ class Terminal extends Component {
 
     componentDidMount() {
         let new_xterm = new Xterm();
-
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
-
         let new_socket = new WebSocket(socketURL);
 
         new_socket.addEventListener('close', (e) => this.props.tearDown(this));
-
         new_xterm.terminadoAttach(new_socket);
+        let self = this;
+
+        // sadly this parses the data twice :(
+        new_socket.addEventListener('message', function (ev) {
+            var data = JSON.parse(ev.data);
+
+            if (data[0] !== 'stdout')
+                self.props.socketMessage(data);
+        });
 
         // is there a way to pass a ract element?
-        new_xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
+        new_xterm.open(document.getElementById(
+            'terminal-container' + this.props.terminalId
+        ));
 
         this.setState({
             xterm: new_xterm,
