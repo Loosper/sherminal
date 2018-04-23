@@ -14,19 +14,23 @@ class Window extends Component {
         this.setupClient = this.setupClient.bind(this);
         this.addTerminal = this.addTerminal.bind(this);
         this.removeTerminal = this.removeTerminal.bind(this);
+        this.retrieveSocket = this.retrieveSocket.bind(this);
+        this.addMessageHandler = this.addMessageHandler.bind(this);
+
 
         this.signOut = this.signOut.bind(this);
 
         this.state = {
             loggedIn: false,
             terminals: [],
-            users: <UserBar terminal_factory={this.addTerminal}/>,
+            users: <UserBar registerMessage={this.addMessageHandler} terminal_factory={this.addTerminal}/>,
             settings: <SettingsMenu signOut={this.signOut}/>
         };
         // token for tracking the user
         this.authToken = '';
         // this is bad but works
         this.termid = 0;
+        this.messageQueue = [];
     }
 
     signOut(e) {
@@ -35,7 +39,7 @@ class Window extends Component {
         this.setState({
             loggedIn: false,
             terminals: [],
-            users: <UserBar terminal_factory={this.addTerminal}/>
+            users: <UserBar registerMessage={this.addMessageHandler} terminal_factory={this.addTerminal}/>
         });
     }
 
@@ -49,7 +53,24 @@ class Window extends Component {
             authToken={this.authToken}
             tearDown={this.removeTerminal}
             terminalId={this.termid++}
+            setSocket={this.retrieveSocket}
         />;
+    }
+
+    addMessageHandler(handler) {
+        this.messageQueue.push(handler);
+    }
+
+    retrieveSocket(socket) {
+        let self = this;
+        socket.addEventListener('message', function (event) {
+            let data = JSON.parse(event.data);
+
+            for (let msg of self.messageQueue) {
+                msg(data);
+            }
+        });
+        this.webSocket = socket;
     }
 
     setupClient(socketPath, authToken) {
