@@ -23,39 +23,22 @@ class Terminal extends Component {
 
         //this.sizeContainer = this.props.size === 2 ? "col-md-6" : "col-md-12";
 
-        this.state = {
-            xterm: null,
-            socket: null,
-            terminal:
-            <div className="col-md-6 terminal-col">
-                <div className="terminal-window border-top border-white terminal-color">
-                    <div className="row terminal-menu text-center">
-                        <div className="close-button"onClick={event => this.props.tearDown(this)}>
-                            <img alt="close-button" src={CloseButton} className="close-icon">
-                            </img>
-                        </div>
-                        <div className="col terminal-username">
-                            {this.props.userName}
-                        </div>
-                    </div>
-                    <div id={'terminal-container' + this.props.terminalId} className="border-top border-secondary"/>
-                </div>
-            </div>
-        };
+        this.xterm = null;
+        this.socket = null;
     }
 
     componentDidMount() {
-        let new_xterm = new Xterm();
+        this.xterm = new Xterm();
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
-        let new_socket = new WebSocket(socketURL);
+        this.socket = new WebSocket(socketURL);
 
-        new_socket.addEventListener('close', (e) => this.props.tearDown(this));
-        new_xterm.terminadoAttach(new_socket);
+        this.socket.addEventListener('close', (e) => this.props.tearDown(this));
+        this.xterm.terminadoAttach(this.socket);
         let self = this;
 
         // sadly this parses the data twice :(
-        new_socket.addEventListener('message', function (ev) {
+        this.socket.addEventListener('message', function (ev) {
             var data = JSON.parse(ev.data);
 
             if (data[0] !== 'stdout')
@@ -63,14 +46,9 @@ class Terminal extends Component {
         });
 
         // is there a way to pass a ract element?
-        new_xterm.open(document.getElementById(
+        this.xterm.open(document.getElementById(
             'terminal-container' + this.props.terminalId
         ));
-
-        this.setState({
-            xterm: new_xterm,
-            socket: new_socket
-        });
     }
 
     componentWillUnmount() {
@@ -80,7 +58,20 @@ class Terminal extends Component {
     }
 
     render() {
-        return (this.state.terminal);
+        return (<div className="col-md-6 terminal-col">
+            <div className="terminal-window border-top border-white terminal-color">
+                <div className="row terminal-menu text-center">
+                    <div className="close-button"onClick={event => this.props.tearDown(this)}>
+                        <img alt="close-button" src={CloseButton} className="close-icon">
+                        </img>
+                    </div>
+                    <div className="col terminal-username">
+                        {this.props.userName}
+                    </div>
+                </div>
+                <div id={'terminal-container' + this.props.terminalId} className="border-top border-secondary"/>
+            </div>
+        </div>);
     }
 }
 
