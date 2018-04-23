@@ -14,8 +14,6 @@ class UserBar extends Component {
     }
 
     makeUser(data) {
-        data = JSON.parse(data);
-
         return <User
             username={data.host}
             avatar={data.avatar}

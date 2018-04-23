@@ -20,11 +20,17 @@ Xterm.applyAddon(fit);
 class Terminal extends Component {
     constructor(props) {
         super(props);
+        this.requestWrite = this.requestWrite.bind(this);
 
         //this.sizeContainer = this.props.size === 2 ? "col-md-6" : "col-md-12";
 
         this.xterm = null;
         this.socket = null;
+    }
+
+    // TODO: dont allow this for my own termianl
+    requestWrite(event) {
+        this.props.sendMessage('request_write', this.props.userName);
     }
 
     componentDidMount() {
@@ -56,7 +62,7 @@ class Terminal extends Component {
                         <img alt="close-button" src={CloseButton} className="close-icon">
                         </img>
                     </div>
-                    <div className="col terminal-username">
+                    <div onClick={this.requestWrite} className="col terminal-username">
                         {this.props.userName}
                     </div>
                 </div>

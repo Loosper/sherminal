@@ -4,6 +4,7 @@ import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
 import SettingsMenu from './SettingsMenu';
+import NotificationBar from './NotificationBar';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
@@ -52,6 +53,7 @@ class Window extends Component {
             tearDown={this.removeTerminal}
             terminalId={this.termid++}
             setSocket={this.retrieveSocket}
+            sendMessage={this.sendMessage}
         />;
     }
 
@@ -129,6 +131,10 @@ class Window extends Component {
                         <UserBar
                             registerMessage={this.addMessageHandler}
                             terminal_factory={this.addTerminal}
+                        />
+                        <NotificationBar
+                            registerMessage={this.addMessageHandler}
+                            sendMessage={this.sendMessage}
                         />
                         <SettingsMenu signOut={this.signOut}/>
                     </div>
