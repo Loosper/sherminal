@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -21,6 +23,9 @@ class User(Base):
         return "username: '{}', pass: {}, guid: {}".format(
             self.username, self.password, self.guid
         )
+
+    def json(self):
+        return json.dumps({'host': self.username, 'avatar': self.avatar})
 
 
 if __name__ == '__main__':

@@ -131,33 +131,37 @@ class ActiveUsersTracker:
     ''' Track users who have an open termianl'''
     def __init__(self):
         # TODO: this should be something fast
-        self.users = set()
-        self.registered_handlers = []
+        self.handlers = {}
 
-    def notify_all(self, message):
-        for handler in self.registered_handlers:
-            handler(json.dumps(message))
-
-    def add_user(self, user):
-        if user not in self.users:
-            self.users.add(user)
-        self.notify_all(['add_user', user])
-        print(self.users)
-
-    def remove_user(self, user):
-        self.users.discard(user)
-        self.notify_all(['remove_user', user])
-        print(self.users)
+    def notify_all(self, msg_type, message):
+        for user, handler in self.handlers.items():
+            handler[0].write_message(f'["{msg_type}", {message}]')
 
     def register(self, handler):
-        self.registered_handlers.append(handler)
-        # print(len(self.registered_handlers))
+        self.handlers[handler.user.username] = [handler]
+        self.notify_all('add_user', handler.user.json())
 
-    def deregister(self, callback):
-        self.registered_handlers.remove(callback)
+    def deregister(self, handler):
+        del self.handlers[handler.user.username]
+        self.notify_all('remove_user', handler.user.json())
 
-    def get_users(self):
-        return self.users
+    def register_guest(self, handler, host_name):
+        self.handlers[host_name].append(handler)
+
+    def deregister_guest(self, handler, host_name):
+        self.handlers[host_name].remove(handler)
+
+    def get_handlers(self):
+        return [handlers[0] for key, handlers in self.handlers.items()]
+
+    def get_handler(self, user):
+        return self.handlers[user][0]
+
+    def get_guest_handler(self, host, guest):
+        print(self.handlers[host])
+        for handler in self.handlers[host]:
+            if handler.user.username == guest:
+                return handler
 
 
 default_tracker = ActiveUsersTracker()
@@ -185,23 +189,26 @@ class UserTermHandler(TermSocket, DatabaseQuery):
             return
 
         if host != guest and not guest.administrator:
-            # print('non-user: ', guest)
             self.read_only = True
+            self.tracker.register_guest(self, host.username)
+        # this means it's the owner, therefore his communication socket
+        if host == guest:
+            self.user = guest
+            # add user to logged in list
+            self.tracker.register(self)
 
-        # TODO: consider having a seperate term handler for superuser sessions
         # REVIEW: this can fail when threshold reached.
         # a) increase maximum
         # b) ruturn error
         super().open(host_id)
 
-        # add user to logged in list
-        self.user = json.dumps({'host': host.username, 'avatar': host.avatar})
-        self.tracker.add_user(self.user)
-        self.tracker.register(self.write_message)
-
     def send_users(self):
-        users = self.tracker.get_users()
-        self.write_message(json.dumps(['initial_users', list(users)]))
+        users = self.tracker.get_handlers()
+        self.write_message(
+            '["initial_users", [' +
+            ','.join([ws.user.json() for ws in users]) +
+            ']]'
+        )
 
     def on_message(self, message):
         if self.read_only:
@@ -210,13 +217,28 @@ class UserTermHandler(TermSocket, DatabaseQuery):
             data = json.loads(message)
             if data[0] == 'get_users':
                 self.send_users()
+            if data[0] == 'request_write':
+                self.request_write(data[1])
+            if data[0] == 'allow_write':
+                self.allow_write(data[1])
+            if data[0] == 'deny_write':
+                # just send message to the other guy
+                pass
             super().on_message(message)
 
     def on_close(self):
-        self.tracker.deregister(self.write_message)
-        self.tracker.remove_user(self.user)
+        self.tracker.deregister(self)
         super().on_close()
 
     # we serve the client from a different place
     def check_origin(self, origin):
         return True
+
+    def request_write(self, user):
+        other = self.tracker.get_handler(user)
+        other.write_message(f'["notification_write", {self.user.json()}]')
+
+    def allow_write(self, user):
+        other = self.tracker.get_guest_handler(self.user.username, user)
+        other.read_only = False
+        print('done')
