@@ -32,18 +32,9 @@ class Terminal extends Component {
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
         this.socket = new WebSocket(socketURL);
-
+        this.props.setSocket(this.socket);
         this.socket.addEventListener('close', (e) => this.props.tearDown(this));
         this.xterm.terminadoAttach(this.socket);
-        let self = this;
-
-        // sadly this parses the data twice :(
-        this.socket.addEventListener('message', function (ev) {
-            var data = JSON.parse(ev.data);
-
-            if (data[0] !== 'stdout')
-                self.props.socketMessage(data);
-        });
 
         // is there a way to pass a ract element?
         this.xterm.open(document.getElementById(
@@ -52,9 +43,9 @@ class Terminal extends Component {
     }
 
     componentWillUnmount() {
-        this.state.socket.close();
+        this.socket.close();
         // this might be unnecessary
-        this.state.xterm.destroy();
+        this.xterm.destroy();
     }
 
     render() {
