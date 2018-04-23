@@ -4,8 +4,7 @@ import logging
 import re
 import uuid
 
-from tornado.web import RequestHandler, asynchronous
-from tornado.iostream import StreamClosedError
+from tornado.web import RequestHandler
 from terminado import TermSocket
 from functools import partial
 from random import randint
@@ -135,20 +134,20 @@ class ActiveUsersTracker:
         self.users = set()
         self.registered_handlers = []
 
+    def notify_all(self, message):
+        for handler in self.registered_handlers:
+            handler(json.dumps(message))
+
     def add_user(self, user):
         if user not in self.users:
             self.users.add(user)
-
-            # notify all registered
-            for handler in self.registered_handlers:
-                handler('added', user)
+        self.notify_all(['add_user', user])
+        print(self.users)
 
     def remove_user(self, user):
         self.users.discard(user)
-
-        # notify all registered
-        for handler in self.registered_handlers:
-            handler('removed', user)
+        self.notify_all(['remove_user', user])
+        print(self.users)
 
     def register(self, handler):
         self.registered_handlers.append(handler)
@@ -168,7 +167,7 @@ class UserTermHandler(TermSocket, DatabaseQuery):
     def initialize(self, session, term_manager, tracker=default_tracker):
         self.setup_session(session)
         self.tracker = tracker
-        self.userURL = ''
+        self.user = ''
         self.read_only = False
 
         super().initialize(term_manager)
@@ -196,65 +195,28 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         super().open(host_id)
 
         # add user to logged in list
-        self.userURL = conn_url
-        self.tracker.add_user(
-            json.dumps({'host': host.username, 'avatar': host.avatar})
-        )
+        self.user = json.dumps({'host': host.username, 'avatar': host.avatar})
+        self.tracker.add_user(self.user)
+        self.tracker.register(self.write_message)
+
+    def send_users(self):
+        users = self.tracker.get_users()
+        self.write_message(json.dumps(['initial_users', list(users)]))
 
     def on_message(self, message):
         if self.read_only:
             return
         else:
+            data = json.loads(message)
+            if data[0] == 'get_users':
+                self.send_users()
             super().on_message(message)
 
     def on_close(self):
-        self.tracker.remove_user(self.userURL)
+        self.tracker.deregister(self.write_message)
+        self.tracker.remove_user(self.user)
         super().on_close()
 
     # we serve the client from a different place
     def check_origin(self, origin):
         return True
-
-
-class ActiveUsersHandler(RequestHandler):
-    def initialize(self, tracker=default_tracker):
-        self.tracker = tracker
-        self.loop = asyncio.get_event_loop()
-
-        # hax
-        self.set_header(
-            'Access-Control-Allow-Origin',
-            self.request.headers.get('Origin')
-        )
-        self.set_header('Content-Type', 'text/event-stream')
-        self.set_header('Cache-Control', 'no-cache')
-
-    # NOTE: if you make this async this breaks
-    @asynchronous
-    def get(self):
-        users = self.tracker.get_users()
-        if users:
-            self.write(f'data: {json.dumps(list(users))}\n\n')
-
-        Logger.info(self.request.uri + ' Opened')
-
-        self.tracker.register(self.send_message)
-        self.keep_alive()
-
-    def on_connection_close(self):
-        Logger.info(self.request.uri + ' Closed')
-        self.tracker.deregister(self.send_message)
-        self.refresher.cancel()
-
-    def keep_alive(self):
-        # void message to refresh connection
-        self.write(': keep_alive\n\n')
-        self.flush()
-        self.refresher = self.loop.call_later(15, self.keep_alive)
-
-    def send_message(self, msg_type, msg_value):
-        try:
-            self.write(f'event: {msg_type}\ndata: {msg_value}\n\n')
-            self.flush()
-        except StreamClosedError as error:
-            raise

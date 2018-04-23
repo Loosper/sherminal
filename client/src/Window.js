@@ -16,7 +16,7 @@ class Window extends Component {
         this.removeTerminal = this.removeTerminal.bind(this);
         this.retrieveSocket = this.retrieveSocket.bind(this);
         this.addMessageHandler = this.addMessageHandler.bind(this);
-
+        this.sendMessage = this.sendMessage.bind(this);
 
         this.signOut = this.signOut.bind(this);
 
@@ -28,7 +28,8 @@ class Window extends Component {
         this.authToken = '';
         // this is bad but works
         this.termid = 0;
-        this.messageQueue = [];
+        this.messageQueue = {};
+        this.webSocket = null;
     }
 
     signOut(e) {
@@ -54,20 +55,35 @@ class Window extends Component {
         />;
     }
 
-    addMessageHandler(handler) {
-        this.messageQueue.push(handler);
+    sendMessage(type, message) {
+        this.webSocket.send(JSON.stringify([type, message]));
+    }
+
+    // REVIEW: if you need 2 handler, you need lists of handlers
+    addMessageHandler(event_name, handler) {
+        this.messageQueue[event_name] = handler;
     }
 
     retrieveSocket(socket) {
+        // use only the firs one for comms
+        // if (this.webSocket !== null)
+        //     return;
+
         let self = this;
         socket.addEventListener('message', function (event) {
             let data = JSON.parse(event.data);
 
-            for (let msg of self.messageQueue) {
-                msg(data);
-            }
+            // execute handler for message type
+            let handler = self.messageQueue[data[0]];
+            if (handler !== undefined)
+                handler(data[1]);
         });
         this.webSocket = socket;
+        // why hasnt it loaded?
+        this.webSocket.addEventListener(
+            'open',
+            () => this.sendMessage('get_users', '')
+        );
     }
 
     setupClient(socketPath, authToken) {
@@ -110,7 +126,10 @@ class Window extends Component {
             return (
                 <div className="container-fluid">
                     <div className="row upper-row border-bottom border-white">
-                        <UserBar registerMessage={this.addMessageHandler} terminal_factory={this.addTerminal}/>
+                        <UserBar
+                            registerMessage={this.addMessageHandler}
+                            terminal_factory={this.addTerminal}
+                        />
                         <SettingsMenu signOut={this.signOut}/>
                     </div>
                     <div className="row terminal-row">

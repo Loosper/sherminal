@@ -47,6 +47,7 @@ class LoginHandler extends Component {
                 console.log('No perms');
             } else {
                 console.log('Error with the request');
+                console.log(error);
             }
         });
     }

@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from database import Base, User
-from request_handlers import UserTermHandler, LoginHandler, ActiveUsersHandler
+from request_handlers import UserTermHandler, LoginHandler
 from managers import ChrootNamedTermManager
 
 
@@ -52,8 +52,7 @@ handlers = [
     (r"/websocket/(.*)/(.*)/?", UserTermHandler, {
         'term_manager': term_manager, 'session': Session
     }),
-    (r'/login/?', LoginHandler, {'session': Session}),
-    (r'/active_users/?', ActiveUsersHandler)
+    (r'/login/?', LoginHandler, {'session': Session})
 ]
 
 app = tornado.web.Application(

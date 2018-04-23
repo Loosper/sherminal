@@ -25,48 +25,32 @@ class UserBar extends Component {
     }
 
     componentDidMount() {
-        let url = 'http://' + process.env.REACT_APP_HOST + '/active_users';
-
         let self = this;
 
-        let events = new EventSource(url);
-        this.events = events;
-
-        events.onerror = function(error) {
-            // if this is not done, it will retry the connection
-            error.target.close();
-        };
-
-        events.onmessage = function(event) {
-            let users = JSON.parse(event.data);
+        this.props.registerMessage('initial_users', function(users) {
             let user_state = [];
 
             for (let user of users) {
-                console.log(user);
                 user_state.push(self.makeUser(user));
             }
             self.setState({users: user_state});
-        };
+        });
 
-        events.addEventListener('added', function(event) {
+        this.props.registerMessage('add_user', function(user) {
             let new_state = self.state.users.slice();
 
-            new_state.push(self.makeUser(event.data));
+            new_state.push(self.makeUser(user));
 
             self.setState({users: new_state});
         });
 
-        events.addEventListener('removed', function(event) {
+        this.props.registerMessage('remove_user', function(user) {
             let new_state = self.state.users.slice();
-            let index = new_state.indexOf(event.data);
+            let index = new_state.indexOf(user);
 
             new_state.splice(index, 1);
             self.setState({users: new_state});
         });
-    }
-
-    componentWillUnmount() {
-        this.events.close();
     }
 
     render() {
