@@ -22,9 +22,7 @@ class Window extends Component {
 
         this.state = {
             loggedIn: false,
-            terminals: [],
-            users: <UserBar registerMessage={this.addMessageHandler} terminal_factory={this.addTerminal}/>,
-            settings: <SettingsMenu signOut={this.signOut}/>
+            terminals: []
         };
         // token for tracking the user
         this.authToken = '';
@@ -38,8 +36,7 @@ class Window extends Component {
 
         this.setState({
             loggedIn: false,
-            terminals: [],
-            users: <UserBar registerMessage={this.addMessageHandler} terminal_factory={this.addTerminal}/>
+            terminals: []
         });
     }
 
@@ -113,8 +110,8 @@ class Window extends Component {
             return (
                 <div className="container-fluid">
                     <div className="row upper-row border-bottom border-white">
-                        {this.state.users}
-                        {this.state.settings}
+                        <UserBar registerMessage={this.addMessageHandler} terminal_factory={this.addTerminal}/>
+                        <SettingsMenu signOut={this.signOut}/>
                     </div>
                     <div className="row terminal-row">
                         {this.state.terminals}
