@@ -16,6 +16,7 @@ const CloseButton = require('./images/close-button.png');
 Xterm.applyAddon(terminado);
 Xterm.applyAddon(fit);
 
+const Draggable = require('react-draggable')
 
 class Terminal extends Component {
     constructor(props) {
@@ -48,27 +49,30 @@ class Terminal extends Component {
         ));
     }
 
+    // TODO: decide whether this should close the socket
     componentWillUnmount() {
-        this.socket.close();
+        // this.socket.close();
         // this might be unnecessary
         this.xterm.destroy();
     }
 
     render() {
-        return (<div className="col-md-6 terminal-col">
-            <div className="terminal-window border-top border-white terminal-color">
-                <div className="row terminal-menu text-center">
-                    <div className="close-button"onClick={event => this.props.tearDown(this)}>
-                        <img alt="close-button" src={CloseButton} className="close-icon">
-                        </img>
+        return (<Draggable>
+            <div className="col-md-6 terminal-col">
+                <div className="terminal-window border-top border-white terminal-color">
+                    <div className="row terminal-menu text-center">
+                        <div className="close-button"onClick={event => this.props.tearDown(this)}>
+                            <img alt="close-button" src={CloseButton} className="close-icon">
+                            </img>
+                        </div>
+                        <div onClick={this.requestWrite} className="col terminal-username">
+                            {this.props.userName}
+                        </div>
                     </div>
-                    <div onClick={this.requestWrite} className="col terminal-username">
-                        {this.props.userName}
-                    </div>
+                    <div id={'terminal-container' + this.props.terminalId} className="border-top border-secondary"/>
                 </div>
-                <div id={'terminal-container' + this.props.terminalId} className="border-top border-secondary"/>
             </div>
-        </div>);
+        </Draggable>);
     }
 }
 
