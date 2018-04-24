@@ -16,15 +16,6 @@
     border-radius: 8px;
     margin: 7px auto;
     overflow: hidden;
- }
-
- .close-icon {
-    width: auto;
-    height: 11px;
-    margin: 6px;
- }
-
- .terminal-color {
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7db9e8+0,dfe1df+0,c1c0c2+6 */
     background: #7db9e8; /* Old browsers */
     background: -moz-linear-gradient(top, #7db9e8 0%, #dfe1df 0%, #c1c0c2 6%); /* FF3.6-15 */
@@ -33,12 +24,14 @@
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7db9e8', endColorstr='#c1c0c2',GradientType=0 ); /* IE6-9 */
  }
 
- .close-button {
-     padding-left: 15px; 
+ .close-icon {
+    width: auto;
+    height: 11px;
+    margin: 6px;
  }
 
- .terminal-container {
-    min-height: 900px;
+ .close-button {
+     padding-left: 15px; 
  }
 
  .terminal-menu {
@@ -95,4 +88,3 @@
     width: 0px;  /* remove scrollbar space */
     background: transparent;  /* optional: just make scrollbar invisible */
 }
-

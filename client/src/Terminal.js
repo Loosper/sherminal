@@ -9,14 +9,12 @@ import './styles/main.css';
 const Draggable = require('react-draggable');
 const CloseButton = require('./images/close-button.png');
 
-class Terminal extends React.Component {
+class Terminal extends Component {
     constructor(props) {
         super(props);
         this.requestWrite = this.requestWrite.bind(this);
 
         //this.sizeContainer = this.props.size === 2 ? "col-md-6" : "col-md-12";
-
-        this.socket = null;
     }
 
     bindXterm(xterm) {
@@ -31,7 +29,7 @@ class Terminal extends React.Component {
     }
 
     componentDidMount() {
-        this.xtermRef.fit()
+        this.xtermRef.fit();
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
@@ -53,8 +51,8 @@ class Terminal extends React.Component {
         return (
             <Draggable>
                 <div className="col-md-6 terminal-col">
-                    <div className="terminal-window border-top border-white terminal-color">
-                        <div className="row terminal-menu text-center">
+                    <div className="terminal-window border-top border-white">
+                        <div className="row terminal-menu text-center border-bottom border-secondary">
                             <div className="close-button" onClick={event => this.props.tearDown(this)}>
                                 <img alt="close-button" src={CloseButton} className="close-icon">
                                 </img>
@@ -63,12 +61,10 @@ class Terminal extends React.Component {
                                 {this.props.userName}
                             </div>
                         </div>
-                        <div id={'terminal-container' + this.props.terminalId} className="border-top border-secondary">
-                            <Xterm 
-                                addons={['fit', 'fullscreen', 'terminado']}
-                                ref={xterm => this.bindXterm(xterm)}
-                            />
-                        </div>
+                        <Xterm 
+                            addons={['fit', 'fullscreen', 'terminado']}
+                            ref={xterm => this.bindXterm(xterm)}
+                        />
                     </div>
                 </div>
             </Draggable>
