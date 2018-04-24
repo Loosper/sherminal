@@ -8,6 +8,7 @@ from tornado.web import RequestHandler
 from terminado import TermSocket
 from functools import partial
 from random import randint
+# from asyncio import Future
 
 from database import User
 
@@ -138,6 +139,7 @@ class ActiveUsersTracker:
             handler[0].write_message(f'["{msg_type}", {message}]')
 
     def register(self, handler):
+        # Logger.warning('registered: ' + handler.user.username)
         self.handlers[handler.user.username] = [handler]
         self.notify_all('add_user', handler.user.json())
 
@@ -146,6 +148,7 @@ class ActiveUsersTracker:
         self.notify_all('remove_user', handler.user.json())
 
     def register_guest(self, handler, host_name):
+        # Logger.warning('guest with host: ' + host_name)
         self.handlers[host_name].append(handler)
 
     def deregister_guest(self, handler, host_name):
@@ -173,6 +176,7 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         self.tracker = tracker
         self.user = ''
         self.read_only = False
+        # self.intialised = Future()
 
         super().initialize(term_manager)
 
@@ -188,14 +192,15 @@ class UserTermHandler(TermSocket, DatabaseQuery):
             self.close(401, 'Not created')
             return
 
-        if host != guest and not guest.administrator:
-            self.read_only = True
-            self.tracker.register_guest(self, host.username)
         # this means it's the owner, therefore his communication socket
         if host == guest:
             self.user = guest
             # add user to logged in list
             self.tracker.register(self)
+        else:
+            self.tracker.register_guest(self, host.username)
+            if not guest.administrator:
+                self.read_only = True
 
         # REVIEW: this can fail when threshold reached.
         # a) increase maximum
@@ -239,6 +244,6 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         other.write_message(f'["notification_write", {self.user.json()}]')
 
     def allow_write(self, user):
+        # Logger.warning('this just in: ' + user)
         other = self.tracker.get_guest_handler(self.user.username, user)
         other.read_only = False
-        print('done')

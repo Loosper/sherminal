@@ -30,10 +30,10 @@ class NotificationBar extends Component {
     }
 
     add_notification(data) {
-        console.log(data);
+        console.log(data['host']);
 
         let new_state = this.state.notifications.slice();
-        new_state.push(this.make_notification(data['user']));
+        new_state.push(this.make_notification(data['host']));
         this.setState({notifications: new_state});
     }
 
