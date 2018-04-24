@@ -37,6 +37,10 @@
      padding-left: 15px; 
  }
 
+ .terminal-container {
+    min-height: 900px;
+ }
+
  .terminal-menu {
      height: 26px;
  }
@@ -46,8 +50,8 @@
  }
 
  .terminal-col {
-     padding-right: 15px;
-     padding-left: 0px;
+    padding-right: 15px;
+    padding-left: 0px;
  }
 
  .terminal-username {

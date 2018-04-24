@@ -4,13 +4,17 @@
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^4.0.0",
+    "chai": "^4.1.2",
     "jquery": "^3.3.1",
     "prop-types": "^15.6.1",
+    "re-resizable": "^4.4.8",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-draggable": "^3.0.5",
     "react-hoverbox": "^1.0.544",
+    "react-resizable": "^1.7.5",
     "react-scripts": "1.1.1",
+    "react-xterm": "^2.0.4",
     "xterm": "^3.2.0"
   },
   "scripts": {
