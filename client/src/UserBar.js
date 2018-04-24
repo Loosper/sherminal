@@ -7,8 +7,10 @@ class UserBar extends Component {
         super(props);
 
         this.state = {
-            users: []
+            users: [],
+            thisUser: null
         };
+
         this.events = null;
         this.childid = 0;
     }
@@ -29,7 +31,12 @@ class UserBar extends Component {
             let user_state = [];
 
             for (let user of users) {
-                user_state.push(self.makeUser(user));
+                if (user.host === self.props.thisUser) {
+                    if (self.state.thisUser == null)
+                        self.setState({thisUser: self.makeUser(user)});
+                } else {
+                    user_state.push(self.makeUser(user));
+                }
             }
             self.setState({users: user_state});
         });
@@ -37,7 +44,12 @@ class UserBar extends Component {
         this.props.registerMessage('add_user', function(user) {
             let new_state = self.state.users.slice();
 
-            new_state.push(self.makeUser(user));
+            if (user.host === self.props.thisUser) {
+                if (self.state.thisUser == null)
+                    self.setState({thisUser: self.makeUser(user)});
+            } else {
+                new_state.push(self.makeUser(user));
+            }
 
             self.setState({users: new_state});
         });
@@ -54,7 +66,14 @@ class UserBar extends Component {
     render() {
         return (
             <div className="row userbar">
-                {this.state.users}
+                <div className="col-md">
+                    <div className="row">
+                        {this.state.users}
+                    </div>
+                </div>
+                <div className="col-md-auto">
+                    {this.state.thisUser}
+                </div>
             </div>
         );
     }

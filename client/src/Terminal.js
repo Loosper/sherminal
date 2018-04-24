@@ -12,8 +12,8 @@ const CloseButton = require('./images/close-button.png');
 class Terminal extends Component {
     constructor(props) {
         super(props);
-        this.requestWrite = this.requestWrite.bind(this);
 
+        this.requestWrite = this.requestWrite.bind(this);
         //this.sizeContainer = this.props.size === 2 ? "col-md-6" : "col-md-12";
     }
 

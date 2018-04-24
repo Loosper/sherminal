@@ -51,7 +51,6 @@ class Window extends Component {
             socketURL={path}
             authToken={this.authToken}
             tearDown={this.removeTerminal}
-            terminalId={this.termid++}
             setSocket={this.retrieveSocket}
             sendMessage={this.sendMessage}
         />;
@@ -89,6 +88,7 @@ class Window extends Component {
     }
 
     setupClient(socketPath, authToken) {
+        this.loggedUser = socketPath;
         this.authToken = authToken;
         let new_state = this.state.terminals.slice();
         new_state.push(this.getTerminal(socketPath));
@@ -101,7 +101,7 @@ class Window extends Component {
 
     addTerminal(path) {
         let new_terminals = this.state.terminals.slice();
-        new_terminals.push();
+
         new_terminals.push(this.getTerminal(path));
 
         this.setState({terminals: new_terminals});
@@ -123,7 +123,7 @@ class Window extends Component {
 
     render() {
         if (!this.state.loggedIn) {
-            return (<LoginHandler onSubmit={this.setupClient} />);
+            return (<LoginHandler onSubmit={this.setupClient}/>);
         } else {
             return (
                 <div className="container-fluid">
@@ -131,12 +131,13 @@ class Window extends Component {
                         <UserBar
                             registerMessage={this.addMessageHandler}
                             terminal_factory={this.addTerminal}
+                            thisUser={this.loggedUser}
                         />
                         <NotificationBar
                             registerMessage={this.addMessageHandler}
                             sendMessage={this.sendMessage}
                         />
-                        <SettingsMenu signOut={this.signOut}/>
+                        {/* <SettingsMenu signOut={this.signOut}/> */}
                     </div>
                     <div className="row terminal-row">
                         {this.state.terminals}
