@@ -15,11 +15,11 @@ class Tester:
         response = requests.post(
             'http://' + HOST + 'login', json={'username': 'test'}
         )
-        login_info = response.json()
+        self.login_info = response.json()
         self.conn = websocket_connect(
             'ws://' + HOST +
-            'websocket/' + login_info['terminal_path'] +
-            '/' + login_info['auth_token']
+            'websocket/' + self.login_info['terminal_path'] +
+            '/' + self.login_info['auth_token']
         )
 
         self.loop = tornado.ioloop.IOLoop.instance()
