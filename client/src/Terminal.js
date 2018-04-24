@@ -21,10 +21,12 @@ class Terminal extends Component {
         if (xterm !== null) {
             this.xtermRef = xterm.getTerminal();
         }
-      }
+    }
 
     // TODO: dont allow this for my own termianl
     requestWrite(event) {
+        // TODO: @DENIS because of drag, this doesnt register lick if no log
+        console.log('at least its pressed ' + this.props.userName);
         this.props.sendMessage('request_write', this.props.userName);
     }
 
@@ -61,7 +63,7 @@ class Terminal extends Component {
                                 {this.props.userName}
                             </div>
                         </div>
-                        <Xterm 
+                        <Xterm
                             addons={['fit', 'fullscreen', 'terminado']}
                             ref={xterm => this.bindXterm(xterm)}
                         />

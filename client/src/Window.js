@@ -68,8 +68,8 @@ class Window extends Component {
 
     retrieveSocket(socket) {
         // use only the firs one for comms
-        // if (this.webSocket !== null)
-        //     return;
+        if (this.webSocket !== null)
+            return;
 
         let self = this;
         socket.addEventListener('message', function (event) {
