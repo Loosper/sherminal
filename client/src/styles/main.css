@@ -1,41 +1,23 @@
-.background {
-    background-color: black; 
-}
-
-.nopadding {
-    padding: 0 !important;
-    margin: 0 !important;
- }
-
- .terminal-round {
-    border-radius: 5px;
- }
-
  .terminal-window {
     box-shadow: 0 8px 35px -8px #000;
     border-radius: 8px;
     margin: 7px auto;
     overflow: hidden;
-    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7db9e8+0,dfe1df+0,c1c0c2+6 */
+    border-top: 1px solid #dee2e6 !important;
+    border-color: #fff !important;
+ }
+
+ .terminal-bar {
+     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7db9e8+0,dfe1df+0,c1c0c2+81 */
     background: #7db9e8; /* Old browsers */
-    background: -moz-linear-gradient(top, #7db9e8 0%, #dfe1df 0%, #c1c0c2 6%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top, #7db9e8 0%,#dfe1df 0%,#c1c0c2 6%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom, #7db9e8 0%,#dfe1df 0%,#c1c0c2 6%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    background: -moz-linear-gradient(top, #7db9e8 0%, #dfe1df 0%, #c1c0c2 81%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #7db9e8 0%,#dfe1df 0%,#c1c0c2 81%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #7db9e8 0%,#dfe1df 0%,#c1c0c2 81%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7db9e8', endColorstr='#c1c0c2',GradientType=0 ); /* IE6-9 */
- }
 
- .close-icon {
-    width: auto;
-    height: 11px;
-    margin: 6px;
- }
-
- .close-button {
-     padding-left: 15px; 
- }
-
- .terminal-menu {
-     height: 26px;
+    height: 26px;
+    text-align: center !important;
+    border-bottom: 1px solid #6c757d !important;
  }
 
  .terminal-row {
@@ -48,13 +30,24 @@
  }
 
  .terminal-username {
-     padding-left: 0px;
-     padding-right: 39px;  
+    padding-left: 0px;
+    padding-right: 39px;  
+ }
+
+ .terminal-container {
+     opacity: 0.8;
+ }
+
+ .close-button {
+    width: auto;
+    height: 11px;
+    margin: 6px;
+    padding-left: 15px; 
  }
 
  .avatar {
     width: auto;
-    height: 60px;
+    height: 55px;
     margin: 8px;
     border-radius: 50%;
     box-shadow: 0 8px 10px -7px #000;
@@ -70,7 +63,8 @@
     border-radius: 7px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    margin: 15px 0px 10px;
+    margin: 30px 0px 20px;
+    border-bottom: 1px solid #fff!important;
  }
 
  .userbar {
@@ -83,6 +77,14 @@
 
  .user {
     flex: 0 0 auto;
+ }
+
+ .content-wraper {
+     margin: 0px 60px;
+ }
+
+ .nopadding {
+     padding: 0 !important;
  }
 
  ::-webkit-scrollbar {

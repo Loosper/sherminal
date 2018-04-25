@@ -53,6 +53,7 @@ class Window extends Component {
             tearDown={this.removeTerminal}
             setSocket={this.retrieveSocket}
             sendMessage={this.sendMessage}
+            terminalId={this.termid}
         />;
     }
 
@@ -127,20 +128,22 @@ class Window extends Component {
         } else {
             return (
                 <div className="container-fluid">
-                    <div className="row upper-row border-bottom border-white">
-                        <UserBar
-                            registerMessage={this.addMessageHandler}
-                            terminal_factory={this.addTerminal}
-                            thisUser={this.loggedUser}
-                        />
-                        <NotificationBar
-                            registerMessage={this.addMessageHandler}
-                            sendMessage={this.sendMessage}
-                        />
-                        {/* <SettingsMenu signOut={this.signOut}/> */}
-                    </div>
-                    <div className="row terminal-row">
-                        {this.state.terminals}
+                    <div className="content-wraper">
+                        <div className="row upper-row">
+                            <UserBar
+                                registerMessage={this.addMessageHandler}
+                                terminal_factory={this.addTerminal}
+                                thisUser={this.loggedUser}
+                            />
+                            <NotificationBar
+                                registerMessage={this.addMessageHandler}
+                                sendMessage={this.sendMessage}
+                            />
+                            {/* <SettingsMenu signOut={this.signOut}/> */}
+                        </div>
+                        <div className="row terminal-row">
+                            {this.state.terminals}
+                        </div>
                     </div>
                 </div>
             );
