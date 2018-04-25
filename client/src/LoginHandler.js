@@ -62,12 +62,11 @@ class LoginHandler extends Component {
 
     render() {
         return (
-            // TODO: fix glyphicon
             <form className="container" onSubmit={this.login}>
                 <div className="col-lg-6 col-md-6 col-sm-8  loginbox">
-                    <div className=" row">
+                    <div className="row">
                         <div className="col-md-12">
-                            <div className="singtext">Sherminal</div>
+                            <div className="singtext">terminet</div>
                         </div>
 
                     </div>

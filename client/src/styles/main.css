@@ -36,6 +36,8 @@
 
  .terminal-container {
      opacity: 0.8;
+     height: 600px;
+     margin-bottom: -7px;
  }
 
  .close-button {
