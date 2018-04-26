@@ -1,3 +1,5 @@
+#! /user/bin/env python3
+
 import os
 # import asyncio
 import tornado.web
@@ -10,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from database import Base, User
-from request_handlers import UserTermHandler, LoginHandler
+from request_handlers import UserTermHandler, LoginHandler, FileSendHandler
 from managers import ChrootNamedTermManager
 
 
@@ -52,7 +54,8 @@ handlers = [
     (r"/websocket/(.*)/(.*)/?", UserTermHandler, {
         'term_manager': term_manager, 'session': Session
     }),
-    (r'/login/?', LoginHandler, {'session': Session})
+    (r'/login/?', LoginHandler, {'session': Session}),
+    (r'/send/?', FileSendHandler)
 ]
 
 app = tornado.web.Application(

@@ -18,6 +18,12 @@ class ChrootNamedTermManager(NamedTermManager):
         self.term_name = term_name
         return super().get_terminal(term_name)
 
+    def make_term_env(self, *args, **argv):
+        env = super().make_term_env(*args, **argv)
+        # store the username until a more solid solution
+        env['LOGGED_IN_USER'] = self.term_name
+        return env
+
     def new_terminal(self, **kwargs):
         user_path = self.data_path + self.term_name
         data = user_path + '_data'

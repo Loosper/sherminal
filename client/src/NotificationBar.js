@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import YesNoNotification from './YesNoNotification';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -8,6 +10,8 @@ class NotificationBar extends Component {
         super(props);
         this.add_notification = this.add_notification.bind(this);
         this.make_notification = this.make_notification.bind(this);
+        this.notification_write = this.notification_write.bind(this);
+        this.notification_file_write = this.notification_file_write.bind(this);
         this.respond = this.respond.bind(this);
 
         this.state = {
@@ -21,22 +25,48 @@ class NotificationBar extends Component {
     }
 
     // This needs types
-    make_notification(user) {
-        return (<div key={this.id++}>
-            <div>User {user} wants write access</div>
-            <button onClick={() => this.respond('allow_write', user)}> YES </button>
-            <button onClick={() => this.respond('deny_write', user)}> NO </button>
-        </div>);
+    make_notification(message, yes, no) {
+        return (<YesNoNotification
+            key={this.id++}
+            message={message}
+            respondYes={yes}
+            respondNo={no}
+        />);
+    }
+
+    notification_write(data) {
+        let notification = this.make_notification(
+            'User ' + data['host'] + ' wants write access',
+            () => this.respond('allow_write', data['host']),
+            () => this.respond('deny_write', data['host'])
+        );
+        this.add_notification(notification);
+    }
+
+    notification_file_write(data) {
+        let notification = this.make_notification(
+            'User ' + data['host'] + ' wants to send you ' + data['file_path'],
+            () => this.respond('allow_file_write', data['file_path']),
+            () => this.respond('deny_file_write', data['host'])
+        );
+        this.add_notification(notification);
     }
 
     add_notification(data) {
         let new_state = this.state.notifications.slice();
-        new_state.push(this.make_notification(data['host']));
+        new_state.push(data);
         this.setState({notifications: new_state});
     }
 
     componentDidMount() {
-        this.props.registerMessage('notification_write', this.add_notification);
+        this.props.registerMessage(
+            'notification_write',
+            this.notification_write
+        );
+        this.props.registerMessage(
+            'notification_file_write',
+            this.notification_file_write
+        );
     }
 
     render() {
