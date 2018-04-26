@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import User from './User';
-
+import { ContextMenu, Item, Separator, Submenu, ContextMenuProvider } from 'react-contexify';
 
 class UserBar extends Component {
     constructor(props) {
@@ -15,13 +15,17 @@ class UserBar extends Component {
         this.childid = 0;
     }
 
-    makeUser(data) {
-        return <User
-            username={data.host}
-            avatar={data.avatar}
-            create_terminal={this.props.terminal_factory}
-            key={this.childid++}
-        />;
+    makeUser(data, isLoggedUser) {
+        return (
+            <User
+                username={data.host}
+                avatar={data.avatar}
+                create_terminal={this.props.terminal_factory}
+                key={this.childid++}
+                signOut={this.props.signOut}
+                isLoggedUser={isLoggedUser}
+            />
+        );
     }
 
     componentDidMount() {
@@ -33,9 +37,9 @@ class UserBar extends Component {
             for (let user of users) {
                 if (user.host === self.props.thisUser) {
                     if (self.state.thisUser == null)
-                        self.setState({thisUser: self.makeUser(user)});
+                        self.setState({thisUser: self.makeUser(user, true)});
                 } else {
-                    user_state.push(self.makeUser(user));
+                    user_state.push(self.makeUser(user, false));
                 }
             }
             self.setState({users: user_state});
@@ -46,9 +50,9 @@ class UserBar extends Component {
 
             if (user.host === self.props.thisUser) {
                 if (self.state.thisUser == null)
-                    self.setState({thisUser: self.makeUser(user)});
+                    self.setState({thisUser: self.makeUser(user, true)});
             } else {
-                new_state.push(self.makeUser(user));
+                new_state.push(self.makeUser(user, false));
             }
 
             self.setState({users: new_state});
@@ -68,7 +72,16 @@ class UserBar extends Component {
             <div className="row userbar">
                 {this.state.users}
                 <div className="this-user">
-                    {this.state.thisUser}
+                    <ContextMenuProvider id='user_menu'>
+                        {this.state.thisUser}
+                    </ContextMenuProvider>
+                    <ContextMenu id='user_menu'>
+                        <Submenu label="Notifications">
+                            {this.state.notifications}
+                        </Submenu>
+                        <Separator/>
+                        <Item onClick={this.props.signOut}>Sign Out</Item>
+                    </ContextMenu>
                 </div>
             </div>
         );

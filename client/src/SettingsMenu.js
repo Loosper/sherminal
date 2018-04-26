@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class SettingsMenu extends Component {
     render() {
         return (
-            <div className="col-md col-sm text-right" onClick={this.props.signOut}>
+            <div className="col-md col-sm text-right" onClick={}>
                 Sign out
             </div>
         );

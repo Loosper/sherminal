@@ -34,15 +34,13 @@ class Window extends Component {
     }
 
     signOut(e) {
-        e.preventDefault();
-
         this.setState({
             loggedIn: false,
             terminals: []
         });
     }
 
-    getTerminal(path, size) {
+    getTerminal(path, isLogged) {
         this.termid += 1;
 
         return <Terminal
@@ -53,7 +51,9 @@ class Window extends Component {
             tearDown={this.removeTerminal}
             setSocket={this.retrieveSocket}
             sendMessage={this.sendMessage}
+            requestWrite={this.requestWrite}
             terminalId={this.termid}
+            isLogged={isLogged}
         />;
     }
 
@@ -92,7 +92,7 @@ class Window extends Component {
         this.loggedUser = socketPath;
         this.authToken = authToken;
         let new_state = this.state.terminals.slice();
-        new_state.push(this.getTerminal(socketPath));
+        new_state.push(this.getTerminal(socketPath, true));
 
         this.setState({
             loggedIn: true,
@@ -103,7 +103,7 @@ class Window extends Component {
     addTerminal(path) {
         let new_terminals = this.state.terminals.slice();
 
-        new_terminals.push(this.getTerminal(path));
+        new_terminals.push(this.getTerminal(path, false));
 
         this.setState({terminals: new_terminals});
     }
@@ -133,12 +133,13 @@ class Window extends Component {
                             registerMessage={this.addMessageHandler}
                             terminal_factory={this.addTerminal}
                             thisUser={this.loggedUser}
+                            signOut={this.signOut}
                         />
                         <NotificationBar
                             registerMessage={this.addMessageHandler}
                             sendMessage={this.sendMessage}
                         />
-                        {/* <SettingsMenu signOut={this.signOut}/> */}
+                        {/* <SettingsMenu /> */}
                         <div className="row terminal-row">
                             {this.state.terminals}
                         </div>

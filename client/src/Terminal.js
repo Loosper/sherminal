@@ -23,7 +23,8 @@ class Terminal extends Component {
 
     // TODO: dont allow this for my own termianl
     requestWrite(event) {
-        this.props.sendMessage('request_write', this.props.userName);
+        if (!this.props.isLogged)
+            this.props.sendMessage('request_write', this.props.userName);
     }
 
     componentDidMount() {
@@ -68,13 +69,14 @@ class Terminal extends Component {
                                     onClick={event => this.props.tearDown(this)}
                                     alt="close-button"
                                 />
-                                <div onClick={this.requestWrite} className="col terminal-username">
+                                <div className="col terminal-username">
                                     {this.props.userName}
                                 </div>
                             </div>
                             <div
                                 id={'terminal-container' + this.props.terminalId}
                                 className='terminal-container'
+                                onClick={this.requestWrite}
                             />
                         </div>
                     </div>

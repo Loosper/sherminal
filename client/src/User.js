@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-//import { ContextMenu, Item, Separator, Submenu, ContextMenuProvider } from 'react-contexify';
 
 import 'react-contexify/dist/ReactContexify.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,14 +9,19 @@ class User extends Component {
     constructor(props) {
         super(props);
 
+        this.onClick = this.onClick.bind(this);
+
         this.state = {
             username: this.props.username,
-            avatar: this.props.avatar
+            avatar: this.props.avatar,
+            notifications : []
         };
     }
 
-    click({ event, ref, data, dataFromProvider }) {
-
+    onClick(event) {
+        if (!this.props.isLoggedUser) {
+            this.props.create_terminal(this.state.username)
+        }       
     }
 
     render() {
@@ -25,7 +29,7 @@ class User extends Component {
             <div className="user">
                 <img
                     src={this.state.avatar}
-                    onClick={(event) => this.props.create_terminal(this.state.username)}
+                    onClick={this.onClick}
                     className="avatar"
                     alt="avatar">
                 </img>
