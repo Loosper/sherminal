@@ -21,11 +21,10 @@ class User extends Component {
     }
 
     render() {
-        // TODO: make this space with HTML
         return (
             <div className="user">
-                <img 
-                    src={this.state.avatar} 
+                <img
+                    src={this.state.avatar}
                     onClick={(event) => this.props.create_terminal(this.state.username)}
                     className="avatar"
                     alt="avatar">
