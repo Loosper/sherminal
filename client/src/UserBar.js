@@ -76,10 +76,10 @@ class UserBar extends Component {
                         {this.state.thisUser}
                     </ContextMenuProvider>
                     <ContextMenu id='user_menu'>
-                        <Submenu label="Notifications">
+                        {/* <Submenu label="Notifications">
                             {this.state.notifications}
-                        </Submenu>
-                        <Separator/>
+                        </Submenu>              
+                        <Separator/> */}
                         <Item onClick={this.props.signOut}>Sign Out</Item>
                     </ContextMenu>
                 </div>

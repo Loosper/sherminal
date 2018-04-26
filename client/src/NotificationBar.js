@@ -25,22 +25,27 @@ class NotificationBar extends Component {
     }
 
     // This needs types
-    make_notification(message, yes, no) {
-        return (<YesNoNotification
-            key={this.id++}
-            message={message}
-            respondYes={yes}
-            respondNo={no}
-            yesMessage='Accept'
-            noMessage='Deny'
-        />);
+    make_notification(message, yes, no, yesMessage, noMessage) {
+        return (
+            <YesNoNotification
+                key={this.id++}
+                message={message}
+                respondYes={yes}
+                respondNo={no}
+                yesMessage={yesMessage}
+                noMessage={noMessage}
+            />
+        );
     }
 
+    // pleaseCamel murzi me da fix
     notification_write(data) {
         let notification = this.make_notification(
             data['host'] + ' wants access to your terminal',
             () => this.respond('allow_write', data['host']),
-            () => this.respond('deny_write', data['host'])
+            () => this.respond('deny_write', data['host']),
+            'Accept',
+            'Deny'
         );
         this.add_notification(notification);
     }

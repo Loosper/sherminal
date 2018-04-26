@@ -35,7 +35,7 @@ class YesNoNotification extends Component {
                     <div className="row button-row">
                         <div className="col"/>
                         <button 
-                            className="btn btn-outline-primary notification-button"
+                            className="btn btn-outline-success notification-button"
                             onClick={this.clickYes}
                         >
                             {this.props.yesMessage}

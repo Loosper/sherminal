@@ -95,6 +95,7 @@
     background: #fffffffa;
     margin-top: -96px;
     border-top: 1px solid #fff!important;
+    border-radius: 4px;
  }
 
  .notification-button {
@@ -110,7 +111,7 @@
     margin-left: -4px;
     margin-top: 7px;
     font-size: 110%;
-    text-shadow: 1px 1px 29px #0000005e;
+    text-shadow: 1px 1px 67px #0000005e;
  }
 
  ::-webkit-scrollbar {

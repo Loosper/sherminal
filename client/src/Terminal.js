@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NotificationBar from './NotificationBar';
+import YesNoNotification from './YesNoNotification';
 
 import 'xterm/dist/xterm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,17 +20,11 @@ const Draggable = require('react-draggable');
 class Terminal extends Component {
     constructor(props) {
         super(props);
+
         this.requestWrite = this.requestWrite.bind(this);
+        this.notifications = null;
 
         this.state = {
-            notifications: 
-                this.props.isLogged ?
-                    <NotificationBar
-                        registerMessage={this.props.registerMessage}
-                        sendMessage={this.props.sendMessage}
-                    /> 
-                : 
-                    null,
             hasRequested: false
         };
     }
@@ -37,7 +32,16 @@ class Terminal extends Component {
     requestWrite(event) {
         if (!this.props.isLogged && !this.state.hasRequested) {
             this.setState({hasRequested: true});
-            this.props.sendMessage('request_write', this.props.userName);
+
+            let notification = this.notifications.make_notification(
+                'Request access to this terminal?',
+                () => this.props.sendMessage('request_write', this.props.userName),
+                () => this.setState({hasRequested: false}),
+                'Yes',
+                'No'
+            );
+
+            this.notifications.add_notification(notification);
         }
     }
 
@@ -73,7 +77,7 @@ class Terminal extends Component {
     render() {
         return (
             <Draggable>
-                <div className="col-lg-4 col-md-6 col-sm-12 terminal-col">
+                <div className="col-lg-6 col-md-6 col-sm-12 terminal-col">
                     <div className="terminal-window">
                         <div className="col nopadding">
                             <div className="row terminal-bar">
@@ -92,7 +96,11 @@ class Terminal extends Component {
                                 className='terminal-container'
                                 onClick={this.requestWrite}
                             />
-                            {this.state.notifications}
+                            <NotificationBar
+                                registerMessage={this.props.registerMessage}
+                                sendMessage={this.props.sendMessage}
+                                ref={ref => this.notifications = ref}
+                            />
                         </div>
                     </div>
                 </div>
