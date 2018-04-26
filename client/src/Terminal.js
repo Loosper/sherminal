@@ -23,8 +23,6 @@ class Terminal extends Component {
 
     // TODO: dont allow this for my own termianl
     requestWrite(event) {
-        // TODO: @DENIS because of drag, this doesnt register lick if no log
-        // the whole div is clickable not just the text
         this.props.sendMessage('request_write', this.props.userName);
     }
 
@@ -44,12 +42,14 @@ class Terminal extends Component {
 
     // TODO: decide whether this should close the socket
     componentWillUnmount() {
+        // REVIEW: IMO doesn't make any difference; TODO: test if it's done
+        // in some extension
         // this.socket.close();
         // this might be unnecessary
         this.xterm.destroy();
     }
 
-    // TODO: 
+    // TODO:
     //  fix z-index
     //  introduce grid system
     //  resizable?
@@ -61,17 +61,17 @@ class Terminal extends Component {
                     <div className="terminal-window">
                         <div className="col nopadding">
                             <div className="row terminal-bar">
-                                <img 
-                                    className="close-button" 
-                                    src={CloseButton} 
-                                    onClick={event => this.props.tearDown(this)} 
+                                <img
+                                    className="close-button"
+                                    src={CloseButton}
+                                    onClick={event => this.props.tearDown(this)}
                                     alt="close-button"
                                 />
                                 <div onClick={this.requestWrite} className="col terminal-username">
                                     {this.props.userName}
                                 </div>
                             </div>
-                            <div 
+                            <div
                                 id={'terminal-container' + this.props.terminalId}
                                 className='terminal-container'
                             />
