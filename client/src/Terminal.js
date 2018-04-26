@@ -53,8 +53,7 @@ class Terminal extends Component {
     //  fix z-index
     //  introduce grid system
     //  resizable?
-    //  opacity white mode font shadows
-    //  .fit still misbehaves ;(
+    //  font shadows
     render() {
         return (
             <Draggable>
@@ -74,7 +73,7 @@ class Terminal extends Component {
                             </div>
                             <div 
                                 id={'terminal-container' + this.props.terminalId}
-                                className={'terminal-container'}
+                                className='terminal-container'
                             />
                         </div>
                     </div>

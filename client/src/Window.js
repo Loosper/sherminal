@@ -129,7 +129,6 @@ class Window extends Component {
             return (
                 <div className="container-fluid">
                     <div className="content-wraper">
-                        <div className="row upper-row">
                             <UserBar
                                 registerMessage={this.addMessageHandler}
                                 terminal_factory={this.addTerminal}
@@ -140,7 +139,6 @@ class Window extends Component {
                                 sendMessage={this.sendMessage}
                             />
                             {/* <SettingsMenu signOut={this.signOut}/> */}
-                        </div>
                         <div className="row terminal-row">
                             {this.state.terminals}
                         </div>

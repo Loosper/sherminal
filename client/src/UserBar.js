@@ -66,12 +66,8 @@ class UserBar extends Component {
     render() {
         return (
             <div className="row userbar">
-                <div className="col-md">
-                    <div className="row">
-                        {this.state.users}
-                    </div>
-                </div>
-                <div className="col-md-auto">
+                {this.state.users}
+                <div className="this-user">
                     {this.state.thisUser}
                 </div>
             </div>
