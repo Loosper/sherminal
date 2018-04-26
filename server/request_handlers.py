@@ -143,6 +143,7 @@ class ActiveUsersTracker:
         self.handlers[handler.user.username] = [handler]
         self.notify_all('add_user', handler.user.json())
 
+    # REVIEW: this blows up sometimes
     def deregister(self, handler):
         del self.handlers[handler.user.username]
         self.notify_all('remove_user', handler.user.json())
@@ -226,11 +227,16 @@ class UserTermHandler(TermSocket, DatabaseQuery):
             if data[0] == 'get_users':
                 self.send_users()
             if data[0] == 'request_write':
-                self.request_write(data[1])
+                self.request_perm_write(data[1])
             if data[0] == 'allow_write':
                 self.allow_write(data[1])
             if data[0] == 'deny_write':
+                # TODO:
                 # just send message to the other guy
+                pass
+            if data[0] == 'allow_file_write':
+                self.allow_file_write(data[1])
+            if data[0] == 'deny_file_write':
                 pass
             super().on_message(message)
 
@@ -245,11 +251,43 @@ class UserTermHandler(TermSocket, DatabaseQuery):
     def check_origin(self, origin):
         return True
 
-    def request_write(self, user):
+    def request_perm_write(self, user):
         other = self.tracker.get_handler(user)
         other.write_message(f'["notification_write", {self.user.json()}]')
+
+    def request_file_write(self, user, file_path):
+        other = self.tracker.get_handler(user)
+        data = self.user.json(extra={'file_path': file_path})
+        other.write_message(f'["notification_file_write", {data}]')
+
+    def allow_file_write(self, file_path):
+        pass
 
     def allow_write(self, user):
         # Logger.warning('this just in: ' + user)
         other = self.tracker.get_guest_handler(self.user.username, user)
         other.read_only = False
+
+
+class FileSendHandler(RequestHandler):
+    def initialize(self, tracker=default_tracker):
+        self.tracker = tracker
+
+    def post(self):
+        info = json.loads(self.request.body)
+        try:
+            print(info['from'])
+            recipient = self.tracker.get_handler(info['from'])
+        except KeyError:
+            # wrong user
+            self.send_error(403)
+            return
+
+        # TODO: check if file exists
+        recipient.request_file_write(info['to'], info['file'])
+
+    def write_error(self, code, **kwargs):
+        if code == 500:
+            self.write('I see you\'re screwing with my system. \nDon\'t.')
+        else:
+            super().write_error(code, **kwargs)

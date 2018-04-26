@@ -24,8 +24,9 @@ class User(Base):
             self.username, self.password, self.guid
         )
 
-    def json(self):
-        return json.dumps({'host': self.username, 'avatar': self.avatar})
+    def json(self, extra={}):
+        data = {'host': self.username, 'avatar': self.avatar, **extra}
+        return json.dumps(data)
 
 
 if __name__ == '__main__':
