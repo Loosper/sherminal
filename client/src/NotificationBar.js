@@ -31,12 +31,14 @@ class NotificationBar extends Component {
             message={message}
             respondYes={yes}
             respondNo={no}
+            yesMessage='Accept'
+            noMessage='Deny'
         />);
     }
 
     notification_write(data) {
         let notification = this.make_notification(
-            'User ' + data['host'] + ' wants write access',
+            data['host'] + ' wants access to your terminal',
             () => this.respond('allow_write', data['host']),
             () => this.respond('deny_write', data['host'])
         );
@@ -71,7 +73,7 @@ class NotificationBar extends Component {
 
     render() {
         return (
-            <div className="col-md col-sm text-right">
+            <div>
                 {this.state.notifications}
             </div>
         );

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import NotificationBar from './NotificationBar';
 
 import 'xterm/dist/xterm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,12 +20,25 @@ class Terminal extends Component {
     constructor(props) {
         super(props);
         this.requestWrite = this.requestWrite.bind(this);
+
+        this.state = {
+            notifications: 
+                this.props.isLogged ?
+                    <NotificationBar
+                        registerMessage={this.props.registerMessage}
+                        sendMessage={this.props.sendMessage}
+                    /> 
+                : 
+                    null,
+            hasRequested: false
+        };
     }
 
-    // TODO: dont allow this for my own termianl
     requestWrite(event) {
-        if (!this.props.isLogged)
+        if (!this.props.isLogged && !this.state.hasRequested) {
+            this.setState({hasRequested: true});
             this.props.sendMessage('request_write', this.props.userName);
+        }
     }
 
     componentDidMount() {
@@ -78,6 +92,7 @@ class Terminal extends Component {
                                 className='terminal-container'
                                 onClick={this.requestWrite}
                             />
+                            {this.state.notifications}
                         </div>
                     </div>
                 </div>

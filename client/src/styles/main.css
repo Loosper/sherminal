@@ -89,7 +89,33 @@
      padding: 0 !important;
  }
 
+ .notification {
+    position: absolute;
+    min-width: 100%;
+    background: #fffffffa;
+    margin-top: -96px;
+    border-top: 1px solid #fff!important;
+ }
+
+ .notification-button {
+    margin-right: 5px;
+ }
+
+ .button-row {
+    margin-top: 19px;
+    margin-bottom: 23px;
+ }
+
+ .notification-text {
+    margin-left: -4px;
+    margin-top: 7px;
+    font-size: 110%;
+    text-shadow: 1px 1px 29px #0000005e;
+ }
+
  ::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
+    width: 10px;  /* remove scrollbar space */
+    background: black;
+    opacity: 0.5;
+    border-radius: 50%;   /* optional: just make scrollbar invisible */
 }

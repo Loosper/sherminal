@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
-//import SettingsMenu from './SettingsMenu';
-import NotificationBar from './NotificationBar';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
@@ -43,18 +41,21 @@ class Window extends Component {
     getTerminal(path, isLogged) {
         this.termid += 1;
 
-        return <Terminal
-            key={this.termid}
-            userName={path}
-            socketURL={path}
-            authToken={this.authToken}
-            tearDown={this.removeTerminal}
-            setSocket={this.retrieveSocket}
-            sendMessage={this.sendMessage}
-            requestWrite={this.requestWrite}
-            terminalId={this.termid}
-            isLogged={isLogged}
-        />;
+        return (
+            <Terminal
+                key={this.termid}
+                userName={path}
+                socketURL={path}
+                authToken={this.authToken}
+                tearDown={this.removeTerminal}
+                setSocket={this.retrieveSocket}
+                sendMessage={this.sendMessage}
+                requestWrite={this.requestWrite}
+                terminalId={this.termid}
+                isLogged={isLogged}
+                registerMessage={this.addMessageHandler}
+            />
+        );
     }
 
     sendMessage(type, message) {
@@ -135,11 +136,6 @@ class Window extends Component {
                             thisUser={this.loggedUser}
                             signOut={this.signOut}
                         />
-                        <NotificationBar
-                            registerMessage={this.addMessageHandler}
-                            sendMessage={this.sendMessage}
-                        />
-                        {/* <SettingsMenu /> */}
                         <div className="row terminal-row">
                             {this.state.terminals}
                         </div>
