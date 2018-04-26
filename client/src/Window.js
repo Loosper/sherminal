@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
-import SettingsMenu from './SettingsMenu';
+//import SettingsMenu from './SettingsMenu';
 import NotificationBar from './NotificationBar';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -129,16 +129,16 @@ class Window extends Component {
             return (
                 <div className="container-fluid">
                     <div className="content-wraper">
-                            <UserBar
-                                registerMessage={this.addMessageHandler}
-                                terminal_factory={this.addTerminal}
-                                thisUser={this.loggedUser}
-                            />
-                            <NotificationBar
-                                registerMessage={this.addMessageHandler}
-                                sendMessage={this.sendMessage}
-                            />
-                            {/* <SettingsMenu signOut={this.signOut}/> */}
+                        <UserBar
+                            registerMessage={this.addMessageHandler}
+                            terminal_factory={this.addTerminal}
+                            thisUser={this.loggedUser}
+                        />
+                        <NotificationBar
+                            registerMessage={this.addMessageHandler}
+                            sendMessage={this.sendMessage}
+                        />
+                        {/* <SettingsMenu signOut={this.signOut}/> */}
                         <div className="row terminal-row">
                             {this.state.terminals}
                         </div>

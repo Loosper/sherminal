@@ -32,7 +32,8 @@ class Terminal extends Component {
         this.xterm = new Xterm();
         this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
         this.xterm.setOption('allowTransparency', true);
-        this.xterm.fit();
+        // still broken
+        // this.xterm.fit();
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
@@ -57,7 +58,7 @@ class Terminal extends Component {
     render() {
         return (
             <Draggable>
-                <div className="col-6 terminal-col">
+                <div className="col-lg-4 col-md-6 col-sm-12 terminal-col">
                     <div className="terminal-window">
                         <div className="col nopadding">
                             <div className="row terminal-bar">

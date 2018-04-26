@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+//import { ContextMenu, Item, Separator, Submenu, ContextMenuProvider } from 'react-contexify';
 
+import 'react-contexify/dist/ReactContexify.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
 
@@ -12,6 +14,10 @@ class User extends Component {
             username: this.props.username,
             avatar: this.props.avatar
         };
+    }
+
+    click({ event, ref, data, dataFromProvider }) {
+
     }
 
     render() {
