@@ -67,8 +67,7 @@ class DatabaseQuery:
 
 # NOTE: this is also register, but there is no such mechanism
 class LoginHandler(RequestHandler, DatabaseQuery):
-    def initialize(self, session, chroot_dir):
-        self.chroot_dir = chroot_dir
+    def initialize(self, session):
         self.setup_session(session)
 
     def prepare(self):
@@ -180,9 +179,10 @@ default_tracker = ActiveUsersTracker()
 
 
 class UserTermHandler(TermSocket, DatabaseQuery):
-    def initialize(self, session, term_manager, tracker=default_tracker):
+    def initialize(self, session, term_manager, chroot_dir, tracker=default_tracker):
         self.setup_session(session)
         self.tracker = tracker
+        self.chroot_dir = chroot_dir
         self.user = ''
         self.read_only = False
         self.is_host = False

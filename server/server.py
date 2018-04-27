@@ -53,7 +53,9 @@ term_manager = ChrootNamedTermManager(
 handlers = [
     # socket/identificator
     (r"/websocket/(.*)/(.*)/?", UserTermHandler, {
-        'term_manager': term_manager, 'session': Session
+        'term_manager': term_manager,
+        'session': Session,
+        'chroot_dir': CHROOT_DIR
     }),
     (r'/login/?', LoginHandler, {'session': Session}),
     (r'/send/?', FileSendHandler, {'chroot_dir': CHROOT_DIR})
