@@ -78,7 +78,7 @@ class Terminal extends Component {
     componentWillUnmount() {
         // REVIEW: IMO doesn't make any difference; TODO: test if it's done
         // in some extension
-        // this.socket.close();
+        this.socket.close();
         // this might be unnecessary
         this.xterm.destroy();
     }

@@ -55,6 +55,10 @@
     box-shadow: 0 8px 10px -7px #000;
  }
 
+ .admin-avatar {
+    box-shadow: 0 8px 10px -7px #ff0532;
+ }
+
  .username {
     margin-bottom: 0rem;
     font-size: 85%;

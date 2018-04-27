@@ -26,13 +26,13 @@ class User extends Component {
 
     render() {
         return (
-            <div className="user">
+            <div className={this.props.isLoggedUser ? "user border-left" : ""}>
                 <img
                     src={this.state.avatar}
                     onClick={this.onClick}
-                    className="avatar"
-                    alt="avatar">
-                </img>
+                    className={this.props.isAdmin ? "avatar admin-avatar" : "avatar"}
+                    alt="avatar"
+                />
                 <p className="text-center username">{this.state.username}</p>
             </div>
         );
