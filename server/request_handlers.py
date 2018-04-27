@@ -177,7 +177,8 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         self.tracker = tracker
         self.user = ''
         self.read_only = False
-        self.host = False
+        self.is_host = False
+        self.owner = None
         # self.intialised = Future()
 
         super().initialize(term_manager)
@@ -197,11 +198,12 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         self.user = guest
         # this means it's the owner, therefore his communication socket
         if host == guest:
-            self.host = True
+            self.is_host = True
             self.tracker.register(self)
         else:
+            self.owner = host
             # Logger.warning('guest')
-            self.host = False
+            self.is_host = False
             self.tracker.register_guest(self, host.username)
             if not guest.administrator:
                 self.read_only = True
@@ -241,10 +243,10 @@ class UserTermHandler(TermSocket, DatabaseQuery):
             super().on_message(message)
 
     def on_close(self):
-        if self.host:
+        if self.is_host:
             self.tracker.deregister(self)
         else:
-            self.tracker.deregister_guest(self)
+            self.tracker.deregister_guest(self, self.owner.username)
         super().on_close()
 
     # we serve the client from a different place
