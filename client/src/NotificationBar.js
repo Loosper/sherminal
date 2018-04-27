@@ -54,7 +54,9 @@ class NotificationBar extends Component {
         let notification = this.make_notification(
             'User ' + data['host'] + ' wants to send you ' + data['file_path'],
             () => this.respond('allow_file_write', data['file_path']),
-            () => this.respond('deny_file_write', data['host'])
+            () => this.respond('deny_file_write', data['host']),
+            'Accept',
+            'Deny'
         );
         this.add_notification(notification);
     }
