@@ -25,6 +25,7 @@ class YesNoNotification extends Component {
         this.setState({ isResponded: true });
     }
 
+    // TODO: Animations
     render() {
         if (!this.state.isResponded) {
             return (

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import NotificationBar from './NotificationBar';
-import YesNoNotification from './YesNoNotification';
 
 import 'xterm/dist/xterm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -76,8 +75,8 @@ class Terminal extends Component {
     //  font shadows
     render() {
         return (
-            <Draggable>
-                <div className="col-lg-6 col-md-6 col-sm-12 terminal-col">
+
+                <div>
                     <div className="terminal-window">
                         <div className="col nopadding">
                             <div className="row terminal-bar">
@@ -104,7 +103,7 @@ class Terminal extends Component {
                         </div>
                     </div>
                 </div>
-            </Draggable>
+
         );
     }
 }

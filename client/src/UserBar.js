@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import User from './User';
+// eslint-disable-next-line
 import { ContextMenu, Item, Separator, Submenu, ContextMenuProvider } from 'react-contexify';
 
 class UserBar extends Component {
@@ -72,10 +73,10 @@ class UserBar extends Component {
             <div className="row userbar">
                 {this.state.users}
                 <div className="this-user">
-                    <ContextMenuProvider id='user_menu'>
+                    <ContextMenuProvider id="user_menu" event="onClick">
                         {this.state.thisUser}
                     </ContextMenuProvider>
-                    <ContextMenu id='user_menu'>
+                    <ContextMenu id='user_menu' animation="fade">
                         {/* <Submenu label="Notifications">
                             {this.state.notifications}
                         </Submenu>              

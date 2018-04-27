@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-
+import GridLayout from 'react-grid-layout';
 import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
+
+///import { Responsive as ResponsiveGridLayout } from 'react-grid-layout';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
@@ -21,7 +23,8 @@ class Window extends Component {
 
         this.state = {
             loggedIn: false,
-            terminals: []
+            terminals: [],
+            layout: []
         };
         // token for tracking the user
         this.authToken = '';
@@ -29,6 +32,7 @@ class Window extends Component {
         this.termid = 0;
         this.messageQueue = {};
         this.webSocket = null;
+
     }
 
     signOut(e) {
@@ -39,22 +43,21 @@ class Window extends Component {
     }
 
     getTerminal(path, isLogged) {
-        this.termid += 1;
-
         return (
-            <Terminal
-                key={this.termid}
-                userName={path}
-                socketURL={path}
-                authToken={this.authToken}
-                tearDown={this.removeTerminal}
-                setSocket={this.retrieveSocket}
-                sendMessage={this.sendMessage}
-                requestWrite={this.requestWrite}
-                terminalId={this.termid}
-                isLogged={isLogged}
-                registerMessage={this.addMessageHandler}
-            />
+            <div key={'terminal' + this.termid}>
+                <Terminal
+                    userName={path}
+                    socketURL={path}
+                    authToken={this.authToken}
+                    tearDown={this.removeTerminal}
+                    setSocket={this.retrieveSocket}
+                    sendMessage={this.sendMessage}
+                    requestWrite={this.requestWrite}
+                    terminalId={this.termid}
+                    isLogged={isLogged}
+                    registerMessage={this.addMessageHandler}
+                />
+            </div>
         );
     }
 
@@ -92,23 +95,35 @@ class Window extends Component {
     setupClient(socketPath, authToken) {
         this.loggedUser = socketPath;
         this.authToken = authToken;
+
+        let newLayout = this.state.layout.slice();
+        newLayout.push({i: 'terminal' + this.termid, x: 4, y: 0, w: 1, h: 2});
+
         let new_state = this.state.terminals.slice();
         new_state.push(this.getTerminal(socketPath, true));
 
+        this.termid++;  
+
         this.setState({
             loggedIn: true,
+            layout: newLayout,
             terminals: new_state
         });
     }
 
     addTerminal(path) {
-        let new_terminals = this.state.terminals.slice();
+        let newLayout = this.state.layout.slice();
+        newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 1, h: 1});
 
+        let new_terminals = this.state.terminals.slice();
         new_terminals.push(this.getTerminal(path, false));
 
-        this.setState({terminals: new_terminals});
+        this.termid++;
+
+        this.setState({terminals: new_terminals, layout: newLayout});
     }
 
+    // TODO: this is broken always pops the last one
     removeTerminal(terminal) {
         let new_state = this.state.terminals.slice();
         let index = new_state.indexOf(terminal);
@@ -136,9 +151,13 @@ class Window extends Component {
                             thisUser={this.loggedUser}
                             signOut={this.signOut}
                         />
-                        <div className="row terminal-row">
+                        <GridLayout className="layout" layout={this.state.layout}
+                            cols={2} rowHeight={600} width={1200}>
                             {this.state.terminals}
-                        </div>
+                        </GridLayout>
+                        {/* <div className="row terminal-row">
+                            {this.state.terminals}
+                        </div> */}
                     </div>
                 </div>
             );
