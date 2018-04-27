@@ -19,6 +19,7 @@ from managers import ChrootNamedTermManager
 DIR = os.path.dirname(__file__)
 PORT = 8765
 HOST = '0.0.0.0'
+CHROOT_DIR = '/tmp/users/'
 
 AsyncIOMainLoop().install()
 
@@ -46,7 +47,7 @@ session.commit()
 
 # TODO: set absolute maximum and refuse everything after
 term_manager = ChrootNamedTermManager(
-    15, shell_command=['chroot', '', '/bin/bash']
+    50, shell_command=['chroot', '', '/bin/bash'], root_dir=CHROOT_DIR
 )
 
 handlers = [
@@ -55,7 +56,7 @@ handlers = [
         'term_manager': term_manager, 'session': Session
     }),
     (r'/login/?', LoginHandler, {'session': Session}),
-    (r'/send/?', FileSendHandler)
+    (r'/send/?', FileSendHandler, {'chroot_dir': CHROOT_DIR})
 ]
 
 app = tornado.web.Application(

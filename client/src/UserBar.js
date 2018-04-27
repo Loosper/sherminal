@@ -69,6 +69,7 @@ class UserBar extends Component {
     }
 
     render() {
+        // TODO: ContextMenuProvider has a null child
         return (
             <div className="row userbar">
                 {this.state.users}
@@ -79,7 +80,7 @@ class UserBar extends Component {
                     <ContextMenu id='user_menu' animation="fade">
                         {/* <Submenu label="Notifications">
                             {this.state.notifications}
-                        </Submenu>              
+                        </Submenu>
                         <Separator/> */}
                         <Item onClick={this.props.signOut}>Sign Out</Item>
                     </ContextMenu>

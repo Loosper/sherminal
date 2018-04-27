@@ -2,6 +2,7 @@ import json
 import asyncio
 import logging
 import re
+import os
 import uuid
 
 from tornado.web import RequestHandler
@@ -66,7 +67,8 @@ class DatabaseQuery:
 
 # NOTE: this is also register, but there is no such mechanism
 class LoginHandler(RequestHandler, DatabaseQuery):
-    def initialize(self, session):
+    def initialize(self, session, chroot_dir):
+        self.chroot_dir = chroot_dir
         self.setup_session(session)
 
     def prepare(self):
@@ -126,6 +128,12 @@ class LoginHandler(RequestHandler, DatabaseQuery):
     def write_error(self, status_code):
         # why????
         self.set_header('Access-Control-Allow-Origin', '*')
+
+
+def file_exists(chroot_dir, info, dir_type=''):
+    return os.path.exists(
+        chroot_dir + info['from'] + dir_type + info['file']
+    )
 
 
 class ActiveUsersTracker:
@@ -262,7 +270,7 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         data = self.user.json(extra={'file_path': file_path})
         other.write_message(f'["notification_file_write", {data}]')
 
-    def allow_file_write(self, file_path):
+    def allow_file_write(self, info):
         pass
 
     def allow_write(self, user):
@@ -272,17 +280,24 @@ class UserTermHandler(TermSocket, DatabaseQuery):
 
 
 class FileSendHandler(RequestHandler):
-    def initialize(self, tracker=default_tracker):
+    def initialize(self, tracker=default_tracker, chroot_dir='/'):
         self.tracker = tracker
+        self.chroot_dir = chroot_dir
 
     def post(self):
         info = json.loads(self.request.body)
         try:
-            print(info['from'])
             recipient = self.tracker.get_handler(info['from'])
         except KeyError:
             # wrong user
             self.send_error(403)
+            return
+
+        if not (
+            file_exists(self.chroot_dir, info) or
+            file_exists(self.chroot_dir, info, '_data')
+        ):
+            self.send_error(404)
             return
 
         # TODO: check if file exists

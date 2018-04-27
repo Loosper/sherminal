@@ -7,10 +7,10 @@ import os
 # TODO:?Create a wrapper that encapsulates the terminado objects with auxiliary
 # metadata like term: chroot_dir pairs
 class ChrootNamedTermManager(NamedTermManager):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, root_dir=None, **kwargs):
         super().__init__(*args, **kwargs)
         # TODO: export to config
-        self.data_path = '/tmp/users/'
+        self.data_path = root_dir
         if not os.path.isdir(self.data_path):
             os.makedirs(self.data_path)
 

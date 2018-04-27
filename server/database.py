@@ -25,7 +25,12 @@ class User(Base):
         )
 
     def json(self, extra={}):
-        data = {'host': self.username, 'avatar': self.avatar, **extra}
+        data = {
+            'host': self.username,
+            'avatar': self.avatar,
+            'administrator': self.administrator,
+            **extra
+        }
         return json.dumps(data)
 
 
