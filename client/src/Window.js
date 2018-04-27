@@ -38,8 +38,16 @@ class Window extends Component {
     signOut(e) {
         this.setState({
             loggedIn: false,
-            terminals: []
+            terminals: [],
+            layout: [],
+            opened: [],
+            terminalsRefs: []
         });
+
+        this.authToken = '';
+        this.termid = 0;
+        this.messageQueue = {};
+        this.webSocket = null;
     }
 
     getTerminal(path, isLogged) {
@@ -103,13 +111,15 @@ class Window extends Component {
         this.isAdmin = isAdmin;
         // let newLayout = this.state.layout.slice();
         // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 3});
-        this.state.opened.push(socketPath);
+        let new_opened = this.state.opened.slice();
+        new_opened.push(socketPath);
         let new_state = this.state.terminals.slice();
         new_state.push(this.getTerminal(socketPath, true));
 
         this.termid++;  
 
         this.setState({
+            opened: new_opened,
             loggedIn: true,
             terminals: new_state
         });
@@ -122,17 +132,23 @@ class Window extends Component {
         if (!this.state.opened.includes(path)) {
             let new_terminals = this.state.terminals.slice();
             new_terminals.push(this.getTerminal(path, false));
-            this.state.opened.push(path);
+            let new_opened = this.state.opened.slice();
+            new_opened.push(path);
             this.termid++;
-            this.setState({terminals: new_terminals});
+            this.setState({opened: new_opened, terminals: new_terminals});
         }
     }
 
     removeTerminal(terminalName) {
+        let newOpened = this.state.opened.slice();
         let indexOpened = this.state.opened.indexOf(terminalName);
         this.state.opened.splice(indexOpened, 1);
 
-        this.setState({loggedIn: this.state.opened.length});
+        this.setState({opened: newOpened});
+
+        if (this.state.opened.length === 0) {
+            this.signOut();
+        }
     }
 
     render() {

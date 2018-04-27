@@ -38,8 +38,9 @@ class UserBar extends Component {
 
             for (let user of users) {
                 if (user.host === self.props.thisUser) {
-                    if (self.state.thisUser == null)
+                    if (self.state.thisUser == null) {
                         self.setState({thisUser: self.makeUser(user, true)});
+                    }
                 } else {
                     user_state.push(self.makeUser(user, false));
                 }
