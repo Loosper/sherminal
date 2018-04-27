@@ -21,11 +21,22 @@ class Terminal extends Component {
         super(props);
 
         this.requestWrite = this.requestWrite.bind(this);
+        this.close = this.close.bind(this);
         this.notifications = null;
 
         this.state = {
-            hasRequested: false
+            hasRequested: false,
+            closed: false
         };
+    }
+
+    getUsername() {
+        return this.props.userName;
+    }
+
+    close() {
+        this.props.tearDown(this.props.userName);
+        this.setState({closed: true});
     }
 
     requestWrite(event) {
@@ -74,37 +85,41 @@ class Terminal extends Component {
     //  resizable?
     //  font shadows
     render() {
-        return (
-            <Draggable>
-                <div className="col-md-6 col-sm-12 terminal-col">
-                    <div className="terminal-window">
-                        <div className="col nopadding">
-                            <div className="row terminal-bar">
-                                <img
-                                    className="close-button"
-                                    src={CloseButton}
-                                    onClick={event => this.props.tearDown(this)}
-                                    alt="close-button"
-                                />
-                                <div className="col terminal-username">
-                                    {this.props.userName}
+        if (!this.state.closed) {
+            return (
+                <Draggable>
+                    <div className="col-md-6 col-sm-12 terminal-col">
+                        <div className="terminal-window">
+                            <div className="col nopadding">
+                                <div className="row terminal-bar">
+                                    <img
+                                        className="close-button"
+                                        src={CloseButton}
+                                        onClick={event => this.close()}
+                                        alt="close-button"
+                                    />
+                                    <div className="col terminal-username">
+                                        {this.props.userName}
+                                    </div>
                                 </div>
+                                <div
+                                    id={'terminal-container' + this.props.terminalId}
+                                    className='terminal-container'
+                                    onClick={this.requestWrite}
+                                />
+                                <NotificationBar
+                                    registerMessage={this.props.registerMessage}
+                                    sendMessage={this.props.sendMessage}
+                                    ref={ref => this.notifications = ref}
+                                />
                             </div>
-                            <div
-                                id={'terminal-container' + this.props.terminalId}
-                                className='terminal-container'
-                                onClick={this.requestWrite}
-                            />
-                            <NotificationBar
-                                registerMessage={this.props.registerMessage}
-                                sendMessage={this.props.sendMessage}
-                                ref={ref => this.notifications = ref}
-                            />
                         </div>
                     </div>
-                </div>
-            </Draggable>
-        );
+                </Draggable>
+            );
+        } else {
+            return null;
+        }
     }
 }
 

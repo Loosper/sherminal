@@ -23,7 +23,9 @@ class Window extends Component {
         this.state = {
             loggedIn: false,
             terminals: [],
-            layout: []
+            layout: [],
+            opened: [],
+            terminalsRefs: []
         };
         // token for tracking the user
         this.authToken = '';
@@ -55,7 +57,7 @@ class Window extends Component {
                 terminalId={this.termid}
                 isLogged={isLogged}
                 registerMessage={this.addMessageHandler}
-                fullWidth={fullWidth}
+                ref={x => this.state.terminalsRefs.push(x)}
             />
         );
     }
@@ -97,9 +99,10 @@ class Window extends Component {
 
         // let newLayout = this.state.layout.slice();
         // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 3});
+        this.state.opened.push(socketPath);
 
         let new_state = this.state.terminals.slice();
-        new_state.push(this.getTerminal(socketPath, true, true));
+        new_state.push(this.getTerminal(socketPath, true));
 
         this.termid++;  
 
@@ -113,28 +116,19 @@ class Window extends Component {
         // let newLayout = this.state.layout.slice();
         // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 1});
 
-        let fullWidth = this.state.terminals.length % 2 === 1;
-        let new_terminals = this.state.terminals.slice();
-        new_terminals.push(this.getTerminal(path, false, fullWidth));
-
-        this.termid++;
-
-        this.setState({terminals: new_terminals});
+        if (!this.state.opened.includes(path)) {
+            let new_terminals = this.state.terminals.slice();
+            new_terminals.push(this.getTerminal(path, false));
+            this.state.opened.push(path);
+            this.termid++;
+            this.setState({terminals: new_terminals});
+        }
     }
 
     // TODO: this is broken always pops the last one
-    removeTerminal(terminal) {
-        let new_state = this.state.terminals.slice();
-        let index = new_state.indexOf(terminal);
-
-        new_state.splice(index, 1);
-
-        let loggedIn = true;
-        if (new_state.length === 0) {
-            loggedIn = false;
-        }
-
-        this.setState({terminals: new_state, loggedIn: loggedIn});
+    removeTerminal(terminalName) {
+        let indexOpened = this.state.opened.indexOf(terminalName);
+        this.state.opened.splice(indexOpened, 1);
     }
 
     render() {
