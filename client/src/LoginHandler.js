@@ -74,20 +74,22 @@ class LoginHandler extends Component {
                         <div className="col-md-12" >
                             <input
                                 className="form-control" type="text"
-                                placeholder="Enter a username"
+                                placeholder="username"
                                 value={this.state.username}
                                 onChange={this.updateUsername}
                             />
                             <input
                                 className="form-control" type="text"
-                                placeholder="password if you are an admin"
+                                placeholder="password (optional)"
                                 value={this.state.password}
                                 onChange={this.updatePassword}
+                                style={{marginTop: 10}}
                             />
                         </div>
                     </div>
                     <div className="row">
-                        <button className=" btn btn-secondary" type='submit'>
+                        <div className="col"/>
+                        <button className=" btn btn-outline-secondary submit" type='submit'>
                             Sign in
                         </button>
                     </div>

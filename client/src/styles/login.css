@@ -19,7 +19,7 @@
     padding: 20px 30px;   
     box-shadow: 0 8px 50px -2px #000;
     border-radius:5px;
-    margin: 40px auto;
+    margin: 200px auto;
 }
 .logo{
     width: 130px; 
@@ -35,6 +35,10 @@
 .loginbox_content{
     padding:30px 0px;
 
+}
+
+.submit {
+    margin-right: 16px;
 }
 
 .singtext{

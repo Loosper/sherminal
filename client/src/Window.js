@@ -38,10 +38,9 @@ class Window extends Component {
     signOut(e) {
         this.setState({
             loggedIn: false,
-            terminals: [],
             layout: [],
-            opened: [],
-            terminalsRefs: []
+            terminals: [],
+            opened: []
         });
 
         this.authToken = '';
@@ -65,7 +64,6 @@ class Window extends Component {
                 isLogged={isLogged}
                 registerMessage={this.addMessageHandler}
                 getIsAdmin={this.getIsAdmin}
-                ref={x => this.state.terminalsRefs.push(x)}
             />
         );
     }
