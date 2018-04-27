@@ -3,6 +3,7 @@ from tornado.websocket import websocket_connect
 import tornado
 import requests
 import json
+import sys
 # import asyncio
 
 HOST = 'localhost:8765/'
@@ -27,17 +28,28 @@ class Tester:
     async def listen_websocket(self):
         self.conn = await self.conn
 
-        # self.loop.add_callback(self.send_message, ['', ''])
-
         while True:
             msg = await self.conn.read_message()
             if msg is None:
-                break
+                # loop.close or some shit
+                sys.exit()
 
+            msg = json.loads(msg)
             print(msg)
 
+            if msg[0] == 'setup':
+                self.loop.add_callback(
+                    self.send_message,
+                    ['request_write', self.login_info['terminal_path']]
+                )
+            # elif msg[0] == 'notification_write':
+            #     self.loop.add_callback(
+            #         self.send_message,
+            #         ['allow_write', msg[1]['host']]
+            #     )
+
     async def send_message(self, message):
-        self.conn.write_message(json.dumps(message))
+        await self.conn.write_message(json.dumps(message))
 
     def run(self):
         self.loop.add_callback(self.listen_websocket)
