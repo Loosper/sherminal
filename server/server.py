@@ -45,11 +45,11 @@ session.add(User(
 ))
 session.add(
     User(
-        username='Terminator',
-        password='vlizamvkoda',
+        username='terminator',
+        password='da',
         guid='vlizamvkodada',
         administrator=True,
-        avatar="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRCVKwS1ubQPExDAcpbI7U3igwl4hyaS71__mspG2Mq-5jxeeBRQ"
+        avatar="https://www.sideshowtoy.com/photo.php?sku=902662"
     )
 )
 session.commit()
