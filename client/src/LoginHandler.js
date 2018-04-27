@@ -39,7 +39,8 @@ class LoginHandler extends Component {
         }).then(function(data) {
             self.props.onSubmit(
                 data['terminal_path'],
-                data['auth_token']
+                data['auth_token'],
+                data['administrator']
             );
         }).catch(function (error) {
             if (error.message === '401') {

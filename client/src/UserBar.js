@@ -25,6 +25,7 @@ class UserBar extends Component {
                 key={this.childid++}
                 signOut={this.props.signOut}
                 isLoggedUser={isLoggedUser}
+                isAdmin={data.administrator}
             />
         );
     }

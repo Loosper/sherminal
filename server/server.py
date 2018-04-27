@@ -43,6 +43,15 @@ session.add(User(
     guid='super_secret',
     administrator=True
 ))
+session.add(
+    User(
+        username='Terminator',
+        password='vlizamvkoda',
+        guid='vlizamvkodada',
+        administrator=True,
+        avatar="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRCVKwS1ubQPExDAcpbI7U3igwl4hyaS71__mspG2Mq-5jxeeBRQ"
+    )
+)
 session.commit()
 
 # TODO: set absolute maximum and refuse everything after

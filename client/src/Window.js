@@ -17,7 +17,7 @@ class Window extends Component {
         this.retrieveSocket = this.retrieveSocket.bind(this);
         this.addMessageHandler = this.addMessageHandler.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
-
+        this.getIsAdmin = this.getIsAdmin.bind(this);
         this.signOut = this.signOut.bind(this);
 
         this.state = {
@@ -33,7 +33,6 @@ class Window extends Component {
         this.termid = 0;
         this.messageQueue = {};
         this.webSocket = null;
-
     }
 
     signOut(e) {
@@ -43,7 +42,7 @@ class Window extends Component {
         });
     }
 
-    getTerminal(path, isLogged, fullWidth) {
+    getTerminal(path, isLogged) {
         return (
             <Terminal
                 key={'terminal' + this.termid}
@@ -57,9 +56,14 @@ class Window extends Component {
                 terminalId={this.termid}
                 isLogged={isLogged}
                 registerMessage={this.addMessageHandler}
+                getIsAdmin={this.getIsAdmin}
                 ref={x => this.state.terminalsRefs.push(x)}
             />
         );
+    }
+
+    getIsAdmin() {
+        return this.isAdmin;
     }
 
     sendMessage(type, message) {
@@ -93,14 +97,13 @@ class Window extends Component {
         );
     }
 
-    setupClient(socketPath, authToken) {
+    setupClient(socketPath, authToken, isAdmin) {
         this.loggedUser = socketPath;
         this.authToken = authToken;
-
+        this.isAdmin = isAdmin;
         // let newLayout = this.state.layout.slice();
         // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 3});
         this.state.opened.push(socketPath);
-
         let new_state = this.state.terminals.slice();
         new_state.push(this.getTerminal(socketPath, true));
 
@@ -112,7 +115,7 @@ class Window extends Component {
         });
     }
 
-    addTerminal(path) {
+    addTerminal(path, isAdmin) {
         // let newLayout = this.state.layout.slice();
         // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 1});
 

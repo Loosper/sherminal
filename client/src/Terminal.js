@@ -43,15 +43,19 @@ class Terminal extends Component {
         if (!this.props.isLogged && !this.state.hasRequested) {
             this.setState({hasRequested: true});
 
-            let notification = this.notifications.make_notification(
-                'Request access to this terminal?',
-                () => this.props.sendMessage('request_write', this.props.userName),
-                () => this.setState({hasRequested: false}),
-                'Yes',
-                'No'
-            );
+            let isAdmin = this.props.getIsAdmin();
+            console.log(isAdmin)
+            if (!isAdmin) {
+                let notification = this.notifications.make_notification(
+                    'Request access to this terminal?',
+                    () => this.props.sendMessage('request_write', this.props.userName),
+                    () => this.setState({hasRequested: false}),
+                    'Yes',
+                    'No'
+                );
 
-            this.notifications.add_notification(notification);
+                this.notifications.add_notification(notification);
+            }
         }
     }
 
