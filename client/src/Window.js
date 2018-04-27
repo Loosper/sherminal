@@ -19,13 +19,15 @@ class Window extends Component {
         this.sendMessage = this.sendMessage.bind(this);
         this.getIsAdmin = this.getIsAdmin.bind(this);
         this.signOut = this.signOut.bind(this);
+        this.zCount = this.zCount.bind(this);
 
         this.state = {
             loggedIn: false,
             terminals: [],
             layout: [],
             opened: [],
-            terminalsRefs: []
+            terminalsRefs: [],
+            zCounter: 10
         };
         // token for tracking the user
         this.authToken = '';
@@ -40,13 +42,18 @@ class Window extends Component {
             loggedIn: false,
             layout: [],
             terminals: [],
-            opened: []
+            opened: [],
+            zCounter: 10
         });
 
         this.authToken = '';
         this.termid = 0;
         this.messageQueue = {};
         this.webSocket = null;
+    }
+
+    zCount() {
+        return this.state.zCounter++;
     }
 
     getTerminal(path, isLogged) {
@@ -64,6 +71,7 @@ class Window extends Component {
                 isLogged={isLogged}
                 registerMessage={this.addMessageHandler}
                 getIsAdmin={this.getIsAdmin}
+                zCounter={this.zCount}
             />
         );
     }

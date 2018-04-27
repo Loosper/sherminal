@@ -80,6 +80,7 @@
 
  .user {
     flex: 0 0 auto;
+    padding: 0px 7px;
  }
 
  .this-user {

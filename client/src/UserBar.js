@@ -73,6 +73,7 @@ class UserBar extends Component {
     render() {
         return (
             <div className="row userbar">
+                <div style={{paddingLeft: 7}}/>
                 {this.state.users}
                 <div className="this-user">
                     <ContextMenuProvider id="user_menu" event="onClick">

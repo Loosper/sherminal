@@ -26,7 +26,8 @@ class Terminal extends Component {
 
         this.state = {
             hasRequested: false,
-            closed: false
+            closed: false,
+            zCounter: this.props.zCounter()
         };
     }
 
@@ -92,7 +93,12 @@ class Terminal extends Component {
         if (!this.state.closed) {
             return (
                 <Draggable>
-                    <div className="col-md-6 col-sm-12 terminal-col">
+                    <div 
+                        className="col-md-6 col-sm-12 terminal-col" 
+                        ref={x => this.ref = x}
+                        style={{zIndex: this.state.zCounter}}
+                        onClick={(e) => this.setState({zCounter: this.props.zCounter()})}
+                    >
                         <div className="terminal-window">
                             <div className="col nopadding">
                                 <div className="row terminal-bar">

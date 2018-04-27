@@ -63,7 +63,7 @@ class LoginHandler extends Component {
     render() {
         return (
             <form className="container" onSubmit={this.login}>
-                <div className="col-lg-6 col-md-6 col-sm-8  loginbox">
+                <div className="col-lg-6 col-md-6 col-sm-8 loginbox">
                     <div className="row">
                         <div className="col-md-12">
                             <div className="singtext">termi.net</div>
