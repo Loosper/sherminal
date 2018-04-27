@@ -75,8 +75,8 @@ class Terminal extends Component {
     //  font shadows
     render() {
         return (
-
-                <div>
+            <Draggable>
+                <div className="col-md-6 col-sm-12 terminal-col">
                     <div className="terminal-window">
                         <div className="col nopadding">
                             <div className="row terminal-bar">
@@ -103,7 +103,7 @@ class Terminal extends Component {
                         </div>
                     </div>
                 </div>
-
+            </Draggable>
         );
     }
 }

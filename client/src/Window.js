@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import GridLayout from 'react-grid-layout';
+
 import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
 
-///import { Responsive as ResponsiveGridLayout } from 'react-grid-layout';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
@@ -42,22 +41,22 @@ class Window extends Component {
         });
     }
 
-    getTerminal(path, isLogged) {
+    getTerminal(path, isLogged, fullWidth) {
         return (
-            <div key={'terminal' + this.termid}>
-                <Terminal
-                    userName={path}
-                    socketURL={path}
-                    authToken={this.authToken}
-                    tearDown={this.removeTerminal}
-                    setSocket={this.retrieveSocket}
-                    sendMessage={this.sendMessage}
-                    requestWrite={this.requestWrite}
-                    terminalId={this.termid}
-                    isLogged={isLogged}
-                    registerMessage={this.addMessageHandler}
-                />
-            </div>
+            <Terminal
+                key={'terminal' + this.termid}
+                userName={path}
+                socketURL={path}
+                authToken={this.authToken}
+                tearDown={this.removeTerminal}
+                setSocket={this.retrieveSocket}
+                sendMessage={this.sendMessage}
+                requestWrite={this.requestWrite}
+                terminalId={this.termid}
+                isLogged={isLogged}
+                registerMessage={this.addMessageHandler}
+                fullWidth={fullWidth}
+            />
         );
     }
 
@@ -96,31 +95,31 @@ class Window extends Component {
         this.loggedUser = socketPath;
         this.authToken = authToken;
 
-        let newLayout = this.state.layout.slice();
-        newLayout.push({i: 'terminal' + this.termid, x: 4, y: 0, w: 1, h: 2});
+        // let newLayout = this.state.layout.slice();
+        // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 3});
 
         let new_state = this.state.terminals.slice();
-        new_state.push(this.getTerminal(socketPath, true));
+        new_state.push(this.getTerminal(socketPath, true, true));
 
         this.termid++;  
 
         this.setState({
             loggedIn: true,
-            layout: newLayout,
             terminals: new_state
         });
     }
 
     addTerminal(path) {
-        let newLayout = this.state.layout.slice();
-        newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 1, h: 1});
+        // let newLayout = this.state.layout.slice();
+        // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 1});
 
+        let fullWidth = this.state.terminals.length % 2 === 1;
         let new_terminals = this.state.terminals.slice();
-        new_terminals.push(this.getTerminal(path, false));
+        new_terminals.push(this.getTerminal(path, false, fullWidth));
 
         this.termid++;
 
-        this.setState({terminals: new_terminals, layout: newLayout});
+        this.setState({terminals: new_terminals});
     }
 
     // TODO: this is broken always pops the last one
@@ -151,13 +150,9 @@ class Window extends Component {
                             thisUser={this.loggedUser}
                             signOut={this.signOut}
                         />
-                        <GridLayout className="layout" layout={this.state.layout}
-                            cols={2} rowHeight={600} width={1200}>
+                        <div className="row terminal-row">
                             {this.state.terminals}
-                        </GridLayout>
-                        {/* <div className="row terminal-row">
-                            {this.state.terminals}
-                        </div> */}
+                        </div>
                     </div>
                 </div>
             );
