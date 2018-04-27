@@ -34,7 +34,6 @@ class LoginHandler extends Component {
             if (response.status !== 200) {
                 throw new Error(response.status);
             }
-
             return response.json();
         }).then(function(data) {
             self.props.onSubmit(
@@ -67,7 +66,7 @@ class LoginHandler extends Component {
                 <div className="col-lg-6 col-md-6 col-sm-8  loginbox">
                     <div className="row">
                         <div className="col-md-12">
-                            <div className="singtext">terminet</div>
+                            <div className="singtext">termi.net</div>
                         </div>
 
                     </div>
@@ -75,7 +74,7 @@ class LoginHandler extends Component {
                         <div className="col-md-12" >
                             <input
                                 className="form-control" type="text"
-                                placeholder="User name"
+                                placeholder="Enter a username"
                                 value={this.state.username}
                                 onChange={this.updateUsername}
                             />

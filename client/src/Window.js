@@ -128,10 +128,11 @@ class Window extends Component {
         }
     }
 
-    // TODO: this is broken always pops the last one
     removeTerminal(terminalName) {
         let indexOpened = this.state.opened.indexOf(terminalName);
         this.state.opened.splice(indexOpened, 1);
+
+        this.setState({loggedIn: this.state.opened.length});
     }
 
     render() {
