@@ -13,7 +13,7 @@ if len(sys.argv) < 3:
 
 file_path = os.path.abspath(sys.argv[1])
 if not os.path.exists(file_path):
-    print('Wrong path: ' + sys.argv[1])
+    print('Wrong file path: ' + sys.argv[1])
     sys.exit()
 
 response = requests.post(f'http://localhost:{SERVER_PORT}/send', json={
@@ -28,4 +28,4 @@ if response.status_code == 200:
 elif response.status_code == 403:
     print(f'No such user: {sys.argv[2]}')
 elif response.status_code == 404:
-    print(f'Wrong file path: {sys.argv[1]}')
+    print(f'Wrong file path: {sys.argv[1]} (404)')

@@ -51,15 +51,13 @@ class NotificationBar extends Component {
     }
 
     notification_file_write(data) {
-        console.log(data);
-
         let notification = this.make_notification(
-            'User ' + data['host'] + ' wants to send you ' + data['file'],
+            'User ' + data['from'] + ' wants to send you ' + data['from'],
             () => this.respond(
                 'allow_file_write',
-                {from: data['host'], file: data['file']}
+                data
             ),
-            () => this.respond('deny_file_write', data['host']),
+            () => this.respond('deny_file_write', data['from']),
             'Accept',
             'Deny'
         );
@@ -73,6 +71,7 @@ class NotificationBar extends Component {
     }
 
     componentDidMount() {
+        // TODO: skip this if not the first terminal
         this.props.registerMessage(
             'notification_write',
             this.notification_write

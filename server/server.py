@@ -41,7 +41,8 @@ session.add(User(
     username='loosper',
     password='hello',
     guid='super_secret',
-    administrator=True
+    administrator=True,
+    avatar='https://api.adorable.io/avatars/123'
 ))
 session.add(
     User(

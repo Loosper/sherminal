@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from tornado.websocket import websocket_connect
 
 import tornado

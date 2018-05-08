@@ -4,6 +4,7 @@ import logging
 import re
 import os
 import uuid
+import shutil
 
 from tornado.web import RequestHandler
 from terminado import TermSocket
@@ -129,10 +130,9 @@ class LoginHandler(RequestHandler, DatabaseQuery):
         self.set_header('Access-Control-Allow-Origin', '*')
 
 
-def file_exists(chroot_dir, info, dir_type=''):
-    return os.path.exists(
-        chroot_dir + info['from'] + dir_type + info['file']
-    )
+def file_exists(chroot_dir, user, file_path, dir_type=''):
+    path = chroot_dir + user + dir_type + file_path
+    return path if os.path.exists(path) else ''
 
 
 class ActiveUsersTracker:
@@ -179,7 +179,10 @@ default_tracker = ActiveUsersTracker()
 
 
 class UserTermHandler(TermSocket, DatabaseQuery):
-    def initialize(self, session, term_manager, chroot_dir, tracker=default_tracker):
+    def initialize(
+        self, session, term_manager,
+        chroot_dir, tracker=default_tracker
+    ):
         self.setup_session(session)
         self.tracker = tracker
         self.chroot_dir = chroot_dir
@@ -254,7 +257,11 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         if self.is_host:
             self.tracker.deregister(self)
         else:
-            self.tracker.deregister_guest(self, self.owner.username)
+            try:
+                self.tracker.deregister_guest(self, self.owner.username)
+            except KeyError:
+                # owner is dead, go ahead
+                pass
         super().on_close()
 
     # we serve the client from a different place
@@ -265,16 +272,36 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         other = self.tracker.get_handler(user)
         other.write_message(f'["notification_write", {self.user.json()}]')
 
-    def request_file_write(self, user, file_path):
-        other = self.tracker.get_handler(user)
-        data = self.user.json(extra={'file_path': file_path})
+    def request_file_write(self, dest_user, file_path):
+        print(dest_user)
+        other = self.tracker.get_handler(dest_user)
+        # that's the from part
+        data = json.dumps({'from': self.user.username, 'file': file_path})
+        # notify HIM, that a file is sent by ME
         other.write_message(f'["notification_file_write", {data}]')
 
     def allow_file_write(self, info):
-        pass
+        # we get the other user in 'from' and his file
+        my_path = self.chroot_dir + self.user.username +\
+            '_data' + info['file']
+
+        his_path = file_exists(
+            self.chroot_dir, info['from'], info['file']
+        )
+        his_base_path = file_exists(
+            self.chroot_dir, info['from'], info['file'], '_data'
+        )
+
+        print((his_path if his_path else his_base_path) + '|' + my_path)
+
+        shutil.copyfile(his_path if his_path else his_base_path, my_path)
+        shutil.copymode(his_path if his_path else his_base_path, my_path)
+
+        # TODO: success msg
 
     def allow_write(self, user):
         # Logger.warning('this just in: ' + user)
+        print(user)
         other = self.tracker.get_guest_handler(self.user.username, user)
         other.read_only = False
 
@@ -287,21 +314,22 @@ class FileSendHandler(RequestHandler):
     def post(self):
         info = json.loads(self.request.body)
         try:
-            recipient = self.tracker.get_handler(info['from'])
+            host = self.tracker.get_handler(info['from'])
         except KeyError:
             # wrong user
             self.send_error(403)
             return
 
-        if not (
-            file_exists(self.chroot_dir, info) or
-            file_exists(self.chroot_dir, info, '_data')
-        ):
+        if not (file_exists(
+            self.chroot_dir, info['from'], info['file']
+        ) or file_exists(
+            self.chroot_dir, info['from'], info['file'], '_data'
+        )):
             self.send_error(404)
             return
 
         # TODO: check if file exists
-        recipient.request_file_write(info['to'], info['file'])
+        host.request_file_write(info['to'], info['file'])
 
     def write_error(self, code, **kwargs):
         if code == 500:
