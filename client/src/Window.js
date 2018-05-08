@@ -37,6 +37,8 @@ class Window extends Component {
         this.webSocket = null;
     }
 
+    // TODO: this is called when the last terminal is closed. This means
+    // there is an inconsitency somwehere so FIXME
     signOut(e) {
         this.setState({
             loggedIn: false,
@@ -122,7 +124,7 @@ class Window extends Component {
         let new_state = this.state.terminals.slice();
         new_state.push(this.getTerminal(socketPath, true));
 
-        this.termid++;  
+        this.termid++;
 
         this.setState({
             opened: new_opened,
@@ -147,10 +149,13 @@ class Window extends Component {
 
     removeTerminal(terminalName) {
         let newOpened = this.state.opened.slice();
+        let new_terminals = this.state.terminals.slice();
         let indexOpened = this.state.opened.indexOf(terminalName);
-        this.state.opened.splice(indexOpened, 1);
 
-        this.setState({opened: newOpened});
+        new_terminals.splice(indexOpened, 1);
+        newOpened.splice(indexOpened, 1);
+
+        this.setState({opened: newOpened, termials: new_terminals});
 
         if (this.state.opened.length === 0) {
             this.signOut();

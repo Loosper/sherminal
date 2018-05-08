@@ -79,7 +79,7 @@ class LoginHandler extends Component {
                                 onChange={this.updateUsername}
                             />
                             <input
-                                className="form-control" type="text"
+                                className="form-control" type="password"
                                 placeholder="password (optional)"
                                 value={this.state.password}
                                 onChange={this.updatePassword}

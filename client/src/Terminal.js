@@ -35,7 +35,7 @@ class Terminal extends Component {
         return this.props.userName;
     }
 
-    close() {
+    close(e) {
         this.props.tearDown(this.props.userName);
         this.setState({closed: true});
     }
@@ -93,8 +93,8 @@ class Terminal extends Component {
         if (!this.state.closed) {
             return (
                 <Draggable>
-                    <div 
-                        className="col-md-6 col-sm-12 terminal-col" 
+                    <div
+                        className="col-md-6 col-sm-12 terminal-col"
                         ref={x => this.ref = x}
                         style={{zIndex: this.state.zCounter}}
                         onClick={(e) => this.setState({zCounter: this.props.zCounter()})}
