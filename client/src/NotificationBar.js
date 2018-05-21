@@ -17,6 +17,7 @@ class NotificationBar extends Component {
         this.state = {
             notifications: []
         };
+        
         this.id = 0;
     }
 
@@ -72,14 +73,16 @@ class NotificationBar extends Component {
 
     componentDidMount() {
         // TODO: skip this if not the first terminal
-        this.props.registerMessage(
-            'notification_write',
-            this.notification_write
-        );
-        this.props.registerMessage(
-            'notification_file_write',
-            this.notification_file_write
-        );
+        if (this.props.isLogged) {
+            this.props.registerMessage(
+                'notification_write',
+                this.notification_write
+            );
+            this.props.registerMessage(
+                'notification_file_write',
+                this.notification_file_write
+            );
+        }
     }
 
     render() {

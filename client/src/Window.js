@@ -24,9 +24,7 @@ class Window extends Component {
         this.state = {
             loggedIn: false,
             terminals: [],
-            layout: [],
             opened: [],
-            terminalsRefs: [],
             zCounter: 10
         };
         // token for tracking the user
@@ -55,7 +53,7 @@ class Window extends Component {
     }
 
     zCount() {
-        return this.state.zCounter++;
+        this.setState({zCounter: this.state.zCounter + 1});
     }
 
     getTerminal(path, isLogged) {
@@ -68,7 +66,6 @@ class Window extends Component {
                 tearDown={this.removeTerminal}
                 setSocket={this.retrieveSocket}
                 sendMessage={this.sendMessage}
-                requestWrite={this.requestWrite}
                 terminalId={this.termid}
                 isLogged={isLogged}
                 registerMessage={this.addMessageHandler}

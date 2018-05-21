@@ -65,7 +65,7 @@ class Terminal extends Component {
         this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
         this.xterm.setOption('allowTransparency', true);
         // still broken
-        // this.xterm.fit();
+        this.xterm.fit();
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
@@ -75,20 +75,13 @@ class Terminal extends Component {
         this.xterm.terminadoAttach(this.socket);
     }
 
-    // TODO: decide whether this should close the socket
     componentWillUnmount() {
-        // REVIEW: IMO doesn't make any difference; TODO: test if it's done
-        // in some extension
-        // this.socket.close();
-        // this might be unnecessary
+        this.socket.close();
         this.xterm.destroy();
     }
 
     // TODO:
-    //  fix z-index
-    //  introduce grid system
-    //  resizable?
-    //  font shadows
+    //  grid system
     render() {
         if (!this.state.closed) {
             return (
@@ -121,6 +114,7 @@ class Terminal extends Component {
                                     registerMessage={this.props.registerMessage}
                                     sendMessage={this.props.sendMessage}
                                     ref={ref => this.notifications = ref}
+                                    isLogged={this.props.isLogged}
                                 />
                             </div>
                         </div>
