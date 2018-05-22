@@ -15,3 +15,5 @@ __pycache__/
 
 # vscode garbage
 .vscode
+
+.eslintrc.js
