@@ -22,12 +22,16 @@ class Terminal extends Component {
 
         this.requestWrite = this.requestWrite.bind(this);
         this.close = this.close.bind(this);
+        this.onDrag = this.onDrag.bind(this);
+        this.onDrop = this.onDrop.bind(this);
+        this.onResize = this.onResize.bind(this);
         this.notifications = null;
 
         this.state = {
             hasRequested: false,
             closed: false,
-            zCounter: this.props.zCounter()
+            zCounter: this.props.zCounter(),
+            isTouchingTerminal: false
         };
     }
 
@@ -60,12 +64,24 @@ class Terminal extends Component {
         }
     }
 
+    onDrag(e) {
+        this.setState({isTouchingTerminal: true});
+    }
+
+    onDrop(e) {
+        this.setState({isTouchingTerminal: false});
+    }
+
+    onResize(e) {
+        this.xterm.fit();
+    }
+
     componentDidMount() {
         this.xterm = new Xterm();
         this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
         this.xterm.setOption('allowTransparency', true);
         // still broken
-        this.xterm.fit();
+        window.addEventListener("resize", this.onResize);
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
@@ -78,14 +94,18 @@ class Terminal extends Component {
     componentWillUnmount() {
         this.socket.close();
         this.xterm.destroy();
+        window.removeEventListener("resize", this.onResize);
     }
 
     // TODO:
     //  grid system
+    //  selecting text gets fucked when dragged
+    //  find a way to overflow nicely
+    //  animations
     render() {
         if (!this.state.closed) {
             return (
-                <Draggable>
+                <Draggable disabled={this.state.isTouchingTerminal}>
                     <div
                         className="col-md-6 col-sm-12 terminal-col"
                         ref={x => this.ref = x}
@@ -109,6 +129,8 @@ class Terminal extends Component {
                                     id={'terminal-container' + this.props.terminalId}
                                     className='terminal-container'
                                     onClick={this.requestWrite}
+                                    onMouseOver={this.onDrag}
+                                    onMouseOut={this.onDrop}
                                 />
                                 <NotificationBar
                                     registerMessage={this.props.registerMessage}
