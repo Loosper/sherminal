@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import NotificationBar from './NotificationBar';
-import { fadeIn, fadeOut } from 'react-animations';
+// import { fadeIn, fadeOut } from 'react-animations';
 
 import 'xterm/dist/xterm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,8 +14,6 @@ Xterm.applyAddon(terminado);
 Xterm.applyAddon(fit);
 
 const CloseButton = require('./images/close-button.png');
-const Draggable = require('react-draggable');
-
 
 class Terminal extends Component {
     constructor(props) {
@@ -109,8 +107,7 @@ class Terminal extends Component {
     }
 
     // TODO:
-    //  selecting text gets fucked when dragged
-    //  find a way to overflow nicely
+    //  selecting text gets fucked when dragged ONLY CHROME :O
     //  animations
     render() {
         if (!this.state.closed) {
@@ -125,30 +122,28 @@ class Terminal extends Component {
                     onTouchEnd={this.props.onTouchEnd}
                     onClick={(e) => this.setState({zCounter: this.props.zCounter()})}
                 >
-                    <div className="terminal-wrapper">
-                        <div className="terminal-bar">
-                            <img
-                                className="close-button"
-                                src={CloseButton}
-                                onClick={event => this.close()}
-                                alt="close-button"
-                            />
-                            {this.props.userName}
-                        </div>
-                        <div
-                            id={'terminal-container' + this.props.terminalId}
-                            className='terminal-container'
-                            onClick={this.requestWrite}
-                            onMouseOver={this.onDrag}
-                            onMouseOut={this.onDrop}
+                    <div className="terminal-bar">
+                        <img
+                            className="close-button"
+                            src={CloseButton}
+                            onClick={event => this.close()}
+                            alt="close-button"
                         />
-                        <NotificationBar
-                            registerMessage={this.props.registerMessage}
-                            sendMessage={this.props.sendMessage}
-                            ref={ref => this.notifications = ref}
-                            isLogged={this.props.isLogged}
-                        />
+                        {this.props.userName}
                     </div>
+                    <div
+                        id={'terminal-container' + this.props.terminalId}
+                        className='terminal-container'
+                        onClick={this.requestWrite}
+                        onMouseOver={this.onDrag}
+                        onMouseOut={this.onDrop}
+                    />
+                    <NotificationBar
+                        registerMessage={this.props.registerMessage}
+                        sendMessage={this.props.sendMessage}
+                        ref={ref => this.notifications = ref}
+                        isLogged={this.props.isLogged}
+                    />
                 </div>
             );
         } else {

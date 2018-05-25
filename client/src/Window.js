@@ -24,43 +24,36 @@ class Window extends Component {
         this.getIsAdmin = this.getIsAdmin.bind(this);
         this.signOut = this.signOut.bind(this);
         this.zCount = this.zCount.bind(this);
-        this.addLayout = this.addLayout.bind(this);
+        this.getLayout = this.getLayout.bind(this);
 
         this.state = {
             loggedIn: false,
             terminals: [],
             opened: [],
             zCounter: 10,
-            xCounter: 0,
-            yCounter: 0
+            layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]}
         };
-        // token for tracking the user
+
         this.authToken = '';
-        // this is bad but works
         this.termid = 0;
         this.messageQueue = {};
         this.webSocket = null;
 
-        this.layouts = {
-            lg: [],
-            md: [],
-            sm: [],
-            xs: []
-        };
-
-        this.cols = {lg: 12, md: 10, sm: 6, xs: 4};
+        this.cols = {lg: 12, md: 10, sm: 6, xs: 4, xxs: 1};
+        this.breakpoints = {lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0};
     }
 
-    //paste again
     signOut(e) {
-        this.setState({
-            loggedIn: false,
-            layout: [],
-            terminals: [],
-            opened: [],
-            zCounter: 10
-        });
-
+        this.setState(
+            {
+                loggedIn: false,
+                terminals: [],
+                opened: [],
+                zCounter: 10,
+                layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]}
+            }
+        );
+        // token for tracking the user
         this.authToken = '';
         this.termid = 0;
         this.messageQueue = {};
@@ -72,48 +65,41 @@ class Window extends Component {
         return this.state.zCounter;
     }
 
+    makeLayout(cols, index) { 
+        const height = 3;
+        const size = this.state.opened.length;
+
+        let layout = {};
+        
+        if (index) {
+            layout.i = 'terminal' + this.termid;
+        }
+
+        layout.x = size * cols;
+        layout.y = parseInt(size / 2, 10);
+        layout.w = cols >= 6 ? cols / 2 : cols;
+        layout.h = height;
+
+        return layout;
+    }
+
+    getLayout() {
+        for (let key in this.breakpoints) {
+            if (window.innerWidth > this.breakpoints[key]) {
+                return this.makeLayout(this.cols[key], false);
+            }
+        }
+    }
+
     addLayout() {
-        const h = 3;
+        let newLayouts = {};
 
-        this.layouts.lg.push(
-            {
-                i: 'terminal' + this.termid,
-                x: this.layouts.lg.length * this.cols.lg, 
-                y: parseInt(this.layouts.lg.length / 2), 
-                w: this.cols.lg / 2, 
-                h: h
-            }
-        );
+        for (let key in this.cols) {
+            newLayouts[key] = this.state.layouts[key].slice();
+            newLayouts[key].push(this.makeLayout(this.cols[key], true));
+        }
 
-        this.layouts.md.push(
-            {
-                i: 'terminal' + this.termid,
-                x: this.layouts.md.length * this.cols.md, 
-                y: parseInt(this.layouts.md.length / 2), 
-                w: this.cols.md / 2, 
-                h: h
-            }
-        );
-
-        this.layouts.sm.push(
-            {
-                i: 'terminal' + this.termid,
-                x: this.layouts.sm.length * this.cols.sm, 
-                y: parseInt(this.layouts.sm.length / 2), 
-                w: this.cols.sm, 
-                h: h
-            }
-        );
-
-        this.layouts.xs.push(
-            {
-                i: 'terminal' + this.termid,
-                x: this.layouts.xs.length * this.cols.xs, 
-                y: parseInt(this.layouts.xs.length / 2), 
-                w: this.cols.xs, 
-                h: h
-            }
-        );
+        this.setState({layouts: newLayouts});
     }
 
     getTerminal(path, isLogged) {
@@ -132,6 +118,7 @@ class Window extends Component {
                 registerMessage={this.addMessageHandler}
                 getIsAdmin={this.getIsAdmin}
                 zCounter={this.zCount}
+                data-grid={this.getLayout()}
             />
         );
     }
@@ -229,9 +216,12 @@ class Window extends Component {
                             thisUser={this.loggedUser}
                             signOut={this.signOut}
                         />
-                        <ResponsiveGridLayout className="layout" layouts={this.layouts}
-                            breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480}}
+                        <ResponsiveGridLayout 
+                            className="layout" 
+                            breakpoints={this.breakpoints}
                             cols={this.cols}
+                            containerPadding={[0, 0]}
+                            layouts={this.state.layouts}
                         >
                             {this.state.terminals}
                         </ResponsiveGridLayout>
