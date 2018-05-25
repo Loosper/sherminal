@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NotificationBar from './NotificationBar';
+import { fadeIn, fadeOut } from 'react-animations';
 
 import 'xterm/dist/xterm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -33,6 +34,15 @@ class Terminal extends Component {
             zCounter: this.props.zCounter(),
             isTouchingTerminal: false
         };
+
+        this.styles = {
+            fadeIn: {
+                animationName: 'fadeIn',
+                animationDuration: '1s'
+            }
+        };
+
+        this.props.style.zIndex = this.state.zCounter;
     }
 
     getUsername() {
@@ -49,7 +59,7 @@ class Terminal extends Component {
             this.setState({hasRequested: true});
 
             let isAdmin = this.props.getIsAdmin();
-            console.log(isAdmin)
+
             if (!isAdmin) {
                 let notification = this.notifications.make_notification(
                     'Request access to this terminal?',
@@ -81,6 +91,7 @@ class Terminal extends Component {
         this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
         this.xterm.setOption('allowTransparency', true);
         // still broken
+        this.xterm.fit();
         window.addEventListener("resize", this.onResize);
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
@@ -98,50 +109,47 @@ class Terminal extends Component {
     }
 
     // TODO:
-    //  grid system
     //  selecting text gets fucked when dragged
     //  find a way to overflow nicely
     //  animations
     render() {
         if (!this.state.closed) {
             return (
-                <Draggable disabled={this.state.isTouchingTerminal}>
-                    <div
-                        className="col-md-6 col-sm-12 terminal-col"
-                        ref={x => this.ref = x}
-                        style={{zIndex: this.state.zCounter}}
-                        onClick={(e) => this.setState({zCounter: this.props.zCounter()})}
-                    >
-                        <div className="terminal-window">
-                            <div className="col nopadding">
-                                <div className="row terminal-bar">
-                                    <img
-                                        className="close-button"
-                                        src={CloseButton}
-                                        onClick={event => this.close()}
-                                        alt="close-button"
-                                    />
-                                    <div className="col terminal-username">
-                                        {this.props.userName}
-                                    </div>
-                                </div>
-                                <div
-                                    id={'terminal-container' + this.props.terminalId}
-                                    className='terminal-container'
-                                    onClick={this.requestWrite}
-                                    onMouseOver={this.onDrag}
-                                    onMouseOut={this.onDrop}
-                                />
-                                <NotificationBar
-                                    registerMessage={this.props.registerMessage}
-                                    sendMessage={this.props.sendMessage}
-                                    ref={ref => this.notifications = ref}
-                                    isLogged={this.props.isLogged}
-                                />
-                            </div>
+                <div
+                    key={this.props.key} 
+                    className={this.props.className + ' terminal-window'} 
+                    style={this.props.style}
+                    onMouseDown={this.props.onMouseDown}
+                    onMouseUp={this.props.onMouseUp}
+                    onTouchStart={this.props.onTouchStart}
+                    onTouchEnd={this.props.onTouchEnd}
+                    onClick={(e) => this.setState({zCounter: this.props.zCounter()})}
+                >
+                    <div className="terminal-wrapper">
+                        <div className="terminal-bar">
+                            <img
+                                className="close-button"
+                                src={CloseButton}
+                                onClick={event => this.close()}
+                                alt="close-button"
+                            />
+                            {this.props.userName}
                         </div>
+                        <div
+                            id={'terminal-container' + this.props.terminalId}
+                            className='terminal-container'
+                            onClick={this.requestWrite}
+                            onMouseOver={this.onDrag}
+                            onMouseOut={this.onDrop}
+                        />
+                        <NotificationBar
+                            registerMessage={this.props.registerMessage}
+                            sendMessage={this.props.sendMessage}
+                            ref={ref => this.notifications = ref}
+                            isLogged={this.props.isLogged}
+                        />
                     </div>
-                </Draggable>
+                </div>
             );
         } else {
             return null;

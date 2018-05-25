@@ -3,10 +3,14 @@ import React, { Component } from 'react';
 import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 
-
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 class Window extends Component {
     constructor(props) {
@@ -20,12 +24,15 @@ class Window extends Component {
         this.getIsAdmin = this.getIsAdmin.bind(this);
         this.signOut = this.signOut.bind(this);
         this.zCount = this.zCount.bind(this);
+        this.addLayout = this.addLayout.bind(this);
 
         this.state = {
             loggedIn: false,
             terminals: [],
             opened: [],
-            zCounter: 10
+            zCounter: 10,
+            xCounter: 0,
+            yCounter: 0
         };
         // token for tracking the user
         this.authToken = '';
@@ -33,10 +40,18 @@ class Window extends Component {
         this.termid = 0;
         this.messageQueue = {};
         this.webSocket = null;
+
+        this.layouts = {
+            lg: [],
+            md: [],
+            sm: [],
+            xs: []
+        };
+
+        this.cols = {lg: 12, md: 10, sm: 6, xs: 4};
     }
 
-    // TODO: this is called when the last terminal is closed. This means
-    // there is an inconsitency somwehere so FIXME
+    //paste again
     signOut(e) {
         this.setState({
             loggedIn: false,
@@ -54,9 +69,55 @@ class Window extends Component {
 
     zCount() {
         this.setState({zCounter: this.state.zCounter + 1});
+        return this.state.zCounter;
+    }
+
+    addLayout() {
+        const h = 3;
+
+        this.layouts.lg.push(
+            {
+                i: 'terminal' + this.termid,
+                x: this.layouts.lg.length * this.cols.lg, 
+                y: parseInt(this.layouts.lg.length / 2), 
+                w: this.cols.lg / 2, 
+                h: h
+            }
+        );
+
+        this.layouts.md.push(
+            {
+                i: 'terminal' + this.termid,
+                x: this.layouts.md.length * this.cols.md, 
+                y: parseInt(this.layouts.md.length / 2), 
+                w: this.cols.md / 2, 
+                h: h
+            }
+        );
+
+        this.layouts.sm.push(
+            {
+                i: 'terminal' + this.termid,
+                x: this.layouts.sm.length * this.cols.sm, 
+                y: parseInt(this.layouts.sm.length / 2), 
+                w: this.cols.sm, 
+                h: h
+            }
+        );
+
+        this.layouts.xs.push(
+            {
+                i: 'terminal' + this.termid,
+                x: this.layouts.xs.length * this.cols.xs, 
+                y: parseInt(this.layouts.xs.length / 2), 
+                w: this.cols.xs, 
+                h: h
+            }
+        );
     }
 
     getTerminal(path, isLogged) {
+        this.addLayout();
         return (
             <Terminal
                 key={'terminal' + this.termid}
@@ -114,8 +175,7 @@ class Window extends Component {
         this.loggedUser = socketPath;
         this.authToken = authToken;
         this.isAdmin = isAdmin;
-        // let newLayout = this.state.layout.slice();
-        // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 3});
+
         let new_opened = this.state.opened.slice();
         new_opened.push(socketPath);
         let new_state = this.state.terminals.slice();
@@ -131,9 +191,6 @@ class Window extends Component {
     }
 
     addTerminal(path, isAdmin) {
-        // let newLayout = this.state.layout.slice();
-        // newLayout.push({i: 'terminal' + this.termid, x: 0, y: 0, w: 2, h: 1});
-
         if (!this.state.opened.includes(path)) {
             let new_terminals = this.state.terminals.slice();
             new_terminals.push(this.getTerminal(path, false));
@@ -172,9 +229,12 @@ class Window extends Component {
                             thisUser={this.loggedUser}
                             signOut={this.signOut}
                         />
-                        <div className="row terminal-row">
+                        <ResponsiveGridLayout className="layout" layouts={this.layouts}
+                            breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480}}
+                            cols={this.cols}
+                        >
                             {this.state.terminals}
-                        </div>
+                        </ResponsiveGridLayout>
                     </div>
                 </div>
             );

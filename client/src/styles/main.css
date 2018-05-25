@@ -1,21 +1,20 @@
  .terminal-window {
     box-shadow: 0 8px 35px -8px #000;
     border-radius: 8px;
-    margin: 7px auto;
     overflow: hidden;
     border-top: 1px solid #dee2e6 !important;
     border-color: #fff !important;
-    min-height: 98%;
  }
 
  .terminal-bar {
      /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7db9e8+0,dfe1df+0,c1c0c2+81 */
     background: #7db9e8; /* Old browsers */
     background: -moz-linear-gradient(top, #7db9e8 0%, #dfe1df 0%, #c1c0c2 81%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top, #7db9e8 0%,#dfe1df 0%,#c1c0c2 81%); /* Chrome10-25,Safari5.1-6 */
+    background: -webkit-linear-gradient(top, #4c799b 0%,#dfe1df 0%,#c1c0c2 81%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to bottom, #7db9e8 0%,#dfe1df 0%,#c1c0c2 81%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7db9e8', endColorstr='#c1c0c2',GradientType=0 ); /* IE6-9 */
 
+    flex: 0 0 100%;
     height: 26px;
     text-align: center !important;
     border-bottom: 1px solid #6c757d !important;
@@ -37,15 +36,22 @@
 
  .terminal-container {
      opacity: 0.8;
-     /* height: 600px; */
-     margin-bottom: -7px;
+     min-height: 100%;
+     flex: 1;
+ }
+
+ .terminal-wrapper {
+     display: flex;
+     min-height: 100%;
+     flex-direction: column;
  }
 
  .close-button {
     width: auto;
     height: 11px;
     margin: 6px;
-    padding-left: 15px; 
+    left: 0;
+    position: absolute;
  }
 
  .avatar {
@@ -125,7 +131,7 @@
     background: transparent; /* optional: just make scrollbar invisible */
 }
 
-.react-grid-layout {
+/* .react-grid-layout {
     position: relative;
     transition: height 200ms ease;
 }
@@ -171,4 +177,4 @@
     background-origin: content-box;
     box-sizing: border-box;
     cursor: se-resize;
-}
+} */
