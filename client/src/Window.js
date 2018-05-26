@@ -25,6 +25,8 @@ class Window extends Component {
         this.signOut = this.signOut.bind(this);
         this.zCount = this.zCount.bind(this);
         this.getLayout = this.getLayout.bind(this);
+        this.addLayout = this.addLayout.bind(this);
+        this.makeLayout = this.makeLayout.bind(this);
 
         this.state = {
             loggedIn: false,
@@ -75,11 +77,16 @@ class Window extends Component {
             layout.i = 'terminal' + this.termid;
         }
 
-        layout.x = size * cols;
-        layout.y = parseInt(size / 2, 10);
-        layout.w = cols >= 6 ? cols / 2 : cols;
+        layout.w = cols >= this.cols.sm ? cols / 2 : cols;
         layout.h = height;
 
+        layout.x = size % 2 === 0 ? 0: layout.w;
+        layout.y = parseInt(size / 2, 10) * height;
+
+        layout.minW = cols > this.cols.xs ? 3 : cols;
+        layout.minH = 2;
+        layout.maxH = 4;
+        
         return layout;
     }
 
@@ -181,8 +188,10 @@ class Window extends Component {
         if (!this.state.opened.includes(path)) {
             let new_terminals = this.state.terminals.slice();
             new_terminals.push(this.getTerminal(path, false));
+
             let new_opened = this.state.opened.slice();
             new_opened.push(path);
+            
             this.termid++;
             this.setState({opened: new_opened, terminals: new_terminals});
         }
@@ -208,24 +217,24 @@ class Window extends Component {
             return (<LoginHandler onSubmit={this.setupClient}/>);
         } else {
             return (
-                <div className="container-fluid">
-                    <div className="content-wraper">
-                        <UserBar
-                            registerMessage={this.addMessageHandler}
-                            terminal_factory={this.addTerminal}
-                            thisUser={this.loggedUser}
-                            signOut={this.signOut}
-                        />
-                        <ResponsiveGridLayout 
-                            className="layout" 
-                            breakpoints={this.breakpoints}
-                            cols={this.cols}
-                            containerPadding={[0, 0]}
-                            layouts={this.state.layouts}
-                        >
-                            {this.state.terminals}
-                        </ResponsiveGridLayout>
-                    </div>
+                <div className="content-wraper">
+                    <UserBar
+                        registerMessage={this.addMessageHandler}
+                        terminal_factory={this.addTerminal}
+                        thisUser={this.loggedUser}
+                        signOut={this.signOut}
+                    />
+                    <ResponsiveGridLayout 
+                        className="layout" 
+                        breakpoints={this.breakpoints}
+                        cols={this.cols}
+                        containerPadding={[0, 0]}
+                        layouts={this.state.layouts}
+                        draggableCancel='.terminal-container'
+                        compactType='horizontal'
+                    >
+                        {this.state.terminals}
+                    </ResponsiveGridLayout>
                 </div>
             );
         }

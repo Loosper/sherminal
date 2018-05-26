@@ -79,7 +79,7 @@
 }
 
  .content-wraper {
-    margin: 0px 60px;
+    margin: 0px 70px;
  }
 
  .notification {
@@ -108,11 +108,29 @@
  }
 
  .react-grid-placeholder {
-     background: whitesmoke !important;
+     background: rgba(240, 240, 240) !important;
      border-radius: 8px;
-     border: 1px solid gainsboro;
+     border: 1px solid silver;
      opacity: 0.4 !important;
-     box-shadow: 0 8px 35px -8px dimgray;
+     box-shadow: 0 8px 35px -10px dimgray;
+     z-index: 1 !important;
+ }
+
+ .react-grid-item.resizing {
+     z-index: 10 !important;
+ }
+
+ .react-resizable-handle::after {
+    width: 10px !important;
+    height: 10px !important;
+    border-right: 1px solid whitesmoke !important;
+    border-bottom: 1px solid whitesmoke !important;
+    opacity: 0.8;
+    margin: 5px;
+ }
+
+ .react-resizable-handle {
+     padding: 0 !important;
  }
 
  ::-webkit-scrollbar {
@@ -122,16 +140,11 @@
 
 @media (max-width: 768px) {
     .content-wraper {
-        margin: 0 5px;
-    }
-}
-
-@media (max-width: 650px) {
-    .content-wraper {
-        margin: 0;
+        margin: 0 15px;
     }
 
     .userbar {
-        margin: 20px 0px ;
+        margin: 15px 0px ;
     }
 }
+

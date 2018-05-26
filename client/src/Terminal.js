@@ -21,8 +21,6 @@ class Terminal extends Component {
 
         this.requestWrite = this.requestWrite.bind(this);
         this.close = this.close.bind(this);
-        this.onDrag = this.onDrag.bind(this);
-        this.onDrop = this.onDrop.bind(this);
         this.onResize = this.onResize.bind(this);
         this.notifications = null;
 
@@ -70,14 +68,6 @@ class Terminal extends Component {
                 this.notifications.add_notification(notification);
             }
         }
-    }
-
-    onDrag(e) {
-        this.setState({isTouchingTerminal: true});
-    }
-
-    onDrop(e) {
-        this.setState({isTouchingTerminal: false});
     }
 
     onResize(e) {
@@ -135,8 +125,6 @@ class Terminal extends Component {
                         id={'terminal-container' + this.props.terminalId}
                         className='terminal-container'
                         onClick={this.requestWrite}
-                        onMouseOver={this.onDrag}
-                        onMouseOut={this.onDrop}
                     />
                     <NotificationBar
                         registerMessage={this.props.registerMessage}
@@ -144,6 +132,7 @@ class Terminal extends Component {
                         ref={ref => this.notifications = ref}
                         isLogged={this.props.isLogged}
                     />
+                    {this.props.children}
                 </div>
             );
         } else {
