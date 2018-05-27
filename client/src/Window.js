@@ -27,11 +27,13 @@ class Window extends Component {
         this.getLayout = this.getLayout.bind(this);
         this.addLayout = this.addLayout.bind(this);
         this.makeLayout = this.makeLayout.bind(this);
+        this.onResize = this.onResize.bind(this);
 
         this.state = {
             loggedIn: false,
             terminals: [],
             opened: [],
+            refs: {},
             zCounter: 10,
             layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]}
         };
@@ -110,10 +112,11 @@ class Window extends Component {
     }
 
     getTerminal(path, isLogged) {
+        const key = 'terminal' + this.termid;
         this.addLayout();
         return (
             <Terminal
-                key={'terminal' + this.termid}
+                key={key}
                 userName={path}
                 socketURL={path}
                 authToken={this.authToken}
@@ -126,6 +129,7 @@ class Window extends Component {
                 getIsAdmin={this.getIsAdmin}
                 zCounter={this.zCount}
                 data-grid={this.getLayout()}
+                ref={ref => {this.state.refs[key] = ref}}
             />
         );
     }
@@ -212,6 +216,10 @@ class Window extends Component {
         }
     }
 
+    onResize(layout, oldItem, newItem, placeholder, e, element) {
+        this.state.refs[newItem.i].onResize();
+    }
+
     render() {
         if (!this.state.loggedIn) {
             return (<LoginHandler onSubmit={this.setupClient}/>);
@@ -232,6 +240,7 @@ class Window extends Component {
                         layouts={this.state.layouts}
                         draggableCancel='.terminal-container'
                         compactType='horizontal'
+                        onResize={this.onResize}
                     >
                         {this.state.terminals}
                     </ResponsiveGridLayout>

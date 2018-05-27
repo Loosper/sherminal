@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NotificationBar from './NotificationBar';
+import ReactDOM from 'react-dom';
 // import { fadeIn, fadeOut } from 'react-animations';
 
 import 'xterm/dist/xterm.css';
@@ -80,7 +81,7 @@ class Terminal extends Component {
         this.xterm.setOption('allowTransparency', true);
         // still broken
         this.xterm.fit();
-        window.addEventListener("resize", this.onResize);
+        window.addEventListener('resize', this.onResize);
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
@@ -93,7 +94,7 @@ class Terminal extends Component {
     componentWillUnmount() {
         this.socket.close();
         this.xterm.destroy();
-        window.removeEventListener("resize", this.onResize);
+        window.removeEventListener('resize', this.onResize);
     }
 
     // TODO:

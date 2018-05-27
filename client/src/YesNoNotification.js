@@ -29,22 +29,16 @@ class YesNoNotification extends Component {
     render() {
         if (!this.state.isResponded) {
             return (
-                <div className="col notification">
-                    <div className="row notification-text">
-                        <div>{this.props.message}</div>
+                <div className="notification">
+                    <div className="notification-text">
+                        {this.props.message}
                     </div>
-                    <div className="row button-row">
-                        <div className="col"/>
-                        <button 
-                            className="btn btn-outline-success notification-button"
-                            onClick={this.clickYes}
-                        >
+                    <div>
+                        <button className="btn btn-notification btn-outline-success" onClick={this.clickYes}>
                             {this.props.yesMessage}
                         </button>
-                        <button 
-                            className="btn btn-outline-secondary notification-button"
-                            onClick={this.clickNo}
-                        >
+                        <span style={{padding: '0 10px'}}/>
+                        <button className="btn btn-notification btn-outline-secondary" onClick={this.clickNo}>
                             {this.props.noMessage}
                         </button>
                     </div>

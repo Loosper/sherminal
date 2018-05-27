@@ -87,7 +87,7 @@ class NotificationBar extends Component {
 
     render() {
         return (
-            <div>
+            <div className="notification-container">
                 {this.state.notifications}
             </div>
         );
