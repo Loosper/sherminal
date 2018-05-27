@@ -6,6 +6,7 @@
     border-color: #fff !important;
     display: flex;
     flex-direction: column;
+    -ms-overflow-style: none;
  }
 
  .terminal-bar {
@@ -25,7 +26,6 @@
 
  .terminal-container {
     opacity: 0.8;
-    backdrop-filter: blur(10px);
     border-bottom: 1px solid black;
     background-color: black; 
     max-height: calc(100% - 25px);
@@ -145,7 +145,11 @@
  ::-webkit-scrollbar {
     width: 0px;  /* remove scrollbar space */
     background: transparent; /* optional: just make scrollbar invisible */
-}
+ }
+
+ @-moz-document url-prefix() {
+    html,body{overflow: hidden !important;}
+ }
 
 @media (max-width: 768px) {
     .content-wraper {

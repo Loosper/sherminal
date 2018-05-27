@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import NotificationBar from './NotificationBar';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 // import { fadeIn, fadeOut } from 'react-animations';
 
 import 'xterm/dist/xterm.css';
@@ -27,19 +27,7 @@ class Terminal extends Component {
 
         this.state = {
             hasRequested: false,
-            closed: false,
-            zCounter: this.props.zCounter(),
-            isTouchingTerminal: false
         };
-
-        this.styles = {
-            fadeIn: {
-                animationName: 'fadeIn',
-                animationDuration: '1s'
-            }
-        };
-
-        this.props.style.zIndex = this.state.zCounter;
     }
 
     getUsername() {
@@ -48,7 +36,6 @@ class Terminal extends Component {
 
     close(e) {
         this.props.tearDown(this.props.userName);
-        this.setState({closed: true});
     }
 
     requestWrite(event) {
@@ -79,66 +66,61 @@ class Terminal extends Component {
         this.xterm = new Xterm();
         this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
         this.xterm.setOption('allowTransparency', true);
-        // still broken
         this.xterm.fit();
-        window.addEventListener('resize', this.onResize);
 
+        window.addEventListener('resize', this.onResize);
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
         this.socket = new WebSocket(socketURL);
         this.props.setSocket(this.socket);
-        this.socket.addEventListener('close', (e) => this.props.tearDown(this));
+        this.socket.addEventListener('close', this.close);
         this.xterm.terminadoAttach(this.socket);
     }
 
     componentWillUnmount() {
+        this.socket.removeEventListener('close', this.close);
+        window.removeEventListener('resize', this.onResize);
         this.socket.close();
         this.xterm.destroy();
-        window.removeEventListener('resize', this.onResize);
     }
 
     // TODO:
     //  selecting text gets fucked when dragged ONLY CHROME :O
     //  animations
     render() {
-        if (!this.state.closed) {
-            return (
-                <div
-                    key={this.props.key} 
-                    className={this.props.className + ' terminal-window'} 
-                    style={this.props.style}
-                    onMouseDown={this.props.onMouseDown}
-                    onMouseUp={this.props.onMouseUp}
-                    onTouchStart={this.props.onTouchStart}
-                    onTouchEnd={this.props.onTouchEnd}
-                    onClick={(e) => this.setState({zCounter: this.props.zCounter()})}
-                >
-                    <div className="terminal-bar">
-                        <img
-                            className="close-button"
-                            src={CloseButton}
-                            onClick={event => this.close()}
-                            alt="close-button"
-                        />
-                        {this.props.userName}
-                    </div>
-                    <div
-                        id={'terminal-container' + this.props.terminalId}
-                        className='terminal-container'
-                        onClick={this.requestWrite}
+        return (
+            <div
+                key={this.props.key} 
+                className={this.props.className + ' terminal-window'} 
+                style={this.props.style}
+                onMouseDown={this.props.onMouseDown}
+                onMouseUp={this.props.onMouseUp}
+                onTouchStart={this.props.onTouchStart}
+                onTouchEnd={this.props.onTouchEnd}
+            >
+                <div className="terminal-bar">
+                    <img
+                        className="close-button"
+                        src={CloseButton}
+                        onClick={this.close}
+                        alt="close-button"
                     />
-                    <NotificationBar
-                        registerMessage={this.props.registerMessage}
-                        sendMessage={this.props.sendMessage}
-                        ref={ref => this.notifications = ref}
-                        isLogged={this.props.isLogged}
-                    />
-                    {this.props.children}
+                    {this.props.userName}
                 </div>
-            );
-        } else {
-            return null;
-        }
+                <div
+                    id={'terminal-container' + this.props.terminalId}
+                    className='terminal-container'
+                    onClick={this.requestWrite}
+                />
+                <NotificationBar
+                    registerMessage={this.props.registerMessage}
+                    sendMessage={this.props.sendMessage}
+                    ref={ref => this.notifications = ref}
+                    isLogged={this.props.isLogged}
+                />
+                {this.props.children}
+            </div>
+        );
     }
 }
 

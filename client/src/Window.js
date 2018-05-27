@@ -23,7 +23,6 @@ class Window extends Component {
         this.sendMessage = this.sendMessage.bind(this);
         this.getIsAdmin = this.getIsAdmin.bind(this);
         this.signOut = this.signOut.bind(this);
-        this.zCount = this.zCount.bind(this);
         this.getLayout = this.getLayout.bind(this);
         this.addLayout = this.addLayout.bind(this);
         this.makeLayout = this.makeLayout.bind(this);
@@ -31,15 +30,12 @@ class Window extends Component {
 
         this.state = {
             loggedIn: false,
-            terminals: [],
-            opened: [],
-            refs: {},
-            zCounter: 10,
+            terminals: {},
             layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]}
         };
 
         this.authToken = '';
-        this.termid = 0;
+        this.terminalsCount = 0;
         this.messageQueue = {};
         this.webSocket = null;
 
@@ -51,32 +47,24 @@ class Window extends Component {
         this.setState(
             {
                 loggedIn: false,
-                terminals: [],
-                opened: [],
-                zCounter: 10,
+                terminals: {},
                 layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]}
             }
         );
         // token for tracking the user
         this.authToken = '';
-        this.termid = 0;
         this.messageQueue = {};
         this.webSocket = null;
     }
 
-    zCount() {
-        this.setState({zCounter: this.state.zCounter + 1});
-        return this.state.zCounter;
-    }
-
-    makeLayout(cols, index) { 
+    makeLayout(name, cols, index) { 
         const height = 3;
-        const size = this.state.opened.length;
+        const size = this.terminalsCount;
 
         let layout = {};
         
         if (index) {
-            layout.i = 'terminal' + this.termid;
+            layout.i = name;
         }
 
         layout.w = cols >= this.cols.sm ? cols / 2 : cols;
@@ -92,46 +80,54 @@ class Window extends Component {
         return layout;
     }
 
-    getLayout() {
+    getLayout(name) {
         for (let key in this.breakpoints) {
             if (window.innerWidth > this.breakpoints[key]) {
-                return this.makeLayout(this.cols[key], false);
+                return this.makeLayout(name, this.cols[key], false);
             }
         }
     }
 
-    addLayout() {
-        let newLayouts = {};
+    addLayout(name) {
+        let newLayouts = Object.assign({}, this.state.layouts);
 
         for (let key in this.cols) {
-            newLayouts[key] = this.state.layouts[key].slice();
-            newLayouts[key].push(this.makeLayout(this.cols[key], true));
+            newLayouts[key].push(this.makeLayout(name, this.cols[key], true));
         }
 
         this.setState({layouts: newLayouts});
     }
 
+    async removeLayout(name) {
+        let newLayouts = Object.assign({}, this.state.layouts);
+
+        for (let breakpoint in newLayouts) {
+            newLayouts[breakpoint] = newLayouts[breakpoint].filter(layout => layout.i !== name);
+        }
+
+        await this.setState({layouts: newLayouts});
+    }
+
     getTerminal(path, isLogged) {
-        const key = 'terminal' + this.termid;
-        this.addLayout();
-        return (
-            <Terminal
-                key={key}
+        const terminal = {
+            component: <Terminal 
+                key={path}
                 userName={path}
                 socketURL={path}
                 authToken={this.authToken}
                 tearDown={this.removeTerminal}
                 setSocket={this.retrieveSocket}
                 sendMessage={this.sendMessage}
-                terminalId={this.termid}
+                terminalId={this.terminalsCount}
                 isLogged={isLogged}
                 registerMessage={this.addMessageHandler}
                 getIsAdmin={this.getIsAdmin}
-                zCounter={this.zCount}
-                data-grid={this.getLayout()}
-                ref={ref => {this.state.refs[key] = ref}}
-            />
-        );
+                data-grid={this.getLayout(path)}
+                ref={ref => terminal.ref = ref}/>
+        };
+
+        this.terminalsCount++;
+        return terminal;
     }
 
     getIsAdmin() {
@@ -174,50 +170,46 @@ class Window extends Component {
         this.authToken = authToken;
         this.isAdmin = isAdmin;
 
-        let new_opened = this.state.opened.slice();
-        new_opened.push(socketPath);
-        let new_state = this.state.terminals.slice();
-        new_state.push(this.getTerminal(socketPath, true));
-
-        this.termid++;
+        this.addLayout(socketPath);
+        let newTerminals = Object.assign({}, this.state.terminals);
+        newTerminals[socketPath] = this.getTerminal(socketPath, true);
 
         this.setState({
-            opened: new_opened,
             loggedIn: true,
-            terminals: new_state
+            terminals: newTerminals
         });
     }
 
     addTerminal(path, isAdmin) {
-        if (!this.state.opened.includes(path)) {
-            let new_terminals = this.state.terminals.slice();
-            new_terminals.push(this.getTerminal(path, false));
-
-            let new_opened = this.state.opened.slice();
-            new_opened.push(path);
-            
-            this.termid++;
-            this.setState({opened: new_opened, terminals: new_terminals});
+        if (!this.state.terminals.hasOwnProperty(path)) {
+            this.addLayout(path);
+            let newTerminals = Object.assign({}, this.state.terminals);
+            newTerminals[path] = this.getTerminal(path, false);
+            this.setState({terminals: newTerminals});
         }
     }
 
     removeTerminal(terminalName) {
-        let newOpened = this.state.opened.slice();
-        let new_terminals = this.state.terminals.slice();
-        let indexOpened = this.state.opened.indexOf(terminalName);
+        if (this.state.terminals.hasOwnProperty(terminalName)) {
+            let newTerminals = Object.assign({}, this.state.terminals);
+            delete newTerminals[terminalName];
+            this.removeLayout(terminalName);
 
-        new_terminals.splice(indexOpened, 1);
-        newOpened.splice(indexOpened, 1);
+            this.terminalsCount--;
+            this.setState({terminals: newTerminals});
 
-        this.setState({opened: newOpened, termials: new_terminals});
-
-        if (this.state.opened.length === 0) {
-            this.signOut();
+            if (this.terminalsCount === 0) {
+                this.signOut();
+            }
         }
     }
 
+    getTerminals() {
+        return Object.values(this.state.terminals).map(terminal => terminal.component);
+    }
+
     onResize(layout, oldItem, newItem, placeholder, e, element) {
-        this.state.refs[newItem.i].onResize();
+        this.state.terminals[newItem.i].ref.onResize();
     }
 
     render() {
@@ -240,9 +232,8 @@ class Window extends Component {
                         layouts={this.state.layouts}
                         draggableCancel='.terminal-container'
                         compactType='horizontal'
-                        onResize={this.onResize}
-                    >
-                        {this.state.terminals}
+                        onResize={this.onResize}>
+                            {this.getTerminals()}
                     </ResponsiveGridLayout>
                 </div>
             );

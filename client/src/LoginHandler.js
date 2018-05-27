@@ -13,11 +13,35 @@ class LoginHandler extends Component {
         this.updatePassword = this.updatePassword.bind(this);
         this.login = this.login.bind(this);
 
-        this.state = {username: '', password: ''};
+        this.state = {username: '', password: '', errors: {}};
     }
+
+    handleValidation(){
+        let newErrors = {};
+        let formIsValid = true;
+
+        if (!this.state.username || this.state.username === '') {
+           formIsValid = false;
+           newErrors["username"] = "The username cannot be empty.";
+        } else if (typeof this.state.username !== "undefined") {
+             if(!this.state.username.match(/^[a-zA-Z]+$/)){
+                 formIsValid = false;
+                 newErrors["username"] = "The username must constains only letters.";
+             }          
+        }
+
+       this.setState({errors: newErrors});
+
+       return formIsValid;
+   }
 
     login(event) {
         event.preventDefault();
+
+        if (!this.handleValidation()) {
+            return;
+        }
+
         let self = this;
         let url = 'http://' + process.env.REACT_APP_HOST + '/login';
         let data = {username: this.state.username, password: this.state.password};
@@ -74,13 +98,15 @@ class LoginHandler extends Component {
                         <div className="col-md-12" >
                             <input
                                 className="form-control" type="text"
-                                placeholder="username"
+                                placeholder="Username"
                                 value={this.state.username}
                                 onChange={this.updateUsername}
                             />
+                            <span style={{color: "red"}}>{this.state.errors["username"]}</span>
+
                             <input
                                 className="form-control" type="password"
-                                placeholder="password (optional)"
+                                placeholder="Password (optional)"
                                 value={this.state.password}
                                 onChange={this.updatePassword}
                                 style={{marginTop: 10}}
