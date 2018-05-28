@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+const CloseButton = require('./images/close-button.png');
 
 class YesNoNotification extends Component {
     constructor(props) {
@@ -9,6 +9,7 @@ class YesNoNotification extends Component {
 
         this.clickNo = this.clickNo.bind(this);
         this.clickYes = this.clickYes.bind(this);
+        this.ignore = this.ignore.bind(this);
 
         this.state = {
             isResponded: false
@@ -25,11 +26,23 @@ class YesNoNotification extends Component {
         this.setState({ isResponded: true });
     }
 
+    ignore() {
+        this.props.ignore();
+        this.setState({ isResponded: true });
+    }
+
     // TODO: Animations
     render() {
         if (!this.state.isResponded) {
             return (
                 <div className="notification">
+                    <img
+                        className="close-button"
+                        src={CloseButton}
+                        onClick={this.ignore}
+                        alt="close-button"
+                        style={{position: 'fixed', margin: '-18px 10px', float: 'left'}}
+                    />
                     <div className="notification-text">
                         {this.props.message}
                     </div>

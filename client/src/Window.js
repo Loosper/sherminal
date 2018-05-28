@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
+import Particles from 'react-particles-js';
 import Terminal from './Terminal';
 import LoginHandler from './LoginHandler';
 import UserBar from './UserBar';
+import PermissionManager from './PermissionManager';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 import 'react-grid-layout/css/styles.css';
@@ -11,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
+const ParticleParams = require('./particles/particlesjs-config.json');
 
 class Window extends Component {
     constructor(props) {
@@ -27,17 +30,25 @@ class Window extends Component {
         this.addLayout = this.addLayout.bind(this);
         this.makeLayout = this.makeLayout.bind(this);
         this.onResize = this.onResize.bind(this);
+        this.updatePermissionManager = this.updatePermissionManager.bind(this);
+        this.getAllowed = this.getAllowed.bind(this);
+        this.getDenied = this.getDenied.bind(this);
+        this.getIgnored = this.getIgnored.bind(this);
 
         this.state = {
             loggedIn: false,
             terminals: {},
-            layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]}
+            layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]},
+            showPermissionManager: false
         };
 
         this.authToken = '';
         this.terminalsCount = 0;
         this.messageQueue = {};
         this.webSocket = null;
+        this.particles = <Particles params={ParticleParams} 
+            style={{height:"100%", left: 0, position: "fixed", top: 0, width: "100%", zIndex: -1}}
+        />;
 
         this.cols = {lg: 12, md: 10, sm: 6, xs: 4, xxs: 1};
         this.breakpoints = {lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0};
@@ -48,7 +59,8 @@ class Window extends Component {
             {
                 loggedIn: false,
                 terminals: {},
-                layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]}
+                layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]},
+                showPermissionManager: false
             }
         );
         // token for tracking the user
@@ -59,8 +71,6 @@ class Window extends Component {
 
     makeLayout(name, cols, index) { 
         const height = 3;
-        const size = this.terminalsCount;
-
         let layout = {};
         
         if (index) {
@@ -70,8 +80,8 @@ class Window extends Component {
         layout.w = cols >= this.cols.sm ? cols / 2 : cols;
         layout.h = height;
 
-        layout.x = size % 2 === 0 ? 0: layout.w;
-        layout.y = parseInt(size / 2, 10) * height;
+        layout.x = this.terminalsCount % 2 === 0 ? 0: layout.w;
+        layout.y = parseInt(this.terminalsCount / 2, 10) * height;
 
         layout.minW = cols > this.cols.xs ? 3 : cols;
         layout.minH = 2;
@@ -98,14 +108,14 @@ class Window extends Component {
         this.setState({layouts: newLayouts});
     }
 
-    async removeLayout(name) {
+    removeLayout(name) {
         let newLayouts = Object.assign({}, this.state.layouts);
 
         for (let breakpoint in newLayouts) {
             newLayouts[breakpoint] = newLayouts[breakpoint].filter(layout => layout.i !== name);
         }
 
-        await this.setState({layouts: newLayouts});
+        this.setState({layouts: newLayouts});
     }
 
     getTerminal(path, isLogged) {
@@ -118,8 +128,7 @@ class Window extends Component {
                 tearDown={this.removeTerminal}
                 setSocket={this.retrieveSocket}
                 sendMessage={this.sendMessage}
-                terminalId={this.terminalsCount}
-                isLogged={isLogged}
+                isLogged={isLogged} 
                 registerMessage={this.addMessageHandler}
                 getIsAdmin={this.getIsAdmin}
                 data-grid={this.getLayout(path)}
@@ -178,6 +187,8 @@ class Window extends Component {
             loggedIn: true,
             terminals: newTerminals
         });
+
+        this.terminal = newTerminals[socketPath].ref;
     }
 
     addTerminal(path, isAdmin) {
@@ -198,9 +209,12 @@ class Window extends Component {
             this.terminalsCount--;
             this.setState({terminals: newTerminals});
 
-            if (this.terminalsCount === 0) {
-                this.signOut();
-            }
+            // removing this because:
+            // 1. it doesnt really make sense since you can still open your terminal
+            // 2. someone can type exit on your terminal and log you out
+            // if (this.terminalsCount === 0) {
+            //     this.signOut();
+            // }
         }
     }
 
@@ -208,11 +222,27 @@ class Window extends Component {
         return Object.values(this.state.terminals).map(terminal => terminal.component);
     }
 
+    getAllowed() {
+        return this.terminal.getNotifications().getAllowed();
+    }
+
+    getDenied() {
+        return this.terminal.getNotifications().getDenied();
+    }
+
+    getIgnored() {
+        return this.terminal.getNotifications().getIgnored();
+    }
+
     onResize(layout, oldItem, newItem, placeholder, e, element) {
         this.state.terminals[newItem.i].ref.onResize();
     }
 
-    render() {
+    updatePermissionManager(toShow) {
+        this.setState({showPermissionManager: toShow});
+    }
+
+    getContent() {
         if (!this.state.loggedIn) {
             return (<LoginHandler onSubmit={this.setupClient}/>);
         } else {
@@ -223,6 +253,7 @@ class Window extends Component {
                         terminal_factory={this.addTerminal}
                         thisUser={this.loggedUser}
                         signOut={this.signOut}
+                        showPermissionManager={this.updatePermissionManager}
                     />
                     <ResponsiveGridLayout 
                         className="layout" 
@@ -232,12 +263,30 @@ class Window extends Component {
                         layouts={this.state.layouts}
                         draggableCancel='.terminal-container'
                         compactType='horizontal'
-                        onResize={this.onResize}>
+                        onResize={this.onResize}
+                        onResizeStop={this.onResize}>
                             {this.getTerminals()}
                     </ResponsiveGridLayout>
+                    {this.state.showPermissionManager && 
+                    <PermissionManager
+                        close={this.updatePermissionManager}
+                        allowed={this.getAllowed}
+                        denied={this.getDenied}
+                        ignored={this.getIgnored}
+                        notifications={this.terminal.getNotifications}
+                    />}
                 </div>
             );
         }
+    }
+
+    render() {
+        return (
+            <div>
+                {this.particles}
+                {this.getContent()}
+            </div>
+        );
     }
 }
 

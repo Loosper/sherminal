@@ -10,6 +10,7 @@ class User extends Component {
         super(props);
 
         this.onClick = this.onClick.bind(this);
+        this.openTerminal = this.openTerminal.bind(this);
 
         this.state = {
             username: this.props.username,
@@ -20,8 +21,12 @@ class User extends Component {
 
     onClick(event) {
         if (!this.props.isLoggedUser) {
-            this.props.create_terminal(this.state.username)
+            this.openTerminal();
         }       
+    }
+
+    openTerminal() {
+        this.props.create_terminal(this.state.username);
     }
 
     render() {

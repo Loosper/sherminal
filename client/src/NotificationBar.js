@@ -13,12 +13,28 @@ class NotificationBar extends Component {
         this.notification_write = this.notification_write.bind(this);
         this.notification_file_write = this.notification_file_write.bind(this);
         this.respond = this.respond.bind(this);
+        this.ignore = this.ignore.bind(this);
 
         this.state = {
-            notifications: []
+            notifications: [],
+            allowed: [],
+            denied: [],
+            ignored: []
         };
         
         this.id = 0;
+    }
+
+    getAllowed() {
+        return this.state.allowed;
+    }
+
+    getDenied() {
+        return this.state.denied;
+    }
+
+    getIgnored() {
+        return this.state.ignored;
     }
 
     respond(msg_type, message) {
@@ -26,7 +42,7 @@ class NotificationBar extends Component {
     }
 
     // This needs types
-    make_notification(message, yes, no, yesMessage, noMessage) {
+    make_notification(message, yes, no, ignore, yesMessage, noMessage) {
         return (
             <YesNoNotification
                 key={this.id++}
@@ -35,16 +51,38 @@ class NotificationBar extends Component {
                 respondNo={no}
                 yesMessage={yesMessage}
                 noMessage={noMessage}
+                ignore={ignore}
             />
         );
+    }
+
+    respondYes(data) {
+        let newAllowed = this.state.allowed.slice();
+        newAllowed.push(data);
+        this.respond('allow_write', data['host']);
+        this.setState({allowed: newAllowed});
+    }
+
+    respondNo(data) {
+        let newDenied = this.state.denied.slice();
+        newDenied.push(data);
+        this.respond('deny_write', data['host']);
+        this.setState({denied: newDenied});
+    }
+
+    ignore(data) {
+        let newIgnored = this.state.ignored.slice();
+        newIgnored.push(data);
+        this.setState({ignored: newIgnored});
     }
 
     // pleaseCamel murzi me da fix
     notification_write(data) {
         let notification = this.make_notification(
             data['host'] + ' wants access to your terminal',
-            () => this.respond('allow_write', data['host']),
-            () => this.respond('deny_write', data['host']),
+            () => this.respondYes(data),
+            () => this.respondNo(data),
+            () => this.ignore(data),
             'Accept',
             'Deny'
         );
@@ -59,6 +97,7 @@ class NotificationBar extends Component {
                 data
             ),
             () => this.respond('deny_file_write', data['from']),
+            null,
             'Accept',
             'Deny'
         );

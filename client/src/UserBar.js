@@ -7,13 +7,22 @@ class UserBar extends Component {
     constructor(props) {
         super(props);
 
+        this.openTerminal = this.openTerminal.bind(this);
+        this.showPermissionManager = this.showPermissionManager.bind(this);
+
         this.state = {
             users: [],
             thisUser: null
         };
 
         this.events = null;
-        this.childid = 0;
+        this.childid = 0;       
+        this.menuStyle = {
+            borderRadius: '8px',
+            background: '#f5f5f5de',
+            fontSize: '0.95rem',
+            marginLeft: '-27px'
+        };
     }
 
     makeUser(data, isLoggedUser) {
@@ -26,6 +35,7 @@ class UserBar extends Component {
                 signOut={this.props.signOut}
                 isLoggedUser={isLoggedUser}
                 isAdmin={data.administrator}
+                ref={ref => {if(isLoggedUser) this.loggedUserRef = ref}}
             />
         );
     }
@@ -70,6 +80,14 @@ class UserBar extends Component {
         });
     }
 
+    openTerminal() {
+        this.loggedUserRef.openTerminal();
+    }
+
+    showPermissionManager() {
+        this.props.showPermissionManager(true);
+    }
+
     render() {
         return (
             <div className="row userbar">
@@ -77,13 +95,12 @@ class UserBar extends Component {
                 {this.state.users}
                 <div className="this-user">
                     <ContextMenuProvider id="user_menu" event="onClick">
-                        {this.state.thisUser}
+                        <div children={this.state.thisUser}/>
                     </ContextMenuProvider>
-                    <ContextMenu id='user_menu' animation="fade">
-                        {/* <Submenu label="Notifications">
-                            {this.state.notifications}
-                        </Submenu>
-                        <Separator/> */}
+                    <ContextMenu id='user_menu' animation="fade" style={this.menuStyle}>
+                        <Item onClick={this.openTerminal}>Reopen Terminal</Item>
+                        <Item onClick={this.showPermissionManager}>Permission Manager</Item>
+                        <Separator/>
                         <Item onClick={this.props.signOut}>Sign Out</Item>
                     </ContextMenu>
                 </div>

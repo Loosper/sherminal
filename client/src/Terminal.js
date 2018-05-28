@@ -23,15 +23,10 @@ class Terminal extends Component {
         this.requestWrite = this.requestWrite.bind(this);
         this.close = this.close.bind(this);
         this.onResize = this.onResize.bind(this);
-        this.notifications = null;
 
         this.state = {
             hasRequested: false,
         };
-    }
-
-    getUsername() {
-        return this.props.userName;
     }
 
     close(e) {
@@ -49,6 +44,7 @@ class Terminal extends Component {
                     'Request access to this terminal?',
                     () => this.props.sendMessage('request_write', this.props.userName),
                     () => this.setState({hasRequested: false}),
+                    () => this.setState({hasRequested: false}),
                     'Yes',
                     'No'
                 );
@@ -63,25 +59,32 @@ class Terminal extends Component {
     }
 
     componentDidMount() {
-        this.xterm = new Xterm();
-        this.xterm.open(document.getElementById('terminal-container' + this.props.terminalId));
+        //theme: {foreground: 'black', background:'white'} white theme
+        this.xterm = new Xterm({cursorBlink: true});
+        this.xterm.open(this.container);
         this.xterm.setOption('allowTransparency', true);
         this.xterm.fit();
-
         window.addEventListener('resize', this.onResize);
+        console.log(this.xterm)
+
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
         this.socket = new WebSocket(socketURL);
         this.props.setSocket(this.socket);
         this.socket.addEventListener('close', this.close);
+
         this.xterm.terminadoAttach(this.socket);
     }
 
     componentWillUnmount() {
-        this.socket.removeEventListener('close', this.close);
         window.removeEventListener('resize', this.onResize);
+        this.socket.removeEventListener('close', this.close);
         this.socket.close();
-        this.xterm.destroy();
+        this.xterm.dispose();
+    }
+
+    getNotifications() {
+        return this.notifications;
     }
 
     // TODO:
@@ -108,9 +111,9 @@ class Terminal extends Component {
                     {this.props.userName}
                 </div>
                 <div
-                    id={'terminal-container' + this.props.terminalId}
                     className='terminal-container'
                     onClick={this.requestWrite}
+                    ref={ref => this.container = ref}
                 />
                 <NotificationBar
                     registerMessage={this.props.registerMessage}

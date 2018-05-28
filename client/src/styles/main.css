@@ -6,7 +6,7 @@
     border-color: #fff !important;
     display: flex;
     flex-direction: column;
-    -ms-overflow-style: none;
+    /* -ms-overflow-style: none; */
  }
 
  .terminal-bar {
@@ -88,6 +88,7 @@
     border-top: 1px solid #fff!important;
     border-radius: 8px;
     padding: 25px;
+    margin-bottom: 5px;
  }
 
  .notification-container {
@@ -96,6 +97,8 @@
     text-align: center;
     min-width: 100%;
     bottom: 0;
+    overflow-y: scroll;
+    max-height: 162px;
  }
 
  .btn-notification {
@@ -108,12 +111,57 @@
     box-shadow: 0 0 26px -5px;
  }
 
+ .btn-permission {
+    float: right;
+    margin-top: 16px;
+    margin-right: 9px;
+ }
+
+ .user-permission-container {
+    border-top: 1px solid silver;
+ }
+
+ .user-permission-container:hover {
+    background: rgb(235, 235, 235);
+ }
+
  .notification-text {
     margin-bottom: 25px; 
     font-size: 1.5rem;
     font-family: Helvetica Neue, Arial;
     font-weight: 300;
     text-shadow: 1px 1px 67px #0000005e;
+ }
+
+ .permissions-container {
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    -ms-transform: translateY(-50%) translate(-50%);
+    transform: translateY(-50%) translate(-50%);
+    width: 100%;
+    height: 100%;
+    background: #0000004d;;
+    position: fixed;
+ }
+
+ .permissions-window {
+    box-shadow: 0 0 74px -13px black;
+    border-radius: 8px;
+    display: initial;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    -ms-transform: translateY(-50%) translate(-50%);
+    transform: translateY(-50%) translate(-50%);
+    background: whitesmoke;
+    width: 88%;
+    height: 77%;
+    position: fixed;
+ }
+
+ .permissions-content {
+     padding: 6px 24px;
  }
 
  .react-grid-placeholder {

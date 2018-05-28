@@ -92,7 +92,6 @@ class LoginHandler extends Component {
                         <div className="col-md-12">
                             <div className="singtext">termi.net</div>
                         </div>
-
                     </div>
                     <div className=" row loginbox_content ">
                         <div className="col-md-12" >
