@@ -188,7 +188,6 @@ class Window extends Component {
             terminals: newTerminals
         });
 
-
         this.terminal = newTerminals[socketPath].ref;
     }
 
@@ -236,7 +235,8 @@ class Window extends Component {
     }
 
     getNotificationsCount() {
-        return this.terminal == null ? 0 : this.terminal.getNotifications().getCount();
+        return this.terminal == null || this.terminal.getNotifications() == null ? 
+            0 : this.terminal.getNotifications().getCount();
     }
 
     onResize(layout, oldItem, newItem, placeholder, e, element) {
@@ -268,10 +268,10 @@ class Window extends Component {
                         containerPadding={[0, 0]}
                         layouts={this.state.layouts}
                         draggableCancel='.terminal-container'
-                        compactType='vertical'
                         onResize={this.onResize}
                         onResizeStop={this.onResize}
                         children={this.getTerminals()}
+                        verticalCompact
                     />
                     {this.state.showPermissionManager && 
                     <PermissionManager

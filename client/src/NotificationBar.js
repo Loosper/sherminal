@@ -77,6 +77,42 @@ class NotificationBar extends Component {
         this.setState({ignored: newIgnored});
     }
 
+    kick(data) {
+        let newAllowed = this.state.allowed.slice();
+        newAllowed = newAllowed.filter(x => x.host !== data.host);
+        this.respond('deny_write', data['host']);
+        this.setState({allowed: newAllowed});
+        // todo: allow to ask again
+        // possible when reopening a terminal
+    }
+
+    deniedToAllowed(data) {
+        let newDenied = this.state.denied.slice();
+        let newAllowed = this.state.allowed.slice();
+        newDenied = newDenied.filter(x => x.host !== data.host);
+        newAllowed.push(data);
+        this.respond('allow_write', data['host']);
+        this.setState({allowed: newAllowed, denied: newDenied});
+    }
+
+    ignoredToAllowed(data) {
+        let newIgnored = this.state.ignored.slice();
+        let newAllowed = this.state.allowed.slice();
+        newIgnored = newIgnored.filter(x => x.host !== data.host);
+        newAllowed.push(data);
+        this.respond('allow_write', data['host']);
+        this.setState({allowed: newAllowed, ignored: newIgnored});
+    }
+
+    ignoredToDenied(data) {
+        let newIgnored = this.state.ignored.slice();
+        let newDenied = this.state.denied.slice();
+        newDenied = newDenied.filter(x => x.host !== data.host);
+        newDenied.push(data);
+        this.respond('allow_write', data['host']);
+        this.setState({denied: newDenied, ignored: newIgnored});
+    }
+
     // pleaseCamel murzi me da fix
     notification_write(data) {
         let notification = this.make_notification(
