@@ -114,7 +114,7 @@
  .btn-permission {
     float: right;
     margin-top: 16px;
-    margin-right: 9px;
+    margin-right: 20px;
  }
 
  .user-permission-container {
@@ -162,6 +162,8 @@
 
  .permissions-content {
      padding: 30px 55px;
+     height: calc(100% - 25px);
+     overflow: auto;
  }
 
  .react-grid-placeholder {

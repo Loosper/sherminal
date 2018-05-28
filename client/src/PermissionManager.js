@@ -30,7 +30,7 @@ export default class PermissionManager extends Component {
                             {x.host}
                         </h6>
                         <button className="btn btn-notification btn-outline-danger btn-permission" 
-                            onClick={this.props.notifications().respondNo}>
+                            onClick={() => this.props.notifications.respondNo(x)}>
                             Kick
                         </button>
                     </div>
@@ -54,7 +54,7 @@ export default class PermissionManager extends Component {
                             {x.host}
                         </h6>
                         <button className="btn btn-notification btn-outline-success btn-permission" 
-                            onClick={this.props.notifications().respondYes}>
+                            onClick={() => this.props.notifications.respondYes(x)}>
                             Allow
                         </button>
                     </div>
@@ -78,17 +78,17 @@ export default class PermissionManager extends Component {
                             {x.host}
                         </h6>
                         <button className="btn btn-notification btn-permission btn-outline-danger" 
-                            onClick={this.props.notifications().respondNo}>
+                            onClick={() => this.props.notifications.respondNo(x)}>
                             Deny
                         </button>
                         <button className="btn btn-notification btn-permission btn-outline-success" 
-                            onClick={this.props.notifications().respondYes}>
+                            onClick={() => this.props.notifications.respondYes(x)}>
                             Allow
                         </button>
                     </div>
                 )}
             </div>
-            );
+        );
     }
 
     render() {
@@ -105,9 +105,9 @@ export default class PermissionManager extends Component {
                     <div className="permissions-content">
                         <h1>Permission Manager</h1>
                         <div style={{marginTop: '24px', overflowY:'scroll'}}>
+                            {this.getIgnored()}
                             {this.getAllowed()}
                             {this.getDenied()}
-                            {this.getIgnored()}
                         </div>
                     </div>
                 </div>

@@ -34,23 +34,19 @@ class Terminal extends Component {
     }
 
     requestWrite(event) {
-        if (!this.props.isLogged && !this.state.hasRequested) {
-            this.setState({hasRequested: true});
+        const isAdmin = this.props.getIsAdmin();
 
-            let isAdmin = this.props.getIsAdmin();
+        if (!this.props.isLogged && !this.state.hasRequested && !isAdmin) {
+            let notification = this.notifications.make_notification(
+                'Request access to this terminal?',
+                () => {
+                        this.setState({hasRequested: true});
+                        this.props.sendMessage('request_write', this.props.userName);
+                },
+                () => {}, () => {}, 'Yes', 'No'
+            );
 
-            if (!isAdmin) {
-                let notification = this.notifications.make_notification(
-                    'Request access to this terminal?',
-                    () => this.props.sendMessage('request_write', this.props.userName),
-                    () => this.setState({hasRequested: false}),
-                    () => this.setState({hasRequested: false}),
-                    'Yes',
-                    'No'
-                );
-
-                this.notifications.add_notification(notification);
-            }
+            this.notifications.add_notification(notification);
         }
     }
 
@@ -60,12 +56,10 @@ class Terminal extends Component {
 
     componentDidMount() {
         //theme: {foreground: 'black', background:'white'} white theme
-        this.xterm = new Xterm({cursorBlink: true});
+        this.xterm = new Xterm({cursorBlink: true, allowTransparency: true});
         this.xterm.open(this.container);
-        this.xterm.setOption('allowTransparency', true);
         this.xterm.fit();
         window.addEventListener('resize', this.onResize);
-        console.log(this.xterm)
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
@@ -80,7 +74,7 @@ class Terminal extends Component {
         window.removeEventListener('resize', this.onResize);
         this.socket.removeEventListener('close', this.close);
         this.socket.close();
-        this.xterm.dispose();
+        this.xterm.destroy();
     }
 
     getNotifications() {

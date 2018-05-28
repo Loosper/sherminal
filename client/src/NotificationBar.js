@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-
 import YesNoNotification from './YesNoNotification';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 class NotificationBar extends Component {
@@ -95,7 +92,7 @@ class NotificationBar extends Component {
 
     notification_file_write(data) {
         let notification = this.make_notification(
-            'User ' + data['from'] + ' wants to send you ' + data['from'],
+            data['from'] + ' wants to send you ' + data['from'],
             () => this.respond(
                 'allow_file_write',
                 data
@@ -115,7 +112,6 @@ class NotificationBar extends Component {
     }
 
     componentDidMount() {
-        // TODO: skip this if not the first terminal
         if (this.props.isLogged) {
             this.props.registerMessage(
                 'notification_write',

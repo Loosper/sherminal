@@ -9,7 +9,6 @@ import { Responsive, WidthProvider } from 'react-grid-layout';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -269,18 +268,18 @@ class Window extends Component {
                         containerPadding={[0, 0]}
                         layouts={this.state.layouts}
                         draggableCancel='.terminal-container'
-                        compactType='horizontal'
+                        compactType='vertical'
                         onResize={this.onResize}
-                        onResizeStop={this.onResize}>
-                            {this.getTerminals()}
-                    </ResponsiveGridLayout>
+                        onResizeStop={this.onResize}
+                        children={this.getTerminals()}
+                    />
                     {this.state.showPermissionManager && 
                     <PermissionManager
                         close={this.updatePermissionManager}
                         allowed={this.getAllowed}
                         denied={this.getDenied}
                         ignored={this.getIgnored}
-                        notifications={this.terminal.getNotifications}
+                        notifications={this.terminal.getNotifications()}
                     />}
                 </div>
             );
