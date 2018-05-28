@@ -152,6 +152,10 @@ class ActiveUsersTracker:
 
     # REVIEW: this blows up sometimes
     def deregister(self, handler):
+        # REVIEW: do these die when the host dies
+        # for listener in self.handlers[handler.user.username]:
+        #     listener.close(200, '')
+
         del self.handlers[handler.user.username]
         self.notify_all('remove_user', handler.user.json())
 
@@ -244,9 +248,8 @@ class UserTermHandler(TermSocket, DatabaseQuery):
             if data[0] == 'allow_write':
                 self.allow_write(data[1])
             if data[0] == 'deny_write':
-                # TODO:
-                # just send message to the other guy
-                pass
+                # TODO: send message to the other guy?
+                self.deny_write(data[1])
             if data[0] == 'allow_file_write':
                 self.allow_file_write(data[1])
             if data[0] == 'deny_file_write':
@@ -304,6 +307,10 @@ class UserTermHandler(TermSocket, DatabaseQuery):
         print(user)
         other = self.tracker.get_guest_handler(self.user.username, user)
         other.read_only = False
+
+    def deny_write(self, user):
+        other = self.tracker.get_guest_handler(self.user.username, user)
+        other.read_only = True
 
 
 class FileSendHandler(RequestHandler):
