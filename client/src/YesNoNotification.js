@@ -41,7 +41,7 @@ class YesNoNotification extends Component {
                         src={CloseButton}
                         onClick={this.ignore}
                         alt="close-button"
-                        style={{position: 'fixed', margin: '-18px 10px', float: 'left'}}
+                        style={{position: 'absolute', margin: '-18px 10px', float: 'left'}}
                     />
                     <div className="notification-text">
                         {this.props.message}

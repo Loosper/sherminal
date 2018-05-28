@@ -9,10 +9,12 @@ class UserBar extends Component {
 
         this.openTerminal = this.openTerminal.bind(this);
         this.showPermissionManager = this.showPermissionManager.bind(this);
+        this.updateMenu = this.updateMenu.bind(this);
 
         this.state = {
             users: [],
-            thisUser: null
+            thisUser: null,
+            hideManager: true
         };
 
         this.events = null;
@@ -88,18 +90,23 @@ class UserBar extends Component {
         this.props.showPermissionManager(true);
     }
 
+    updateMenu() {
+        this.setState({hideManager: this.props.notificationCount() === 0});
+    }
+
     render() {
         return (
             <div className="row userbar">
                 <div style={{paddingLeft: 7}}/>
                 {this.state.users}
-                <div className="this-user">
+                <div className="this-user" onMouseOver={this.updateMenu}>
                     <ContextMenuProvider id="user_menu" event="onClick">
                         <div children={this.state.thisUser}/>
                     </ContextMenuProvider>
                     <ContextMenu id='user_menu' animation="fade" style={this.menuStyle}>
                         <Item onClick={this.openTerminal}>Reopen Terminal</Item>
-                        <Item onClick={this.showPermissionManager}>Permission Manager</Item>
+                        <Item onClick={this.showPermissionManager}
+                            disabled={this.state.hideManager}>Permission Manager</Item>
                         <Separator/>
                         <Item onClick={this.props.signOut}>Sign Out</Item>
                     </ContextMenu>

@@ -15,65 +15,80 @@ export default class PermissionManager extends Component {
         this.props.close(false);
     }
 
-    mapAllowed() {
-        return this.props.allowed().map(x => 
-            <div key={x.host} className="user-permission-container">
-                <img
-                    src={x.avatar}
-                    className="avatar"
-                    alt="avatar"
-                />
-                <h6 style={{display: 'inline'}}>
-                    {x.host}
-                </h6>
-                <button className="btn btn-notification btn-outline-danger btn-permission" 
-                    onClick={this.props.notifications().respondNo}>
-                    Kick
-                </button>
+    getAllowed() {
+        return this.props.allowed().length === 0 ? null : (
+            <div>
+                <h5>Allowed access:</h5>
+                {this.props.allowed().map(x => 
+                    <div key={x.host} className="user-permission-container">
+                        <img
+                            src={x.avatar}
+                            className="avatar"
+                            alt="avatar"
+                        />
+                        <h6 style={{display: 'inline'}}>
+                            {x.host}
+                        </h6>
+                        <button className="btn btn-notification btn-outline-danger btn-permission" 
+                            onClick={this.props.notifications().respondNo}>
+                            Kick
+                        </button>
+                    </div>
+                )}
             </div>
         );
     }
 
-    mapDenied() {
-        return this.props.denied().map(x => 
-            <div key={x.host} className="user-permission-container">
-                <img
-                    src={x.avatar}
-                    className="avatar"
-                    alt="avatar"
-                />
-                <h6 style={{display: 'inline'}}>
-                    {x.host}
-                </h6>
-                <button className="btn btn-notification btn-outline-success btn-permission" 
-                    onClick={this.props.notifications().respondYes}>
-                    Allow
-                </button>
+    getDenied() {
+        return this.props.denied().length === 0 ? null : (
+            <div>
+                <h5>Denied access:</h5>
+                {this.props.denied().map(x => 
+                    <div key={x.host} className="user-permission-container">
+                        <img
+                            src={x.avatar}
+                            className="avatar"
+                            alt="avatar"
+                        />
+                        <h6 style={{display: 'inline'}}>
+                            {x.host}
+                        </h6>
+                        <button className="btn btn-notification btn-outline-success btn-permission" 
+                            onClick={this.props.notifications().respondYes}>
+                            Allow
+                        </button>
+                    </div>
+                )}
             </div>
         );
     }
 
-    mapIgnored() {
-        return this.props.ignored().map(x => 
-            <div key={x.host} className="user-permission-container">
-                <img
-                    src={x.avatar}
-                    className="avatar"
-                    alt="avatar"
-                />
-                <h6 style={{display: 'inline'}}>
-                    {x.host}
-                </h6>
-                <button className="btn btn-notification btn-outline-success btn-permission" 
-                    onClick={this.props.notifications().respondYes}>
-                    Allow
-                </button>
-                <button className="btn btn-notification btn-outline-danger btn-permission" 
-                    onClick={this.props.notifications().respondNo}>
-                    Deny
-                </button>
+    getIgnored() {
+        return this.props.ignored().length === 0 ? null : (
+            <div>
+                <h5>Ignored:</h5>
+                {this.props.ignored().map(x => 
+                    <div key={x.host} className="user-permission-container">
+                        <img
+                            src={x.avatar}
+                            className="avatar"
+                            alt="avatar"
+                        />
+                        <h6 style={{display: 'inline'}}>
+                            {x.host}
+                        </h6>
+                        <button className="btn btn-notification btn-permission btn-outline-danger" 
+                            onClick={this.props.notifications().respondNo}>
+                            Deny
+                        </button>
+                        <button className="btn btn-notification btn-permission btn-outline-success" 
+                            onClick={this.props.notifications().respondYes}>
+                            Allow
+                        </button>
+                    </div>
+                )}
             </div>
-        );
+            );
     }
 
     render() {
@@ -81,7 +96,7 @@ export default class PermissionManager extends Component {
             <div className="permissions-container">
                 <div className="permissions-window">
                     <img
-                        className="close-button"
+                        className="close-button"    
                         src={CloseButton}
                         onClick={this.close}
                         alt="close-button"
@@ -89,13 +104,10 @@ export default class PermissionManager extends Component {
                     />
                     <div className="permissions-content">
                         <h1>Permission Manager</h1>
-                        <div>
-                            <h5>Allowed access:</h5>
-                            {this.mapAllowed()}
-                            <h5>Denied access:</h5>
-                            {this.mapDenied()}
-                            <h5>Ignored:</h5>
-                            {this.mapIgnored()}
+                        <div style={{marginTop: '24px', overflowY:'scroll'}}>
+                            {this.getAllowed()}
+                            {this.getDenied()}
+                            {this.getIgnored()}
                         </div>
                     </div>
                 </div>

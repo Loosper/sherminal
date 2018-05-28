@@ -25,6 +25,10 @@ class NotificationBar extends Component {
         this.id = 0;
     }
 
+    getCount() {
+        return this.state.allowed.length + this.state.denied.length + this.state.ignored.length;
+    }
+
     getAllowed() {
         return this.state.allowed;
     }

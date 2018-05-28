@@ -34,6 +34,7 @@ class Window extends Component {
         this.getAllowed = this.getAllowed.bind(this);
         this.getDenied = this.getDenied.bind(this);
         this.getIgnored = this.getIgnored.bind(this);
+        this.getNotificationsCount = this.getNotificationsCount.bind(this);
 
         this.state = {
             loggedIn: false,
@@ -188,6 +189,7 @@ class Window extends Component {
             terminals: newTerminals
         });
 
+
         this.terminal = newTerminals[socketPath].ref;
     }
 
@@ -234,6 +236,10 @@ class Window extends Component {
         return this.terminal.getNotifications().getIgnored();
     }
 
+    getNotificationsCount() {
+        return this.terminal == null ? 0 : this.terminal.getNotifications().getCount();
+    }
+
     onResize(layout, oldItem, newItem, placeholder, e, element) {
         this.state.terminals[newItem.i].ref.onResize();
     }
@@ -254,6 +260,7 @@ class Window extends Component {
                         thisUser={this.loggedUser}
                         signOut={this.signOut}
                         showPermissionManager={this.updatePermissionManager}
+                        notificationCount={this.getNotificationsCount}
                     />
                     <ResponsiveGridLayout 
                         className="layout" 
