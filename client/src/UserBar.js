@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import User from './User';
-// eslint-disable-next-line
-import { ContextMenu, Item, Separator, Submenu, ContextMenuProvider } from 'react-contexify';
+
+import Switch from "react-switch";
+import { ContextMenu, Item, Separator, ContextMenuProvider } from 'react-contexify';
 
 class UserBar extends Component {
     constructor(props) {
@@ -91,22 +92,29 @@ class UserBar extends Component {
     }
 
     updateMenu() {
-        this.setState({hideManager: this.props.notificationCount() === 0});
+        return this.props.notificationCount() === 0;
     }
 
     render() {
         return (
             <div className="row userbar">
                 <div style={{paddingLeft: 7}}/>
-                {this.state.users}
-                <div className="this-user" onMouseOver={this.updateMenu}>
+                    {this.state.users}
+                <div className="this-user">
                     <ContextMenuProvider id="user_menu" event="onClick">
                         <div children={this.state.thisUser}/>
                     </ContextMenuProvider>
-                    <ContextMenu id='user_menu' animation="fade" style={this.menuStyle}>
+                    <ContextMenu id='user_menu' animation="pop" style={this.menuStyle}>
                         <Item onClick={this.openTerminal}>Reopen Terminal</Item>
                         <Item onClick={this.showPermissionManager}
-                            disabled={this.state.hideManager}>Permission Manager</Item>
+                            disabled={this.updateMenu}>Permission Manager</Item>
+                        <Separator/>
+                        <Item>
+                            <span style={{marginTop: 2}}>Particles</span>
+                            <Switch onChange={this.props.handleChangeParticles} checked={this.props.particles}
+                                onColor="#74E33C" offColor="#FFFFFF" checkedIcon={false} uncheckedIcon={false} 
+                                boxShadow={'0px 0px 14px -3px black'} handleDiameter={25} className="switch" />
+                        </Item>
                         <Separator/>
                         <Item onClick={this.props.signOut}>Sign Out</Item>
                     </ContextMenu>

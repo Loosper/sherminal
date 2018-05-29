@@ -34,24 +34,26 @@ class Window extends Component {
         this.getDenied = this.getDenied.bind(this);
         this.getIgnored = this.getIgnored.bind(this);
         this.getNotificationsCount = this.getNotificationsCount.bind(this);
+        this.handleChangeParticles = this.handleChangeParticles.bind(this);
 
         this.state = {
             loggedIn: false,
             terminals: {},
             layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]},
-            showPermissionManager: false
+            showPermissionManager: false,
+            particles: true
         };
 
         this.authToken = '';
         this.terminalsCount = 0;
         this.messageQueue = {};
         this.webSocket = null;
+        
+        this.cols = {lg: 12, md: 10, sm: 6, xs: 4, xxs: 1};
+        this.breakpoints = {lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0};
         this.particles = <Particles params={ParticleParams} 
             style={{height:"100%", left: 0, position: "fixed", top: 0, width: "100%", zIndex: -1}}
         />;
-
-        this.cols = {lg: 12, md: 10, sm: 6, xs: 4, xxs: 1};
-        this.breakpoints = {lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0};
     }
 
     signOut(e) {
@@ -65,6 +67,7 @@ class Window extends Component {
         );
         // token for tracking the user
         this.authToken = '';
+        this.terminalsCount = 0;
         this.messageQueue = {};
         this.webSocket = null;
     }
@@ -247,6 +250,10 @@ class Window extends Component {
         this.setState({showPermissionManager: toShow});
     }
 
+    handleChangeParticles(checked) {
+        this.setState({particles: checked});
+    }
+
     getContent() {
         if (!this.state.loggedIn) {
             return (<LoginHandler onSubmit={this.setupClient}/>);
@@ -260,6 +267,8 @@ class Window extends Component {
                         signOut={this.signOut}
                         showPermissionManager={this.updatePermissionManager}
                         notificationCount={this.getNotificationsCount}
+                        particles={this.state.particles}
+                        handleChangeParticles={this.handleChangeParticles}
                     />
                     <ResponsiveGridLayout 
                         className="layout" 
@@ -289,7 +298,7 @@ class Window extends Component {
     render() {
         return (
             <div>
-                {this.particles}
+                {this.state.particles && this.particles}
                 {this.getContent()}
             </div>
         );

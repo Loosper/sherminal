@@ -17,6 +17,7 @@
     "react-particles-js": "^2.2.0",
     "react-resizable": "^1.7.5",
     "react-scripts": "1.1.1",
+    "react-switch": "^2.3.2",
     "xterm": "^3.2.0"
   },
   "scripts": {

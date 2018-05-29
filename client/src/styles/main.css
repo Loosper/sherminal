@@ -166,6 +166,11 @@
      overflow: auto;
  }
 
+ .switch {
+     margin-left: 25px;
+     border: 1px solid #d6d6d6; 
+ }
+
  .react-grid-placeholder {
      background: rgba(240, 240, 240) !important;
      border-radius: 8px;
