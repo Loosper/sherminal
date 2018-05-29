@@ -67,19 +67,12 @@ class Terminal extends Component {
         this.props.setSocket(this.socket);
         this.socket.addEventListener('close', this.close);
         this.xterm.terminadoAttach(this.socket);
-    }
 
-    shouldComponentUpdate() {
-        if (!this.state.fitted) {
-            setTimeout(() => {
-                if (this.socket.readyState === 1) {
-                    this.xterm.fit();
-                    this.setState({fitted: true});
-                }
-            }, 50);
-            return true;
-        }
-        return false;
+        setTimeout(() => {
+            if (this.socket.readyState === 1) {
+                this.xterm.fit();
+            }
+        }, 50);
     }
 
     componentWillUnmount() {

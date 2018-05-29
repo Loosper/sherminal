@@ -105,7 +105,7 @@ class NotificationBar extends Component {
     ignoredToDenied(data) {
         let newIgnored = this.state.ignored.slice();
         let newDenied = this.state.denied.slice();
-        newDenied = newDenied.filter(x => x.host !== data.host);
+        newIgnored = newIgnored.filter(x => x.host !== data.host);
         newDenied.push(data);
         this.respond('allow_write', data['host']);
         this.setState({denied: newDenied, ignored: newIgnored});
