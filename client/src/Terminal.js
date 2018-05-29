@@ -26,6 +26,7 @@ class Terminal extends Component {
 
         this.state = {
             hasRequested: false,
+            fitted: false
         };
     }
 
@@ -37,13 +38,13 @@ class Terminal extends Component {
         const isAdmin = this.props.getIsAdmin();
 
         if (!this.props.isLogged && !this.state.hasRequested && !isAdmin) {
+            this.setState({hasRequested: true});
+
             let notification = this.notifications.make_notification(
                 'Request access to this terminal?',
-                () => {
-                        this.setState({hasRequested: true});
-                        this.props.sendMessage('request_write', this.props.userName);
-                },
-                () => {}, () => {}, 'Yes', 'No'
+                () => this.props.sendMessage('request_write', this.props.userName),
+                () => this.setState({hasRequested: false}), () => this.setState({hasRequested: false}),
+                'Yes', 'No'
             );
 
             this.notifications.add_notification(notification);
@@ -58,7 +59,6 @@ class Terminal extends Component {
         //theme: {foreground: 'black', background:'white'} white theme
         this.xterm = new Xterm({cursorBlink: true, allowTransparency: true});
         this.xterm.open(this.container);
-        this.xterm.fit();
         window.addEventListener('resize', this.onResize);
 
         let socketURL = encodeURI('ws://' + process.env.REACT_APP_HOST +
@@ -66,8 +66,20 @@ class Terminal extends Component {
         this.socket = new WebSocket(socketURL);
         this.props.setSocket(this.socket);
         this.socket.addEventListener('close', this.close);
-
         this.xterm.terminadoAttach(this.socket);
+    }
+
+    shouldComponentUpdate() {
+        if (!this.state.fitted) {
+            setTimeout(() => {
+                if (this.socket.readyState === 1) {
+                    this.xterm.fit();
+                    this.setState({fitted: true});
+                }
+            }, 50);
+            return true;
+        }
+        return false;
     }
 
     componentWillUnmount() {

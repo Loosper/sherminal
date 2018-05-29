@@ -82,8 +82,6 @@ class NotificationBar extends Component {
         newAllowed = newAllowed.filter(x => x.host !== data.host);
         this.respond('deny_write', data['host']);
         this.setState({allowed: newAllowed});
-        // todo: allow to ask again
-        // possible when reopening a terminal
     }
 
     deniedToAllowed(data) {
