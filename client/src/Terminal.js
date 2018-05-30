@@ -7,7 +7,7 @@ import 'xterm/dist/xterm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css';
 
-const Xterm  = require('xterm/dist/xterm.js');
+const Xterm = require('xterm/dist/xterm.js');
 const fit = require('xterm/dist/addons/fit/fit');
 const terminado = require('xterm/dist/addons/terminado/terminado');
 
@@ -36,6 +36,11 @@ class Terminal extends Component {
         this.props.reOpen(this.props.userName, this.isLogged);
     }
 
+    deletePrompt() {
+        this.setState({hasRequested: false});
+        this.notifications.deleteNotification('prompt');
+    }
+
     requestWrite(event) {
         const isAdmin = this.props.getIsAdmin();
 
@@ -45,11 +50,12 @@ class Terminal extends Component {
             let notification = this.notifications.make_notification(
                 'Request access to this terminal?',
                 () => this.props.sendMessage('request_write', this.props.userName),
-                () => this.setState({hasRequested: false}), () => this.setState({hasRequested: false}),
-                'Yes', 'No'
+                () => this.deletePrompt(), 
+                () => this.deletePrompt(),
+                'Yes', 'No', 'prompt'
             );
 
-            this.notifications.add_notification(notification);
+            this.notifications.add_notification(notification, 'prompt');
         }
     }
 
@@ -92,7 +98,6 @@ class Terminal extends Component {
     }
 
     // TODO:
-    //  selecting text gets fucked when dragged ONLY CHROME :O
     //  animations
     render() {
         return (

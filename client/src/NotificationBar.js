@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import YesNoNotification from './YesNoNotification';
-
+import { Spring, Transition, animated } from 'react-spring';
 
 class NotificationBar extends Component {
     constructor(props) {
@@ -11,9 +11,10 @@ class NotificationBar extends Component {
         this.notification_file_write = this.notification_file_write.bind(this);
         this.respond = this.respond.bind(this);
         this.ignore = this.ignore.bind(this);
+        this.deleteNotification = this.deleteNotification.bind(this);
 
         this.state = {
-            notifications: [],
+            notifications: {},
             allowed: [],
             denied: [],
             ignored: []
@@ -43,7 +44,7 @@ class NotificationBar extends Component {
     }
 
     // This needs types
-    make_notification(message, yes, no, ignore, yesMessage, noMessage) {
+    make_notification(message, yes, no, ignore, yesMessage, noMessage, host) {
         return (
             <YesNoNotification
                 key={this.id++}
@@ -53,6 +54,8 @@ class NotificationBar extends Component {
                 yesMessage={yesMessage}
                 noMessage={noMessage}
                 ignore={ignore}
+                id={host}
+                deleteNotification={this.deleteNotification}
             />
         );
     }
@@ -119,9 +122,10 @@ class NotificationBar extends Component {
             () => this.respondNo(data),
             () => this.ignore(data),
             'Accept',
-            'Deny'
+            'Deny',
+            data.host
         );
-        this.add_notification(notification);
+        this.add_notification(notification, data.host);
     }
 
     notification_file_write(data) {
@@ -134,15 +138,16 @@ class NotificationBar extends Component {
             () => this.respond('deny_file_write', data['from']),
             null,
             'Accept',
-            'Deny'
+            'Deny',
+            data.host
         );
-        this.add_notification(notification);
+        this.add_notification(notification, data.host);
     }
 
-    add_notification(data) {
-        let new_state = this.state.notifications.slice();
-        new_state.push(data);
-        this.setState({notifications: new_state});
+    add_notification(notification, key) {
+        let newNotifications = Object.assign({}, this.state.notifications);
+        newNotifications[key] = notification;
+        this.setState({notifications: newNotifications});
     }
 
     componentDidMount() {
@@ -158,10 +163,27 @@ class NotificationBar extends Component {
         }
     }
 
+    deleteNotification(key) {
+        let newNotifications = Object.assign({}, this.state.notifications);
+        delete newNotifications[key];
+        this.setState({notifications: newNotifications});
+    }
+
     render() {
         return (
             <div className="notification-container">
-                {this.state.notifications}
+                <Transition
+                    native
+                    keys={Object.keys(this.state.notifications)}
+                    from={{ opacity: 0, height: 0 }}
+                    enter={{ opacity: 1, height: 157 }}
+                    leave={{ opacity: 0, height: 0 }}>
+                    {Object.values(this.state.notifications).map(n => styles => 
+                        <animated.div style={{...styles }}>
+                            {n}
+                        </animated.div>
+                    )}
+                </Transition>
             </div>
         );
     }
