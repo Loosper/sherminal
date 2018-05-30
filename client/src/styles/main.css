@@ -18,6 +18,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    padding: 0 68px;
  }
  
  .login-form {
@@ -31,15 +32,17 @@
     background: transparent;
     color: rgb(168, 168, 168);
     font-family: Helvetica Neue, Arial;
+    width: 100%;
  }
 
  .login-submit {
-    position: absolute;
-    bottom: 70px;
+    margin-top: auto;
+    margin-bottom: 70px;
     font-size: 1.8rem !important;
     font-weight: 100 !important;
     font-family: Helvetica Neue, Arial !important;
     padding: 0 92px !important;
+    width: 100%;
  }
 
  .login-form:focus {
@@ -53,12 +56,16 @@
     font-size: 6.4rem;
     opacity: 0.97;
     text-shadow: 0px 0px 35px #00000038;
+    font-weight: 400 !important;
+    font-family: Helvetica Neue, Arial !important;
 }
 
 .login-subtitle {
-    top: 70px;
-    position: absolute;
+    margin-bottom: auto;
+    margin-top: 50px;
     opacity: 0.9;
+    font-weight: 400 !important;
+    font-family: Helvetica Neue, Arial !important;
 }
 
  .terminal-window {

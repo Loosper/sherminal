@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import NotificationBar from './NotificationBar';
-// import ReactDOM from 'react-dom';
-// import { fadeIn, fadeOut } from 'react-animations';
+
 
 import 'xterm/dist/xterm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -97,8 +96,6 @@ class Terminal extends Component {
         return this.notifications;
     }
 
-    // TODO:
-    //  animations
     render() {
         return (
             <div
