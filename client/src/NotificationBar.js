@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import YesNoNotification from './YesNoNotification';
-import { Spring, Transition, animated } from 'react-spring';
+import { Transition, animated } from 'react-spring';
 
 class NotificationBar extends Component {
     constructor(props) {

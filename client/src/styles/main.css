@@ -1,3 +1,66 @@
+ .body {
+    background: #efefef
+ }
+
+ .full-container {
+    height: 100vh;
+    width: 100%;
+ }
+
+ .login-container {
+    width: 400px;
+    height: 100%;
+    background: #f7f7f7b8;
+    /* #424242d6; */
+    float: right;
+    box-shadow: 0 0 40px -8px black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+ }
+ 
+ .login-form {
+    font-size: 1.8rem;
+    border-radius: 28px;
+    border: 1px solid #00000038;
+    box-shadow: 0 0 62px -10px;
+    text-align: center;
+    font-weight: 100;
+    margin: 15px 0;
+    background: transparent;
+    color: rgb(168, 168, 168);
+    font-family: Helvetica Neue, Arial;
+ }
+
+ .login-submit {
+    position: absolute;
+    bottom: 70px;
+    font-size: 1.8rem !important;
+    font-weight: 100 !important;
+    font-family: Helvetica Neue, Arial !important;
+    padding: 0 92px !important;
+ }
+
+ .login-form:focus {
+    outline: none;
+    color: rgba(0, 0, 0, 0.692)
+}
+
+.login-title {
+    position: fixed;
+    margin: 100px;
+    font-size: 6.4rem;
+    opacity: 0.97;
+    text-shadow: 0px 0px 35px #00000038;
+}
+
+.login-subtitle {
+    top: 70px;
+    position: absolute;
+    opacity: 0.9;
+}
+
  .terminal-window {
     box-shadow: 0 8px 35px -8px #000;
     border-radius: 8px;
@@ -58,7 +121,7 @@
  }
 
  .userbar {
-    background: rgba(240, 240, 240, 0.35);
+    background: rgba(240, 240, 240, 0.753);
     border-radius: 7px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -204,6 +267,16 @@
 
  @-moz-document url-prefix() {
     html,body{overflow: hidden !important;}
+ }
+
+ @media (max-width: 930px) {
+     .login-title {
+         display: none;
+     }
+
+     .login-container {
+         width: 100%;
+     }
  }
 
 @media (max-width: 768px) {

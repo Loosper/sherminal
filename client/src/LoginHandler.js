@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import './styles/login.css';
 import './styles/main.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -86,40 +85,30 @@ class LoginHandler extends Component {
 
     render() {
         return (
-            <form className="container" onSubmit={this.login}>
-                <div className="col-lg-6 col-md-6 col-sm-8 loginbox">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="singtext">termi.net</div>
-                        </div>
-                    </div>
-                    <div className=" row loginbox_content ">
-                        <div className="col-md-12" >
-                            <input
-                                className="form-control" type="text"
-                                placeholder="Username"
-                                value={this.state.username}
-                                onChange={this.updateUsername}
-                            />
-                            <span style={{color: "red"}}>{this.state.errors["username"]}</span>
-
-                            <input
-                                className="form-control" type="password"
-                                placeholder="Password (optional)"
-                                value={this.state.password}
-                                onChange={this.updatePassword}
-                                style={{marginTop: 10}}
-                            />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col"/>
-                        <button className=" btn btn-outline-secondary submit" type='submit'>
-                            Sign in
-                        </button>
-                    </div>
-                </div>
-            </form>
+            <div className="full-container">
+                <h1 className="login-title">termi.net</h1>
+                <form className="login-container" onSubmit={this.login}>
+                    <h1 className="login-subtitle">Please, sign in</h1>
+                    <span style={{color: 'red', minHeight: 24}}>{this.state.errors["username"]}</span>
+                    <input
+                        className="login-form" type="text"
+                        placeholder="username"
+                        value={this.state.username}
+                        onChange={this.updateUsername}
+                    />
+                    <input
+                        className="login-form" type="password"
+                        placeholder="password"
+                        value={this.state.password}
+                        onChange={this.updatePassword}
+                        style={{marginTop: 10}}
+                    />
+                    <span style={{ minHeight: 24}}/>
+                    <button className="btn btn-notification btn-outline-secondary login-submit" type='submit'>
+                        sign in
+                    </button>
+                </form>
+            </div>
         );
     }
 }

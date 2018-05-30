@@ -41,7 +41,7 @@ class Window extends Component {
             terminals: {},
             layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]},
             showPermissionManager: false,
-            particles: false
+            particles: true
         };
 
         this.authToken = '';
@@ -67,11 +67,11 @@ class Window extends Component {
             }
         );
         // token for tracking the user
-        this.terminal = null;
         this.authToken = '';
         this.terminalsCount = 0;
         this.messageQueue = {};
         this.webSocket = null;
+        this.terminal = null;
     }
 
     makeLayout(name, cols, index) { 
