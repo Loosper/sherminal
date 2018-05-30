@@ -19,7 +19,7 @@ class NotificationBar extends Component {
             denied: [],
             ignored: []
         };
-        
+
         this.id = 0;
     }
 
@@ -130,7 +130,7 @@ class NotificationBar extends Component {
 
     notification_file_write(data) {
         let notification = this.make_notification(
-            data['from'] + ' wants to send you ' + data['from'],
+            data['from'] + ' wants to send you ' + data['file'],
             () => this.respond(
                 'allow_file_write',
                 data
@@ -178,7 +178,7 @@ class NotificationBar extends Component {
                     from={{ opacity: 0, height: 0 }}
                     enter={{ opacity: 1, height: 157 }}
                     leave={{ opacity: 0, height: 0 }}>
-                    {Object.values(this.state.notifications).map(n => styles => 
+                    {Object.values(this.state.notifications).map(n => styles =>
                         <animated.div style={{...styles }}>
                             {n}
                         </animated.div>
