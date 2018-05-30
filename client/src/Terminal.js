@@ -23,6 +23,7 @@ class Terminal extends Component {
         this.requestWrite = this.requestWrite.bind(this);
         this.close = this.close.bind(this);
         this.onResize = this.onResize.bind(this);
+        this.onOpen = this.onOpen.bind(this);
 
         this.state = {
             hasRequested: false,
@@ -32,6 +33,7 @@ class Terminal extends Component {
 
     close(e) {
         this.props.tearDown(this.props.userName);
+        this.props.reOpen(this.props.userName, this.isLogged);
     }
 
     requestWrite(event) {
@@ -55,6 +57,13 @@ class Terminal extends Component {
         this.xterm.fit();
     }
 
+    onOpen(e) {
+        if (this.socket.readyState === 1) {
+            this.xterm.terminadoAttach(this.socket);
+            this.xterm.fit();
+        }
+    }
+
     componentDidMount() {
         //theme: {foreground: 'black', background:'white'} white theme
         this.xterm = new Xterm({cursorBlink: true, allowTransparency: true});
@@ -65,18 +74,14 @@ class Terminal extends Component {
             '/websocket/' + this.props.socketURL + '/' + this.props.authToken);
         this.socket = new WebSocket(socketURL);
         this.props.setSocket(this.socket);
+        
+        this.socket.addEventListener('open', this.onOpen);
         this.socket.addEventListener('close', this.close);
-        this.xterm.terminadoAttach(this.socket);
-
-        setTimeout(() => {
-            if (this.socket.readyState === 1) {
-                this.xterm.fit();
-            }
-        }, 50);
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
+        this.socket.removeEventListener('open', this.onOpen);
         this.socket.removeEventListener('close', this.close);
         this.socket.close();
         this.xterm.destroy();

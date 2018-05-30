@@ -21,20 +21,19 @@ class User extends Component {
 
     onClick(event) {
         if (!this.props.isLoggedUser) {
-            this.openTerminal();
+            this.openTerminal(false);
         }       
     }
 
-    openTerminal() {
-        this.props.create_terminal(this.state.username);
+    openTerminal(isLogged) {
+        this.props.create_terminal(this.state.username, isLogged);
     }
 
     render() {
         return (
-            <div className={this.props.isLoggedUser ? "user border-left" : ""}>
+            <div className={this.props.isLoggedUser ? "user border-left" : ""} onClick={this.onClick}>
                 <img
                     src={this.state.avatar}
-                    onClick={this.onClick}
                     className={this.props.isAdmin ? "avatar admin-avatar" : "avatar"}
                     alt="avatar"
                 />

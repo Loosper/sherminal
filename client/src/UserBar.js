@@ -84,7 +84,7 @@ class UserBar extends Component {
     }
 
     openTerminal() {
-        this.loggedUserRef.openTerminal();
+        this.props.terminal_factory(this.loggedUserRef.props.username, true);
     }
 
     showPermissionManager() {

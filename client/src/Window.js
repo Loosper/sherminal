@@ -41,13 +41,14 @@ class Window extends Component {
             terminals: {},
             layouts: {lg:[], md:[], sm:[], xs:[], xxs:[]},
             showPermissionManager: false,
-            particles: true
+            particles: false
         };
 
         this.authToken = '';
         this.terminalsCount = 0;
         this.messageQueue = {};
         this.webSocket = null;
+        this.terminal = null;
         
         this.cols = {lg: 12, md: 10, sm: 6, xs: 4, xxs: 1};
         this.breakpoints = {lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0};
@@ -66,6 +67,7 @@ class Window extends Component {
             }
         );
         // token for tracking the user
+        this.terminal = null;
         this.authToken = '';
         this.terminalsCount = 0;
         this.messageQueue = {};
@@ -121,7 +123,20 @@ class Window extends Component {
         this.setState({layouts: newLayouts});
     }
 
+    getRef(terminal, ref, isLogged) {
+        terminal.ref = ref;
+
+        if (isLogged) {
+            this.terminal = terminal.ref;
+        }
+    }
+
     getTerminal(path, isLogged) {
+        // end my suffering 
+        if (isLogged === undefined) {
+            isLogged = true;
+        }
+
         const terminal = {
             component: <Terminal 
                 key={path}
@@ -135,9 +150,9 @@ class Window extends Component {
                 registerMessage={this.addMessageHandler}
                 getIsAdmin={this.getIsAdmin}
                 data-grid={this.getLayout(path)}
-                ref={ref => terminal.ref = ref}/>
+                reOpen={this.addTerminal}
+                ref={ref => this.getRef(terminal, ref, isLogged)}/>
         };
-
         this.terminalsCount++;
         return terminal;
     }
@@ -171,10 +186,7 @@ class Window extends Component {
         });
         this.webSocket = socket;
         // why hasnt it loaded?
-        this.webSocket.addEventListener(
-            'open',
-            () => this.sendMessage('get_users', '')
-        );
+        this.webSocket.addEventListener('open', () => this.sendMessage('get_users', ''));
     }
 
     setupClient(socketPath, authToken, isAdmin) {
@@ -182,23 +194,18 @@ class Window extends Component {
         this.authToken = authToken;
         this.isAdmin = isAdmin;
 
-        this.addLayout(socketPath);
-        let newTerminals = Object.assign({}, this.state.terminals);
-        newTerminals[socketPath] = this.getTerminal(socketPath, true);
+        this.addTerminal(socketPath, true);
 
         this.setState({
-            loggedIn: true,
-            terminals: newTerminals
+            loggedIn: true
         });
-
-        this.terminal = newTerminals[socketPath].ref;
     }
 
-    addTerminal(path, isAdmin) {
+    addTerminal(path, isLogged) {
         if (!this.state.terminals.hasOwnProperty(path)) {
             this.addLayout(path);
             let newTerminals = Object.assign({}, this.state.terminals);
-            newTerminals[path] = this.getTerminal(path, false);
+            newTerminals[path] = this.getTerminal(path, isLogged);
             this.setState({terminals: newTerminals});
         }
     }
