@@ -3,9 +3,10 @@ Sherminal is a shared terminal implementation for use in a web browser. It is de
 
 <!-- expand this -->
 # Features
-* User file isolation
-* User communication - send files
-* Permissioning system between users
+* View another user's terminal session - you can click on the avatar of every user and see what they are doing *in real time*.
+* User file isolation - every user gets a clean environment, separate form everyone else.
+* User communication - users can send files between each other for fast sharing of work.
+* Permissioning system between users - anyone can request permission to write in your terminal session. A great way to keep progressing when one member of hte group feel stuck.
 * Full freedom of each and every user - the frustration with not having permission to install packages is gone! Every user's is free to do whatever they like.
 
 # Running
@@ -37,7 +38,6 @@ The app uses `chroot` and `mount` for user isolation and because of this needs t
 * [Terminado](https://github.com/jupyter/terminado) - The xterm backend. Forwards the console to a websocket.
 * [XTerm.js](https://github.com/xtermjs/xterm.js) - Terminal emulator in the browser.
 
-
 # System requirements
 Tested on:
 
@@ -46,8 +46,11 @@ Tested on:
 * npm v5.7
 
 # Contributors
-[Loosper](https://github.com/loosper) - backend
-[denishristov](https://github.com/denishristov) - frontend
+* [Loosper](https://github.com/loosper) - backend
+* [denishristov](https://github.com/denishristov) - frontend
+
+# Trivia
+This is a course project for Software engineering class. It was build with its constraints and deadlines in mind.
 
 # License
 This project is licensed under the GPLv2.0
