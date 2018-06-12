@@ -1,5 +1,7 @@
-# Sherminal
+# termi.net
 Sherminal is a shared terminal implementation for use in a web browser. It is designed to provide a shared always connected environment in class. Students can view and help each other's work while an optional teacher is able to instantly share materials and monitor his students. __Copying off a whiteboard is a thing of the past__.
+
+[Demo video: ](https://www.youtube.com/watch?v=osFXtbgEgZc&feature=youtu.be)
  
 ## Introduction
 Most introductory programming classes usually involve two modules: theory lectures and practical code examples. In our experience the code examples are done by the teacher in real-time on a whiteboard or similar. The problem with this method is that student oftentimes struggle to keep up with the teacher's pace - he is an experienced programmer who can grasp the concept at hand very quickly. Students on the other hand require time to go through everything that is said. However their attention is preoccupied with copying code off the whiteboard, code they can receive by email for example. We offer a solution to this problem by bringing every student's and the teacher's environment in a shared place that can be view by anyone at any time.
