@@ -1,5 +1,5 @@
 # termi.net
-Termi.net is a shared terminal implementation for use in a web browser. It is designed to provide an always shared and connected environment in class. Students can view and help each other's work while an optional teacher is able to instantly share materials and monitor his students. __Copying off a whiteboard is a thing of the past__.
+termi.net is a shared terminal implementation for use in a web browser. It is designed to provide an always shared and connected environment in class. Students can view and help each other's work while an optional teacher is able to instantly share materials and monitor his students. __Copying off a whiteboard is a thing of the past__.
 
 ![alt text](https://github.com/Loosper/sherminal/blob/master/docs/Screen%20Shot%202018-06-12%20at%203.39.16.png "Screenshot")
 
@@ -48,9 +48,9 @@ sudo python3 server/server.py
 ## Notes
 The app uses `chroot` and `mount` for user isolation and because of this needs to be ran with superuser privileges. It would be advised to use a virtual machine at this stage in the project.
  
-## Dependencies
-* [Terminado](https://github.com/jupyter/terminado) - The xterm backend. Forwards the console to a websocket.
-* [XTerm.js](https://github.com/xtermjs/xterm.js) - Terminal emulator in the browser.
+## Frameworks
+* Tornado - backend
+* React - frontend
  
 ## System requirements
 Tested on:
