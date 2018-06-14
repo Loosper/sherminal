@@ -1,5 +1,5 @@
 # termi.net
-Sherminal is a shared terminal implementation for use in a web browser. It is designed to provide a shared always connected environment in class. Students can view and help each other's work while an optional teacher is able to instantly share materials and monitor his students. __Copying off a whiteboard is a thing of the past__.
+Termi.net is a shared terminal implementation for use in a web browser. It is designed to provide an always shared and connected environment in class. Students can view and help each other's work while an optional teacher is able to instantly share materials and monitor his students. __Copying off a whiteboard is a thing of the past__.
 
 ![alt text](https://github.com/Loosper/sherminal/blob/master/docs/Screen%20Shot%202018-06-12%20at%203.39.16.png "Screenshot")
 
