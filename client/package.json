@@ -12,7 +12,7 @@
     "react-grid-layout": "^0.16.6",
     "react-particles-js": "^2.2.0",
     "react-resizable": "^1.7.5",
-    "react-scripts": "1.1.1",
+    "react-scripts": "5.0.1",
     "react-spring": "^5.3.8",
     "react-switch": "^2.3.2",
     "velocity-react": "^1.4.1",
